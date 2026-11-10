@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <radialGradient id="pearBg" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#FCFAF6"/>
+      <stop offset="100%" stop-color="#EBE3D5"/>
+    </radialGradient>
+    <radialGradient id="pearGrad" cx="42%" cy="45%" r="65%">
+      <stop offset="0%" stop-color="#E9D874"/>
+      <stop offset="45%" stop-color="#C5B83B"/>
+      <stop offset="80%" stop-color="#8B8624"/>
+      <stop offset="100%" stop-color="#555813"/>
+    </radialGradient>
+    <linearGradient id="pearLeaf" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#74C69D"/>
+      <stop offset="100%" stop-color="#1B4332"/>
+    </linearGradient>
+    <filter id="softShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#1B4332" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  
+  <rect width="400" height="400" rx="28" fill="url(#pearBg)"/>
+  <circle cx="200" cy="200" r="145" fill="#EAF0E2" opacity="0.7"/>
+  <circle cx="200" cy="200" r="143" fill="none" stroke="#D3E0C5" stroke-width="1.5" stroke-dasharray="4 4"/>
+  
+  <!-- Shadow -->
+  <ellipse cx="200" cy="308" rx="65" ry="14" fill="#000" opacity="0.08"/>
+  
+  <g filter="url(#softShadow)">
+    <!-- Stem -->
+    <path d="M200 135 C202 105 218 90 228 85" stroke="#4A3423" stroke-width="6.5" stroke-linecap="round" fill="none"/>
+    <!-- Leaf -->
+    <path d="M206 112 C240 102 268 118 274 138 C246 146 220 134 206 112 Z" fill="url(#pearLeaf)"/>
+    <path d="M206 112 Q240 125 274 138" stroke="#A7D7B5" stroke-width="1.5" fill="none"/>
+    
+    <!-- Pear Body -->
+    <path d="M200 138 
+             C182 138 174 158 170 185 
+             C165 210 135 230 132 260 
+             C128 290 152 305 195 306 
+             C205 306 208 306 215 305 
+             C252 300 272 285 268 255 
+             C262 225 235 205 230 182 
+             C225 158 218 138 200 138 Z" 
+          fill="url(#pearGrad)"/>
+          
+    <!-- Subtle blush -->
+    <ellipse cx="230" cy="255" rx="30" ry="25" fill="#E07A5F" opacity="0.25"/>
+    <path d="M155 240 C148 260 152 280 162 292" stroke="#FFF" stroke-width="4.5" stroke-linecap="round" opacity="0.4" fill="none"/>
+  </g>
+  
+  <text x="200" y="348" font-family="'Playfair Display', Georgia, serif" font-size="15" font-weight="700" fill="#1B4332" text-anchor="middle" letter-spacing="1">PĂR • PYRUS COMMUNIS</text>
+  <text x="200" y="368" font-family="system-ui, sans-serif" font-size="10.5" font-weight="500" fill="#52796F" text-anchor="middle" letter-spacing="0.5">Pepiniera Ciumbrud • Pomi Fructiferi Certificați</text>
+</svg>

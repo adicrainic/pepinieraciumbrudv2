@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <radialGradient id="cherryBg" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#FCFAF6"/>
+      <stop offset="100%" stop-color="#EBE3D5"/>
+    </radialGradient>
+    <radialGradient id="cherryGrad1" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#FF3366"/>
+      <stop offset="40%" stop-color="#C9184A"/>
+      <stop offset="80%" stop-color="#800F2F"/>
+      <stop offset="100%" stop-color="#400515"/>
+    </radialGradient>
+    <radialGradient id="cherryGrad2" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#FF4D6D"/>
+      <stop offset="45%" stop-color="#A4133C"/>
+      <stop offset="85%" stop-color="#590D22"/>
+      <stop offset="100%" stop-color="#300510"/>
+    </radialGradient>
+    <linearGradient id="cherryLeaf" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#74C69D"/>
+      <stop offset="100%" stop-color="#1B4332"/>
+    </linearGradient>
+    <filter id="softShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#1B4332" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  
+  <rect width="400" height="400" rx="28" fill="url(#cherryBg)"/>
+  <circle cx="200" cy="200" r="145" fill="#FCECEF" opacity="0.7"/>
+  <circle cx="200" cy="200" r="143" fill="none" stroke="#F3CCD6" stroke-width="1.5" stroke-dasharray="4 4"/>
+  
+  <ellipse cx="160" cy="302" rx="36" ry="10" fill="#000" opacity="0.08"/>
+  <ellipse cx="242" cy="296" rx="36" ry="10" fill="#000" opacity="0.08"/>
+  
+  <g filter="url(#softShadow)">
+    <!-- Leaves from top joint -->
+    <path d="M205 110 C235 95 268 108 274 126 C245 136 218 128 205 110 Z" fill="url(#cherryLeaf)"/>
+    <path d="M205 110 Q240 118 274 126" stroke="#C5E8D0" stroke-width="1.5" fill="none"/>
+    
+    <!-- Joint stem point -->
+    <circle cx="204" cy="112" r="5" fill="#52796F"/>
+    
+    <!-- Stems -->
+    <path d="M204 112 C180 145 160 195 162 230" stroke="#52796F" stroke-width="4" stroke-linecap="round" fill="none"/>
+    <path d="M204 112 C218 145 235 190 238 224" stroke="#52796F" stroke-width="4" stroke-linecap="round" fill="none"/>
+    
+    <!-- Left Cherry -->
+    <ellipse cx="162" cy="254" rx="42" ry="40" fill="url(#cherryGrad1)"/>
+    <!-- Right Cherry -->
+    <ellipse cx="240" cy="248" rx="40" ry="38" fill="url(#cherryGrad2)"/>
+    
+    <!-- Highlights -->
+    <ellipse cx="148" cy="240" rx="10" ry="7" fill="#FFF" opacity="0.55" transform="rotate(-30 148 240)"/>
+    <ellipse cx="228" cy="235" rx="9" ry="6" fill="#FFF" opacity="0.5" transform="rotate(-30 228 235)"/>
+  </g>
+  
+  <text x="200" y="348" font-family="'Playfair Display', Georgia, serif" font-size="15" font-weight="700" fill="#1B4332" text-anchor="middle" letter-spacing="1">CIREȘ • PRUNUS AVIUM</text>
+  <text x="200" y="368" font-family="system-ui, sans-serif" font-size="10.5" font-weight="500" fill="#52796F" text-anchor="middle" letter-spacing="0.5">Pepiniera Ciumbrud • Pomi Fructiferi Certificați</text>
+</svg>

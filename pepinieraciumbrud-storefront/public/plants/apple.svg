@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <radialGradient id="bgGrad" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#FCFAF6"/>
+      <stop offset="100%" stop-color="#EBE3D5"/>
+    </radialGradient>
+    <radialGradient id="appleGrad" cx="38%" cy="32%" r="68%">
+      <stop offset="0%" stop-color="#FF6B6B"/>
+      <stop offset="45%" stop-color="#D90429"/>
+      <stop offset="85%" stop-color="#9B0017"/>
+      <stop offset="100%" stop-color="#59000D"/>
+    </radialGradient>
+    <linearGradient id="leafGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#95D5B2"/>
+      <stop offset="100%" stop-color="#2D6A4F"/>
+    </linearGradient>
+    <filter id="softShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#1B4332" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  
+  <rect width="400" height="400" rx="28" fill="url(#bgGrad)"/>
+  <circle cx="200" cy="200" r="145" fill="#E8F1E9" opacity="0.7"/>
+  <circle cx="200" cy="200" r="143" fill="none" stroke="#D1E3D4" stroke-width="1.5" stroke-dasharray="4 4"/>
+  
+  <!-- Apple shadow -->
+  <ellipse cx="200" cy="305" rx="70" ry="14" fill="#000" opacity="0.08"/>
+  
+  <g filter="url(#softShadow)">
+    <!-- Branch / Stem -->
+    <path d="M200 160 C198 125 212 105 224 95" stroke="#5C3D2E" stroke-width="7" stroke-linecap="round" fill="none"/>
+    <path d="M210 115 C215 110 220 106 224 104" stroke="#7A533E" stroke-width="4" stroke-linecap="round" fill="none"/>
+    
+    <!-- Leaves -->
+    <path d="M204 135 C235 125 265 140 275 160 C250 170 220 160 204 135 Z" fill="url(#leafGrad)"/>
+    <path d="M204 135 Q240 148 275 160" stroke="#B7E4C7" stroke-width="1.8" fill="none"/>
+    
+    <!-- Apple Body -->
+    <path d="M200 165 
+             C175 155 140 165 128 195 
+             C112 235 125 285 165 300 
+             C185 308 195 304 200 302 
+             C205 304 215 308 235 300 
+             C275 285 288 235 272 195 
+             C260 165 225 155 200 165 Z" 
+          fill="url(#appleGrad)"/>
+          
+    <!-- Apple Specular Highlight -->
+    <path d="M152 188 C140 205 138 232 146 250" stroke="#FFA8A8" stroke-width="5" stroke-linecap="round" opacity="0.45" fill="none"/>
+    <circle cx="160" cy="195" r="4" fill="#FFFFFF" opacity="0.6"/>
+  </g>
+  
+  <!-- Calyx indentation -->
+  <ellipse cx="200" cy="164" rx="8" ry="3" fill="#400008" opacity="0.6"/>
+  
+  <text x="200" y="348" font-family="'Playfair Display', Georgia, serif" font-size="15" font-weight="700" fill="#1B4332" text-anchor="middle" letter-spacing="1">MĂR • MALUS DOMESTICA</text>
+  <text x="200" y="368" font-family="system-ui, sans-serif" font-size="10.5" font-weight="500" fill="#52796F" text-anchor="middle" letter-spacing="0.5">Pepiniera Ciumbrud • Pomi Fructiferi Certificați</text>
+</svg>

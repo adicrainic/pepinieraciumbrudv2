@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <radialGradient id="plumBg" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#FCFAF6"/>
+      <stop offset="100%" stop-color="#EBE3D5"/>
+    </radialGradient>
+    <radialGradient id="plumGrad" cx="35%" cy="35%" r="70%">
+      <stop offset="0%" stop-color="#9D4EDD"/>
+      <stop offset="35%" stop-color="#5A189A"/>
+      <stop offset="75%" stop-color="#3C096C"/>
+      <stop offset="100%" stop-color="#1A0233"/>
+    </radialGradient>
+    <linearGradient id="plumLeaf" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#74C69D"/>
+      <stop offset="100%" stop-color="#1B4332"/>
+    </linearGradient>
+    <filter id="softShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#1B4332" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  
+  <rect width="400" height="400" rx="28" fill="url(#plumBg)"/>
+  <circle cx="200" cy="200" r="145" fill="#EFE8F5" opacity="0.7"/>
+  <circle cx="200" cy="200" r="143" fill="none" stroke="#DCCDE8" stroke-width="1.5" stroke-dasharray="4 4"/>
+  
+  <ellipse cx="200" cy="305" rx="65" ry="13" fill="#000" opacity="0.08"/>
+  
+  <g filter="url(#softShadow)">
+    <path d="M200 145 C198 120 205 102 215 95" stroke="#4B382A" stroke-width="6" stroke-linecap="round" fill="none"/>
+    <path d="M204 122 C236 112 264 128 270 146 C245 154 220 142 204 122 Z" fill="url(#plumLeaf)"/>
+    <path d="M204 122 Q238 134 270 146" stroke="#C5E8D0" stroke-width="1.5" fill="none"/>
+    
+    <!-- Plum Oval Body -->
+    <path d="M200 146 
+             C165 146 135 178 132 218 
+             C128 262 155 302 195 304 
+             C202 304 205 302 210 300 
+             C245 296 268 258 266 215 
+             C264 175 235 146 200 146 Z" 
+          fill="url(#plumGrad)"/>
+          
+    <!-- Plum suture line -->
+    <path d="M198 148 C190 190 190 260 205 301" stroke="#240046" stroke-width="3" stroke-linecap="round" opacity="0.4" fill="none"/>
+    <!-- Powdery bloom highlight -->
+    <path d="M152 178 C140 205 142 245 158 270" stroke="#C77DFF" stroke-width="5.5" stroke-linecap="round" opacity="0.4" fill="none"/>
+    <circle cx="160" cy="190" r="3.5" fill="#E0AAFF" opacity="0.6"/>
+  </g>
+  
+  <text x="200" y="348" font-family="'Playfair Display', Georgia, serif" font-size="15" font-weight="700" fill="#1B4332" text-anchor="middle" letter-spacing="1">PRUN • PRUNUS DOMESTICA</text>
+  <text x="200" y="368" font-family="system-ui, sans-serif" font-size="10.5" font-weight="500" fill="#52796F" text-anchor="middle" letter-spacing="0.5">Pepiniera Ciumbrud • Pomi Fructiferi Certificați</text>
+</svg>

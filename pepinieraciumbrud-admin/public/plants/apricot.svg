@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <radialGradient id="apricotBg" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#FCFAF6"/>
+      <stop offset="100%" stop-color="#EBE3D5"/>
+    </radialGradient>
+    <radialGradient id="apricotGrad" cx="38%" cy="34%" r="68%">
+      <stop offset="0%" stop-color="#FFD166"/>
+      <stop offset="35%" stop-color="#F77F00"/>
+      <stop offset="75%" stop-color="#D62828"/>
+      <stop offset="100%" stop-color="#7A0000"/>
+    </radialGradient>
+    <linearGradient id="apricotLeaf" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#74C69D"/>
+      <stop offset="100%" stop-color="#1B4332"/>
+    </linearGradient>
+    <filter id="softShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#1B4332" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  
+  <rect width="400" height="400" rx="28" fill="url(#apricotBg)"/>
+  <circle cx="200" cy="200" r="145" fill="#FFF3E6" opacity="0.7"/>
+  <circle cx="200" cy="200" r="143" fill="none" stroke="#FCE0C3" stroke-width="1.5" stroke-dasharray="4 4"/>
+  
+  <ellipse cx="200" cy="305" rx="66" ry="13" fill="#000" opacity="0.08"/>
+  
+  <g filter="url(#softShadow)">
+    <path d="M200 152 C198 128 208 110 218 100" stroke="#543D2B" stroke-width="6" stroke-linecap="round" fill="none"/>
+    <path d="M204 126 C238 114 266 130 272 150 C246 158 220 148 204 126 Z" fill="url(#apricotLeaf)"/>
+    <path d="M204 126 Q238 138 272 150" stroke="#C5E8D0" stroke-width="1.5" fill="none"/>
+    
+    <!-- Apricot Body -->
+    <path d="M200 155 
+             C170 148 135 170 128 208 
+             C120 250 145 295 188 303 
+             C198 304 202 302 208 300 
+             C246 295 275 255 272 210 
+             C270 172 232 148 200 155 Z" 
+          fill="url(#apricotGrad)"/>
+          
+    <!-- Suture indentation -->
+    <path d="M198 155 C190 195 188 255 204 301" stroke="#991B1E" stroke-width="3" stroke-linecap="round" opacity="0.4" fill="none"/>
+    <!-- Velvety highlight -->
+    <path d="M150 185 C138 212 140 248 152 270" stroke="#FFF" stroke-width="5" stroke-linecap="round" opacity="0.35" fill="none"/>
+  </g>
+  
+  <text x="200" y="348" font-family="'Playfair Display', Georgia, serif" font-size="15" font-weight="700" fill="#1B4332" text-anchor="middle" letter-spacing="1">CAIS &amp; PIERSIC • PRUNUS ARMENIACA</text>
+  <text x="200" y="368" font-family="system-ui, sans-serif" font-size="10.5" font-weight="500" fill="#52796F" text-anchor="middle" letter-spacing="0.5">Pepiniera Ciumbrud • Pomi Fructiferi Certificați</text>
+</svg>

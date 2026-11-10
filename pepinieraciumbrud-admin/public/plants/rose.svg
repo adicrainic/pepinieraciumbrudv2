@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <radialGradient id="roseBg" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#FCFAF6"/>
+      <stop offset="100%" stop-color="#EBE3D5"/>
+    </radialGradient>
+    <radialGradient id="roseGrad" cx="45%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#FF5D8F"/>
+      <stop offset="35%" stop-color="#E01E5A"/>
+      <stop offset="75%" stop-color="#A00030"/>
+      <stop offset="100%" stop-color="#540018"/>
+    </radialGradient>
+    <linearGradient id="roseLeaf" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#74C69D"/>
+      <stop offset="100%" stop-color="#1B4332"/>
+    </linearGradient>
+    <filter id="softShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#1B4332" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  
+  <rect width="400" height="400" rx="28" fill="url(#roseBg)"/>
+  <circle cx="200" cy="200" r="145" fill="#FAEFF2" opacity="0.7"/>
+  <circle cx="200" cy="200" r="143" fill="none" stroke="#ECCDD5" stroke-width="1.5" stroke-dasharray="4 4"/>
+  
+  <ellipse cx="200" cy="310" rx="55" ry="11" fill="#000" opacity="0.08"/>
+  
+  <g filter="url(#softShadow)">
+    <!-- Stem with Thorns -->
+    <path d="M200 240 C198 270 205 295 208 308" stroke="#2D6A4F" stroke-width="6" stroke-linecap="round" fill="none"/>
+    <!-- Thorn -->
+    <path d="M203 268 Q216 265 214 274 Q205 272 201 270 Z" fill="#1B4332"/>
+    <!-- Serrated Leaves -->
+    <path d="M198 250 C165 240 140 255 130 270 C155 278 185 265 198 250 Z" fill="url(#roseLeaf)"/>
+    <path d="M202 260 C235 250 260 265 270 280 C245 288 215 275 202 260 Z" fill="url(#roseLeaf)"/>
+    
+    <!-- Outer Rose Petals -->
+    <path d="M140 190 C130 150 170 120 200 120 C230 120 270 150 260 190 C250 230 225 245 200 245 C175 245 150 230 140 190 Z" fill="url(#roseGrad)"/>
+    
+    <!-- Middle Swirl Petals -->
+    <path d="M160 175 C155 145 180 135 200 135 C220 135 245 145 240 175 C235 205 220 220 200 220 C180 220 165 205 160 175 Z" fill="#C9184A"/>
+    <path d="M172 165 C170 145 185 140 200 140 C215 140 230 145 228 165 C225 185 215 198 200 198 C185 198 175 185 172 165 Z" fill="#A4133C"/>
+    
+    <!-- Rose Core -->
+    <path d="M185 160 C185 150 192 146 200 146 C208 146 215 150 215 160 C215 170 208 175 200 175 C192 175 185 170 185 160 Z" fill="#FF758F"/>
+    
+    <!-- Edge Accents -->
+    <path d="M148 180 C155 165 175 160 188 170" stroke="#FF8FA3" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.6"/>
+    <path d="M252 180 C245 165 225 160 212 170" stroke="#FF8FA3" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.6"/>
+  </g>
+  
+  <text x="200" y="348" font-family="'Playfair Display', Georgia, serif" font-size="15" font-weight="700" fill="#1B4332" text-anchor="middle" letter-spacing="1">TRANDAFIR • ROSA L.</text>
+  <text x="200" y="368" font-family="system-ui, sans-serif" font-size="10.5" font-weight="500" fill="#52796F" text-anchor="middle" letter-spacing="0.5">Pepiniera Ciumbrud • Butași de Trandafiri Nobil</text>
+</svg>

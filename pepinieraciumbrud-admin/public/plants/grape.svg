@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <radialGradient id="grapeBg" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#FCFAF6"/>
+      <stop offset="100%" stop-color="#EBE3D5"/>
+    </radialGradient>
+    <radialGradient id="grapeGrad" cx="35%" cy="32%" r="68%">
+      <stop offset="0%" stop-color="#7B2CBF"/>
+      <stop offset="45%" stop-color="#5A189A"/>
+      <stop offset="85%" stop-color="#3C096C"/>
+      <stop offset="100%" stop-color="#10002B"/>
+    </radialGradient>
+    <linearGradient id="vineLeaf" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#74C69D"/>
+      <stop offset="100%" stop-color="#1B4332"/>
+    </linearGradient>
+    <filter id="softShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#1B4332" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  
+  <rect width="400" height="400" rx="28" fill="url(#grapeBg)"/>
+  <circle cx="200" cy="200" r="145" fill="#EFE8F5" opacity="0.7"/>
+  <circle cx="200" cy="200" r="143" fill="none" stroke="#DCCDE8" stroke-width="1.5" stroke-dasharray="4 4"/>
+  
+  <ellipse cx="200" cy="310" rx="45" ry="10" fill="#000" opacity="0.08"/>
+  
+  <g filter="url(#softShadow)">
+    <!-- Vine Tendril & Wood -->
+    <path d="M200 120 C196 90 205 75 220 70" stroke="#4B382A" stroke-width="6" stroke-linecap="round" fill="none"/>
+    <path d="M208 85 C225 80 235 90 240 105 C242 115 235 125 242 130" stroke="#74C69D" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+    
+    <!-- Large Vine Leaf -->
+    <path d="M195 115 
+             C165 95 130 110 125 135 
+             C135 145 130 155 120 162 
+             C140 170 165 160 178 150 
+             C188 158 198 152 195 115 Z" 
+          fill="url(#vineLeaf)"/>
+    <path d="M195 115 Q155 135 120 162" stroke="#B7E4C7" stroke-width="1.5" fill="none"/>
+    
+    <!-- Grape Cluster -->
+    <!-- Row 1 (Top, 4 grapes) -->
+    <circle cx="170" cy="165" r="17" fill="url(#grapeGrad)"/>
+    <circle cx="198" cy="162" r="17" fill="url(#grapeGrad)"/>
+    <circle cx="225" cy="166" r="17" fill="url(#grapeGrad)"/>
+    
+    <!-- Row 2 (4 grapes) -->
+    <circle cx="158" cy="192" r="17" fill="url(#grapeGrad)"/>
+    <circle cx="185" cy="190" r="17" fill="url(#grapeGrad)"/>
+    <circle cx="212" cy="190" r="17" fill="url(#grapeGrad)"/>
+    <circle cx="238" cy="195" r="17" fill="url(#grapeGrad)"/>
+    
+    <!-- Row 3 (3 grapes) -->
+    <circle cx="172" cy="220" r="17" fill="url(#grapeGrad)"/>
+    <circle cx="200" cy="218" r="17" fill="url(#grapeGrad)"/>
+    <circle cx="225" cy="222" r="17" fill="url(#grapeGrad)"/>
+    
+    <!-- Row 4 (2 grapes) -->
+    <circle cx="186" cy="248" r="17" fill="url(#grapeGrad)"/>
+    <circle cx="212" cy="248" r="17" fill="url(#grapeGrad)"/>
+    
+    <!-- Row 5 (Bottom grape) -->
+    <circle cx="200" cy="275" r="16" fill="url(#grapeGrad)"/>
+    
+    <!-- Highlights -->
+    <circle cx="165" cy="160" r="3.5" fill="#C77DFF" opacity="0.6"/>
+    <circle cx="192" cy="157" r="3.5" fill="#C77DFF" opacity="0.6"/>
+    <circle cx="180" cy="185" r="3.5" fill="#C77DFF" opacity="0.6"/>
+    <circle cx="206" cy="185" r="3.5" fill="#C77DFF" opacity="0.6"/>
+    <circle cx="194" cy="213" r="3.5" fill="#C77DFF" opacity="0.6"/>
+    <circle cx="195" cy="270" r="3" fill="#C77DFF" opacity="0.6"/>
+  </g>
+  
+  <text x="200" y="348" font-family="'Playfair Display', Georgia, serif" font-size="15" font-weight="700" fill="#1B4332" text-anchor="middle" letter-spacing="1">VIȚĂ DE VIE • VITIS VINIFERA</text>
+  <text x="200" y="368" font-family="system-ui, sans-serif" font-size="10.5" font-weight="500" fill="#52796F" text-anchor="middle" letter-spacing="0.5">Pepiniera Ciumbrud • Butași Viță de Masă &amp; Vin</text>
+</svg>
