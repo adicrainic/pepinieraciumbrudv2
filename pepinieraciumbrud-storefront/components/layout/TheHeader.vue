@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { useCartStore } from '~/stores/cart'
 import { useUiStore } from '~/stores/ui'
+import { useSiteSettings } from '~/composables/useSiteSettings'
 import { storeApi } from '~/services/storeApi'
 import type { Product } from '~/types/product'
 
 const cartStore = useCartStore()
 const uiStore = useUiStore()
+const { settings } = useSiteSettings()
 
 const isScrolled = ref(false)
 const searchQuery = ref('')
@@ -59,27 +61,42 @@ const handleSearch = () => {
 </script>
 
 <template>
+  <div class="hidden md:block bg-primary-dark text-white/90 text-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-between">
+      <span>🚚 Livrare în toată țara · Ambalare specială pentru rădăcini</span>
+      <span class="flex items-center gap-4">
+        <span v-if="settings.contact_phone">📞 {{ settings.contact_phone }}</span>
+        <NuxtLink to="/livrare-si-plata" class="hover:text-accent transition-colors">Livrare &amp; plată</NuxtLink>
+      </span>
+    </div>
+  </div>
   <header
     class="sticky top-0 z-40 transition-all duration-300 backdrop-blur-md"
     :class="[
-      isScrolled ? 'bg-white/95 shadow-sm border-b border-border py-3' : 'bg-white border-b border-border py-4'
+      isScrolled ? 'bg-background/90 shadow-soft border-b border-border py-3' : 'bg-background border-b border-border py-4'
     ]"
   >
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between">
         <!-- Logo -->
         <NuxtLink to="/" class="flex items-center space-x-3 group">
-          <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-sm group-hover:bg-primary-dark transition-colors">
-            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+          <div class="w-11 h-11 rounded-xl bg-primary flex items-center justify-center text-white shadow-sm group-hover:bg-primary-dark transition-colors overflow-hidden">
+            <img
+              v-if="settings.logo_url"
+              :src="settings.logo_url"
+              :alt="settings.site_title"
+              class="max-h-full max-w-full object-contain p-1"
+            />
+            <svg v-else class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
               <path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17.98.3 1.34.3C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75C7 8 17 8 17 8z"/>
             </svg>
           </div>
           <div>
             <span class="font-serif text-xl sm:text-2xl font-bold tracking-tight text-primary-dark block leading-none">
-              Pepiniera Ciumbrud
+              {{ settings.site_title }}
             </span>
             <span class="text-[11px] tracking-wider uppercase text-text-muted font-sans font-medium">
-              Tradiție & Calitate din 1990
+              {{ settings.site_tagline }}
             </span>
           </div>
         </NuxtLink>
@@ -141,7 +158,7 @@ const handleSearch = () => {
               </svg>
               <span
                 v-if="cartStore.itemCount > 0"
-                class="absolute -top-1.5 -right-1.5 bg-accent-warm text-white font-bold rounded-full w-5 h-5 flex items-center justify-center text-[10px]"
+                class="absolute -top-1.5 -right-1.5 bg-rose-500 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center text-[10px]"
               >
                 {{ cartStore.itemCount }}
               </span>
@@ -219,7 +236,7 @@ const handleSearch = () => {
                 </div>
                 <span
                   class="inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                  :class="item.is_in_stock ? 'bg-emerald-50 text-emerald-700' : 'bg-gray-100 text-gray-500'"
+                  :class="item.is_in_stock ? 'bg-leaf-50 text-leaf-700' : 'bg-gray-100 text-gray-500'"
                 >
                   {{ item.is_in_stock ? 'În stoc' : 'Epuizat' }}
                 </span>

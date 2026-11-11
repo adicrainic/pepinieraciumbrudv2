@@ -18,7 +18,7 @@ setPageSeo({
 
 <template>
   <div class="max-w-2xl mx-auto px-4 py-16 text-center">
-    <div class="w-20 h-20 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-3xl mx-auto mb-6">
+    <div class="w-20 h-20 rounded-full bg-leaf-100 text-leaf-700 flex items-center justify-center text-3xl mx-auto mb-6">
       ✓
     </div>
 

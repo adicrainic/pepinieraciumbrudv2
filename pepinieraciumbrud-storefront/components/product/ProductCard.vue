@@ -25,7 +25,7 @@ const handleAddToCart = async () => {
 </script>
 
 <template>
-  <div class="group relative bg-white border border-border hover:border-primary/40 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg flex flex-col h-full">
+  <div class="group relative bg-white border border-border hover:border-primary/40 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-petal hover:-translate-y-1 flex flex-col h-full">
     <!-- Image with Link -->
     <NuxtLink :to="`/produse/${product.slug || product.id}`" class="block aspect-square w-full overflow-hidden bg-surface-warm relative">
       <img
@@ -43,7 +43,7 @@ const handleAddToCart = async () => {
         <AppBadge v-else variant="danger">
           Stoc epuizat
         </AppBadge>
-        <AppBadge v-if="product.on_sale" variant="warning">
+        <AppBadge v-if="product.on_sale" variant="danger">
           Promoție
         </AppBadge>
       </div>

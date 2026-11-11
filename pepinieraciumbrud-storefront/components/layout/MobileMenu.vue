@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { useUiStore } from '~/stores/ui'
+import { useSiteSettings } from '~/composables/useSiteSettings'
 
 const uiStore = useUiStore()
+const { settings } = useSiteSettings()
 </script>
 
 <template>
@@ -68,8 +70,10 @@ const uiStore = useUiStore()
       </nav>
 
       <div class="pt-6 border-t border-border text-xs text-text-muted">
-        <p>Pepiniera Ciumbrud, Sat Ciumbrud, Jud. Alba</p>
-        <p class="mt-1 font-semibold text-primary">Tel: +40 700 000 000</p>
+        <p>{{ settings.contact_address }}</p>
+        <p class="mt-1 font-semibold text-primary">
+          <a :href="`tel:${settings.contact_phone.replace(/\s+/g, '')}`">Tel: {{ settings.contact_phone }}</a>
+        </p>
       </div>
     </div>
   </div>

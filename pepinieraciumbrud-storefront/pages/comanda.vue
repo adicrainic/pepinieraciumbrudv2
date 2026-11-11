@@ -273,7 +273,7 @@ const handlePlaceOrder = async () => {
         </h3>
 
         <div class="space-y-3">
-          <label class="flex items-center p-3.5 border border-primary/40 bg-emerald-50/50 rounded-xl cursor-pointer">
+          <label class="flex items-center p-3.5 border border-primary/40 bg-leaf-50/50 rounded-xl cursor-pointer">
             <input
               type="radio"
               v-model="form.payment_method"
@@ -314,7 +314,7 @@ const handlePlaceOrder = async () => {
             </div>
             <div class="flex justify-between">
               <span class="text-text-muted">Transport</span>
-              <span class="font-semibold text-emerald-700">Calculat la expediere</span>
+              <span class="font-semibold text-leaf-700">Calculat la expediere</span>
             </div>
             <div class="border-t border-border pt-2 flex justify-between text-sm font-bold text-primary-dark">
               <span>Total plată</span>

@@ -69,6 +69,18 @@ const router = createRouter({
       name: 'inventory',
       component: () => import('@/views/inventory/InventoryView.vue'),
       meta: { requiresAuth: true }
+    },
+    {
+      path: '/mesaje',
+      name: 'messages',
+      component: () => import('@/views/messages/MessagesListView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/setari',
+      name: 'settings',
+      component: () => import('@/views/settings/SettingsView.vue'),
+      meta: { requiresAuth: true }
     }
   ]
 })

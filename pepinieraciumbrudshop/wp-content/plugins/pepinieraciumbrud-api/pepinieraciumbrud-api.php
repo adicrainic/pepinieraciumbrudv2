@@ -28,6 +28,8 @@ require_once PCS_API_PLUGIN_DIR . 'includes/class-pcs-orders-routes.php';
 require_once PCS_API_PLUGIN_DIR . 'includes/class-pcs-customers-routes.php';
 require_once PCS_API_PLUGIN_DIR . 'includes/class-pcs-dashboard-routes.php';
 require_once PCS_API_PLUGIN_DIR . 'includes/class-pcs-media-routes.php';
+require_once PCS_API_PLUGIN_DIR . 'includes/class-pcs-settings-routes.php';
+require_once PCS_API_PLUGIN_DIR . 'includes/class-pcs-contact-routes.php';
 
 /**
  * Main plugin class.
@@ -59,6 +61,8 @@ final class PCS_API {
         ( new PCS_Customers_Routes() )->register();
         ( new PCS_Dashboard_Routes() )->register();
         ( new PCS_Media_Routes() )->register();
+        ( new PCS_Settings_Routes() )->register();
+        ( new PCS_Contact_Routes() )->register();
     }
 
     /**

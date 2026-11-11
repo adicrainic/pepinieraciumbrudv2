@@ -12,7 +12,9 @@ const navItems = [
   { name: 'Produse', path: '/produse', icon: '🍏' },
   { name: 'Categorii', path: '/categorii', icon: '🏷️' },
   { name: 'Comenzi', path: '/comenzi', icon: '📦' },
+  { name: 'Mesaje', path: '/mesaje', icon: '💬' },
   { name: 'Inventar', path: '/inventar', icon: '📋' },
+  { name: 'Setări', path: '/setari', icon: '⚙️' },
 ]
 
 const handleLogout = async () => {
