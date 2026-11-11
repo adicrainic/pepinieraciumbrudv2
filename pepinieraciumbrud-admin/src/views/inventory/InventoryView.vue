@@ -450,7 +450,7 @@ const revertAllDirty = () => {
           <input
             v-model="searchQuery"
             type="text"
-            placeholder="Caută după nume produs sau SKU..."
+            placeholder="Caută după nume produs..."
             class="w-full bg-gray-50 border border-gray-200 rounded-xl pl-9 pr-4 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white"
           />
           <span class="absolute left-3 top-2.5 text-xs text-gray-400 select-none">🔍</span>
@@ -522,7 +522,7 @@ const revertAllDirty = () => {
           <table class="w-full text-left text-sm">
             <thead class="bg-gray-50 text-[11px] uppercase tracking-wider text-gray-500 border-b border-border">
               <tr>
-                <th class="px-5 py-3.5">Produs & SKU</th>
+                <th class="px-5 py-3.5">Produs</th>
                 <th class="px-4 py-3.5">Stare Stoc</th>
                 <th class="px-4 py-3.5">
                   <div class="flex items-center gap-1">
@@ -570,9 +570,9 @@ const revertAllDirty = () => {
                       <div class="font-semibold text-gray-900 truncate max-w-xs" :title="item.name">
                         {{ item.name }}
                       </div>
-                      <div class="flex items-center gap-2 mt-0.5 text-xs text-gray-500">
-                        <span class="font-mono text-[11px] bg-gray-100 px-1.5 py-0.5 rounded">
-                          SKU: {{ item.sku || 'fără SKU' }}
+                      <div class="flex items-center gap-2 mt-0.5 text-xs">
+                        <span v-if="item.categories && item.categories.length" class="text-emerald-700 font-medium text-[11px]">
+                          {{ item.categories.map((c: any) => c.name).join(', ') }}
                         </span>
                         <span v-if="item.price" class="text-gray-400 text-[11px]">
                           {{ item.price }} lei

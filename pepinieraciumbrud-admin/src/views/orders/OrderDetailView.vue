@@ -266,7 +266,6 @@ const handlePrintPackingSlip = () => {
             <tr class="border-b-2 border-gray-800 bg-gray-100">
               <th class="py-2.5 px-3 font-bold w-12 text-center">Nr.</th>
               <th class="py-2.5 px-3 font-bold">Denumire Soi & Produs</th>
-              <th class="py-2.5 px-3 font-bold w-28">Cod SKU</th>
               <th class="py-2.5 px-3 font-bold w-20 text-center">Cant.</th>
               <th class="py-2.5 px-3 font-bold w-24 text-right">Preț Unitar</th>
               <th class="py-2.5 px-3 font-bold w-24 text-right">Total</th>
@@ -276,7 +275,6 @@ const handlePrintPackingSlip = () => {
             <tr v-for="(item, index) in order.line_items" :key="item.id">
               <td class="py-2.5 px-3 text-center">{{ index + 1 }}</td>
               <td class="py-2.5 px-3 font-medium">{{ item.name }}</td>
-              <td class="py-2.5 px-3 text-gray-600 font-mono text-[11px]">{{ item.sku || '-' }}</td>
               <td class="py-2.5 px-3 text-center font-bold">{{ item.quantity }} buc.</td>
               <td class="py-2.5 px-3 text-right">{{ item.price }} lei</td>
               <td class="py-2.5 px-3 text-right font-bold">{{ item.total }} lei</td>

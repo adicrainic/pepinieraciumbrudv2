@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import AdminLayout from '@/layouts/AdminLayout.vue'
 import { ordersService } from '@/services/ordersService'
 import { useUiStore } from '@/stores/ui'
+import { getStatusBadge, getStatusLabel } from '@/utils/order'
 import type { Order } from '@/types/order'
 
 const uiStore = useUiStore()
@@ -23,16 +24,6 @@ const fetchOrders = async () => {
 onMounted(() => {
   fetchOrders()
 })
-
-const getStatusBadge = (status: string) => {
-  switch (status) {
-    case 'completed': return 'bg-emerald-50 text-emerald-700 border-emerald-200'
-    case 'processing': return 'bg-blue-50 text-blue-700 border-blue-200'
-    case 'pending': return 'bg-amber-50 text-amber-700 border-amber-200'
-    case 'cancelled': return 'bg-rose-50 text-rose-700 border-rose-200'
-    default: return 'bg-gray-50 text-gray-700 border-gray-200'
-  }
-}
 </script>
 
 <template>
@@ -96,10 +87,10 @@ const getStatusBadge = (status: string) => {
                 </td>
                 <td class="px-6 py-4">
                   <span
-                    class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold border capitalize"
+                    class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold border"
                     :class="getStatusBadge(o.status)"
                   >
-                    {{ o.status }}
+                    {{ getStatusLabel(o.status) }}
                   </span>
                 </td>
                 <td class="px-6 py-4 font-bold text-primary-dark">

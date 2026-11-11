@@ -45,6 +45,7 @@ export interface InventoryItem {
   low_stock: boolean
   price: string
   permalink?: string
+  categories?: ProductCategoryRef[]
   image?: string | null
 }
 

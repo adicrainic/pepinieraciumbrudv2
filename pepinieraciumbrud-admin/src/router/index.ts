@@ -58,15 +58,11 @@ const router = createRouter({
     },
     {
       path: '/clienti',
-      name: 'customers',
-      component: () => import('@/views/customers/CustomersListView.vue'),
-      meta: { requiresAuth: true }
+      redirect: '/dashboard'
     },
     {
       path: '/clienti/:id',
-      name: 'customer-detail',
-      component: () => import('@/views/customers/CustomerDetailView.vue'),
-      meta: { requiresAuth: true }
+      redirect: '/dashboard'
     },
     {
       path: '/inventar',

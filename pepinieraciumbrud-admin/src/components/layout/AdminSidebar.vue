@@ -12,7 +12,6 @@ const navItems = [
   { name: 'Produse', path: '/produse', icon: '🍏' },
   { name: 'Categorii', path: '/categorii', icon: '🏷️' },
   { name: 'Comenzi', path: '/comenzi', icon: '📦' },
-  { name: 'Clienți', path: '/clienti', icon: '👥' },
   { name: 'Inventar', path: '/inventar', icon: '📋' },
 ]
 

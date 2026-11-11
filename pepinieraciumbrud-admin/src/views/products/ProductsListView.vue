@@ -1,20 +1,47 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/layouts/AdminLayout.vue'
 import { productsService } from '@/services/productsService'
+import { categoriesService } from '@/services/categoriesService'
 import { useUiStore } from '@/stores/ui'
 import type { Product } from '@/types/product'
+import type { Category } from '@/types/category'
 
 const uiStore = useUiStore()
 const products = ref<Product[]>([])
+const categories = ref<Category[]>([])
+const selectedCategory = ref<number | ''>('')
 const loading = ref(true)
 const searchQuery = ref('')
+
+const formattedCategories = computed(() => {
+  const list = [...categories.value].filter(c => c.slug !== 'uncategorized')
+  const parents = list.filter(c => !c.parent || c.parent === 0)
+  const result: (Category & { level: number })[] = []
+
+  parents.forEach(parent => {
+    result.push({ ...parent, level: 0 })
+    const children = list.filter(c => c.parent === parent.id)
+    children.forEach(child => {
+      result.push({ ...child, level: 1 })
+    })
+  })
+
+  list.forEach(c => {
+    if (!result.some(r => r.id === c.id)) {
+      result.push({ ...c, level: 0 })
+    }
+  })
+
+  return result
+})
 
 const fetchProducts = async () => {
   loading.value = true
   try {
     const params: Record<string, any> = { per_page: 50 }
     if (searchQuery.value) params.search = searchQuery.value
+    if (selectedCategory.value) params.category = selectedCategory.value
     products.value = await productsService.list(params)
   } catch (err: any) {
     uiStore.addNotification('error', 'Eroare la încărcarea produselor.')
@@ -23,7 +50,12 @@ const fetchProducts = async () => {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
+  try {
+    categories.value = await categoriesService.list()
+  } catch {
+    // ignore
+  }
   fetchProducts()
 })
 
@@ -62,14 +94,30 @@ const handleDelete = async (id: number) => {
       </div>
 
       <!-- Filter bar -->
-      <div class="bg-white p-4 rounded-2xl border border-border flex items-center gap-3">
+      <div class="bg-white p-4 rounded-2xl border border-border flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
         <input
           v-model="searchQuery"
           @keyup.enter="fetchProducts"
           type="text"
-          placeholder="Căutați după nume sau SKU..."
+          placeholder="Căutați după nume produs..."
           class="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
         />
+
+        <select
+          v-model="selectedCategory"
+          @change="fetchProducts"
+          class="bg-gray-50 border border-gray-200 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-primary text-gray-700 font-medium"
+        >
+          <option value="">Toate Categoriile</option>
+          <option
+            v-for="cat in formattedCategories"
+            :key="cat.id"
+            :value="cat.id"
+          >
+            {{ cat.level === 1 ? '— ' + cat.name : cat.name }}
+          </option>
+        </select>
+
         <button
           @click="fetchProducts"
           class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl text-xs font-semibold text-gray-700"
@@ -93,7 +141,7 @@ const handleDelete = async (id: number) => {
             <thead class="bg-gray-50 text-[11px] uppercase tracking-wider text-gray-500 border-b border-border">
               <tr>
                 <th class="px-6 py-3.5">Produs</th>
-                <th class="px-6 py-3.5">SKU</th>
+                <th class="px-6 py-3.5">Categorie</th>
                 <th class="px-6 py-3.5">Preț</th>
                 <th class="px-6 py-3.5">Stoc</th>
                 <th class="px-6 py-3.5">Status</th>
@@ -117,8 +165,17 @@ const handleDelete = async (id: number) => {
                     <span class="text-xs text-gray-400">ID: #{{ p.id }}</span>
                   </div>
                 </td>
-                <td class="px-6 py-4 text-xs font-mono text-gray-600">
-                  {{ p.sku || '—' }}
+                <td class="px-6 py-4">
+                  <div v-if="p.categories && p.categories.length > 0" class="flex flex-wrap gap-1 max-w-xs">
+                    <span
+                      v-for="cat in p.categories"
+                      :key="cat.id"
+                      class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-800 border border-emerald-200/60"
+                    >
+                      {{ cat.name }}
+                    </span>
+                  </div>
+                  <span v-else class="text-xs text-gray-400 italic">Fără categorie</span>
                 </td>
                 <td class="px-6 py-4 font-bold text-gray-900">
                   {{ p.price || p.regular_price || '0' }} lei

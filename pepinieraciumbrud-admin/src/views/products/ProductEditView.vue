@@ -1,9 +1,13 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import AdminLayout from '@/layouts/AdminLayout.vue'
+import ProductImageUploader from '@/components/ui/ProductImageUploader.vue'
 import { productsService } from '@/services/productsService'
+import { categoriesService } from '@/services/categoriesService'
 import { useUiStore } from '@/stores/ui'
+import { stripHtml } from '@/utils/text'
+import type { Category } from '@/types/category'
 
 const route = useRoute()
 const router = useRouter()
@@ -12,6 +16,30 @@ const uiStore = useUiStore()
 const id = Number(route.params.id)
 const loading = ref(true)
 const saving = ref(false)
+const categories = ref<Category[]>([])
+const selectedCategoryIds = ref<number[]>([])
+
+const formattedCategories = computed(() => {
+  const list = [...categories.value].filter(c => c.slug !== 'uncategorized')
+  const parents = list.filter(c => !c.parent || c.parent === 0)
+  const result: (Category & { level: number })[] = []
+
+  parents.forEach(parent => {
+    result.push({ ...parent, level: 0 })
+    const children = list.filter(c => c.parent === parent.id)
+    children.forEach(child => {
+      result.push({ ...child, level: 1 })
+    })
+  })
+
+  list.forEach(c => {
+    if (!result.some(r => r.id === c.id)) {
+      result.push({ ...c, level: 0 })
+    }
+  })
+
+  return result
+})
 
 const form = ref({
   name: '',
@@ -28,24 +56,36 @@ const form = ref({
   coacere: '',
   polenizatori: '',
   distanta: '',
-  images: [{ src: '' }]
+  images: [{ id: undefined as number | undefined, src: '' }]
 })
 
 onMounted(async () => {
   try {
+    try {
+      categories.value = await categoriesService.list()
+    } catch {
+      // ignore
+    }
+
     const prod = await productsService.get(id)
     form.value.name = prod.name
     form.value.regular_price = prod.regular_price || prod.price || ''
     form.value.sale_price = prod.sale_price || ''
     form.value.sku = prod.sku || ''
-    form.value.description = prod.description || ''
-    form.value.short_description = prod.short_description || ''
+    form.value.description = stripHtml(prod.description)
+    form.value.short_description = stripHtml(prod.short_description)
     form.value.stock_status = prod.stock_status || 'instock'
     form.value.stock_quantity = prod.stock_quantity !== null && prod.stock_quantity !== undefined ? prod.stock_quantity : ''
     form.value.low_stock_amount = prod.low_stock_amount !== null && prod.low_stock_amount !== undefined ? prod.low_stock_amount : ''
     form.value.status = (prod.status as any) || 'publish'
-    if (prod.images && prod.images[0]) {
-      form.value.images = [{ src: prod.images[0].src }]
+    if (prod.images && prod.images[0] && (prod.images[0].src || prod.images[0].id)) {
+      form.value.images = [{ id: prod.images[0].id, src: prod.images[0].src || '' }]
+    } else {
+      form.value.images = [{ id: undefined, src: '' }]
+    }
+
+    if (prod.categories && Array.isArray(prod.categories)) {
+      selectedCategoryIds.value = prod.categories.map((c: any) => c.id)
     }
 
     if (prod.attributes && Array.isArray(prod.attributes)) {
@@ -87,9 +127,19 @@ const handleUpdate = async () => {
       attributes.push({ name: 'Distanță de plantare', options: [form.value.distanta.trim()], visible: true })
     }
 
+    const imagesPayload: any[] = []
+    if (form.value.images && form.value.images[0] && (form.value.images[0].src || form.value.images[0].id)) {
+      const img = form.value.images[0]
+      imagesPayload.push(
+        img.id ? { id: img.id, src: img.src } : { src: img.src }
+      )
+    }
+
     const payload: any = {
       ...form.value,
       attributes,
+      images: imagesPayload,
+      categories: selectedCategoryIds.value.map(id => ({ id })),
       stock_quantity: form.value.stock_quantity === '' ? null : Number(form.value.stock_quantity),
       low_stock_amount: form.value.low_stock_amount === '' ? null : Number(form.value.low_stock_amount),
       manage_stock: form.value.stock_quantity !== ''
@@ -144,7 +194,73 @@ const handleUpdate = async () => {
             />
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <!-- Categorii Produs -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="block text-xs font-semibold text-gray-700">
+                Categorii Produs (din <RouterLink to="/categorii" class="text-primary hover:underline">/categorii</RouterLink>)
+              </label>
+              <RouterLink
+                to="/categorii"
+                target="_blank"
+                class="text-[11px] text-primary hover:underline font-medium inline-flex items-center gap-1"
+              >
+                <span>Gestionează Categoriile ↗</span>
+              </RouterLink>
+            </div>
+
+            <!-- Categories Selector Box -->
+            <div class="border border-gray-300 rounded-xl p-3 bg-gray-50/70 max-h-52 overflow-y-auto space-y-1">
+              <div v-if="categories.length === 0" class="text-xs text-gray-400 py-2 text-center">
+                Se încarcă categoriile...
+              </div>
+              <div
+                v-for="cat in formattedCategories"
+                :key="cat.id"
+                class="flex items-center gap-2.5 py-1 px-2 rounded-lg hover:bg-white transition-colors cursor-pointer"
+                :class="{ 'bg-emerald-50 font-medium': selectedCategoryIds.includes(cat.id) }"
+                :style="{ paddingLeft: cat.level === 1 ? '1.5rem' : '0.5rem' }"
+              >
+                <input
+                  type="checkbox"
+                  :id="'edit-cat-' + cat.id"
+                  :value="cat.id"
+                  v-model="selectedCategoryIds"
+                  class="rounded text-primary focus:ring-primary h-4 w-4 border-gray-300 cursor-pointer"
+                />
+                <label :for="'edit-cat-' + cat.id" class="text-xs text-gray-700 cursor-pointer flex-1 select-none flex items-center justify-between">
+                  <span :class="{ 'font-semibold text-gray-900': cat.level === 0 }">
+                    {{ cat.level === 1 ? '↳ ' + cat.name : cat.name }}
+                  </span>
+                  <span v-if="cat.count !== undefined" class="text-[10px] text-gray-400 font-normal">
+                    ({{ cat.count }} produse)
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Selected categories preview badges -->
+            <div v-if="selectedCategoryIds.length > 0" class="flex items-center gap-1.5 flex-wrap mt-2">
+              <span class="text-[11px] text-gray-500 font-medium">Selectate:</span>
+              <span
+                v-for="id in selectedCategoryIds"
+                :key="id"
+                class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800"
+              >
+                {{ categories.find(c => c.id === id)?.name || id }}
+                <button
+                  type="button"
+                  @click="selectedCategoryIds = selectedCategoryIds.filter(cid => cid !== id)"
+                  class="hover:text-emerald-950 font-bold ml-0.5 text-xs"
+                >×</button>
+              </span>
+            </div>
+            <p v-else class="text-[11px] text-gray-400 mt-1">
+              Bifați una sau mai multe categorii din cele definite în secțiunea Categorii.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label class="block text-xs font-semibold text-gray-700 mb-1">
                 Preț Standard (RON) *
@@ -162,16 +278,6 @@ const handleUpdate = async () => {
               </label>
               <input
                 v-model="form.sale_price"
-                type="text"
-                class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white"
-              />
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-gray-700 mb-1">
-                Cod SKU
-              </label>
-              <input
-                v-model="form.sku"
                 type="text"
                 class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white"
               />
@@ -284,13 +390,10 @@ const handleUpdate = async () => {
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-gray-700 mb-1">
-              URL Imagine Produs
-            </label>
-            <input
-              v-model="form.images[0].src"
-              type="text"
-              class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white"
+            <ProductImageUploader
+              v-model="form.images[0]"
+              label="Imagine Principală Produs"
+              helper-text="Imaginile sunt stocate local pe serverul Pepiniera Ciumbrud. Formate acceptate: JPG, PNG, GIF, WEBP."
             />
           </div>
 

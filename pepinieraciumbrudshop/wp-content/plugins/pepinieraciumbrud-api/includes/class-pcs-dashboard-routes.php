@@ -176,6 +176,7 @@ final class PCS_Dashboard_Routes extends PCS_Base_Routes {
             'low_stock'           => $is_low,
             'price'               => $p['price'] ?? '',
             'permalink'           => $p['permalink'] ?? '',
+            'categories'          => $p['categories'] ?? [],
             'image'               => ! empty( $p['images'][0]['src'] ) ? $p['images'][0]['src'] : null,
         ];
     }

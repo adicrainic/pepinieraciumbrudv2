@@ -94,6 +94,7 @@ final class PCS_Categories_Routes extends PCS_Base_Routes {
         }
         if ( isset( $body['name'] ) ) $body['name'] = sanitize_text_field( $body['name'] );
         if ( isset( $body['slug'] ) ) $body['slug'] = sanitize_title( $body['slug'] );
+        if ( isset( $body['parent'] ) ) $body['parent'] = (int) $body['parent'];
         if ( isset( $body['description'] ) ) $body['description'] = wp_kses_post( $body['description'] );
         return $body;
     }

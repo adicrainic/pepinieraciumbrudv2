@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import AdminLayout from '@/layouts/AdminLayout.vue'
 import { customersService } from '@/services/customersService'
 import { useUiStore } from '@/stores/ui'
+import { getStatusBadge, getStatusLabel } from '@/utils/order'
 import type { Customer } from '@/types/customer'
 import type { Order } from '@/types/order'
 
@@ -97,7 +98,14 @@ onMounted(async () => {
               <tr v-for="o in orders" :key="o.id" class="hover:bg-gray-50">
                 <td class="px-6 py-3.5 font-bold text-gray-900">#{{ o.id }}</td>
                 <td class="px-6 py-3.5 text-xs text-gray-500">{{ new Date(o.date_created).toLocaleDateString('ro-RO') }}</td>
-                <td class="px-6 py-3.5 text-xs capitalize">{{ o.status }}</td>
+                <td class="px-6 py-3.5">
+                  <span
+                    class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold border"
+                    :class="getStatusBadge(o.status)"
+                  >
+                    {{ getStatusLabel(o.status) }}
+                  </span>
+                </td>
                 <td class="px-6 py-3.5 text-right font-bold text-primary-dark">{{ o.total }} {{ o.currency }}</td>
               </tr>
             </tbody>

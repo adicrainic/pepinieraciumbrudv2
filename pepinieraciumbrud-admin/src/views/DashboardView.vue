@@ -4,6 +4,7 @@ import AdminLayout from '@/layouts/AdminLayout.vue'
 import { dashboardService } from '@/services/dashboardService'
 import { ordersService } from '@/services/ordersService'
 import { productsService } from '@/services/productsService'
+import { getStatusBadge, getStatusLabel } from '@/utils/order'
 import type { Order } from '@/types/order'
 import type { Product } from '@/types/product'
 
@@ -51,9 +52,6 @@ onMounted(async () => {
             </span>
             <span class="text-2xl font-bold text-gray-900">
               {{ products.length }}
-            </span>
-            <span class="text-[11px] text-emerald-600 font-medium block mt-1">
-              În catalogul WooCommerce
             </span>
           </div>
           <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center text-2xl">
@@ -152,7 +150,9 @@ onMounted(async () => {
                 </div>
                 <div>
                   <span class="font-semibold text-gray-800 block truncate max-w-xs">{{ p.name }}</span>
-                  <span class="text-xs text-gray-400">SKU: {{ p.sku || 'N/A' }}</span>
+                  <span v-if="p.categories && p.categories.length" class="text-xs text-emerald-700 block font-medium truncate max-w-xs">
+                    {{ p.categories.map(c => c.name).join(', ') }}
+                  </span>
                 </div>
               </div>
 
@@ -198,9 +198,12 @@ onMounted(async () => {
                 <span class="text-xs text-gray-400 block">{{ new Date(o.date_created).toLocaleDateString('ro-RO') }}</span>
               </div>
               <div class="text-right">
-                <span class="font-bold text-gray-900 block">{{ o.total }} {{ o.currency }}</span>
-                <span class="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-medium">
-                  {{ o.status }}
+                <span class="font-bold text-gray-900 block mb-1">{{ o.total }} {{ o.currency }}</span>
+                <span
+                  class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold border"
+                  :class="getStatusBadge(o.status)"
+                >
+                  {{ getStatusLabel(o.status) }}
                 </span>
               </div>
             </div>
