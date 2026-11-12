@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/layouts/AdminLayout.vue'
+import ProductImageUploader from '@/components/ui/ProductImageUploader.vue'
 import { categoriesService } from '@/services/categoriesService'
 import { useUiStore } from '@/stores/ui'
 import { stripHtml } from '@/utils/text'
@@ -16,7 +17,8 @@ const editLoading = ref(false)
 const newCategory = ref({
   name: '',
   parent: 0,
-  description: ''
+  description: '',
+  image: { id: undefined as number | undefined, src: '' }
 })
 
 // Edit state & modal
@@ -26,7 +28,8 @@ const editForm = ref({
   id: 0,
   name: '',
   parent: 0,
-  description: ''
+  description: '',
+  image: { id: undefined as number | undefined, src: '' }
 })
 
 const fetchCategories = async () => {
@@ -96,14 +99,20 @@ const handleCreate = async () => {
 
   createLoading.value = true
   try {
-    const payload: Partial<Category> = {
+    const payload: any = {
       name: newCategory.value.name.trim(),
       parent: Number(newCategory.value.parent),
       description: newCategory.value.description
     }
+    if (newCategory.value.image?.id || newCategory.value.image?.src) {
+      payload.image = {
+        id: newCategory.value.image.id,
+        src: newCategory.value.image.src
+      }
+    }
     await categoriesService.create(payload)
     uiStore.addNotification('success', 'Categoria a fost adăugată.')
-    newCategory.value = { name: '', parent: 0, description: '' }
+    newCategory.value = { name: '', parent: 0, description: '', image: { id: undefined, src: '' } }
     await fetchCategories()
   } catch (err) {
     uiStore.addNotification('error', 'Eroare la crearea categoriei.')
@@ -118,7 +127,8 @@ const openEditModal = (cat: Category) => {
     id: cat.id,
     name: cat.name,
     parent: cat.parent || 0,
-    description: stripHtml(cat.description)
+    description: stripHtml(cat.description),
+    image: cat.image ? { id: cat.image.id, src: cat.image.src, title: cat.image.name || cat.name } : { id: undefined, src: '' }
   }
   isEditModalOpen.value = true
 }
@@ -136,10 +146,13 @@ const handleUpdate = async () => {
 
   editLoading.value = true
   try {
-    const payload: Partial<Category> = {
+    const payload: any = {
       name: editForm.value.name.trim(),
       parent: Number(editForm.value.parent),
-      description: editForm.value.description
+      description: editForm.value.description,
+      image: (editForm.value.image?.id || editForm.value.image?.src)
+        ? { id: editForm.value.image.id, src: editForm.value.image.src }
+        : null
     }
     await categoriesService.update(editForm.value.id, payload)
     uiStore.addNotification('success', 'Categoria a fost actualizată.')
@@ -236,6 +249,17 @@ const handleDelete = async (id: number) => {
               ></textarea>
             </div>
 
+            <div>
+              <ProductImageUploader
+                v-model="newCategory.image"
+                label="Imagine Categorie"
+                helper-text="Format: JPG, PNG, WEBP. Salvare pe server."
+                empty-title="Încarcă imagine categorie"
+                empty-subtitle="Apasă sau trage imaginea aici"
+                :compact="true"
+              />
+            </div>
+
             <button
               type="submit"
               :disabled="createLoading"
@@ -275,21 +299,36 @@ const handleDelete = async (id: number) => {
                   :class="{ 'bg-gray-50/40': cat.level === 1 }"
                 >
                   <td class="px-6 py-4">
-                    <div class="flex items-center gap-2" :style="{ paddingLeft: cat.level === 1 ? '1.5rem' : '0' }">
+                    <div class="flex items-center gap-3" :style="{ paddingLeft: cat.level === 1 ? '1.5rem' : '0' }">
                       <span v-if="cat.level === 1" class="text-gray-400 select-none font-bold">↳</span>
-                      <span v-else class="text-emerald-700 select-none">📁</span>
-                      <span
-                        class="text-gray-900"
-                        :class="cat.level === 0 ? 'font-bold' : 'font-medium text-gray-700'"
-                      >
-                        {{ cat.name }}
-                      </span>
-                      <span
-                        v-if="cat.level === 1"
-                        class="text-[10px] uppercase font-semibold tracking-wider px-1.5 py-0.2 rounded bg-amber-50 text-amber-700 border border-amber-200/50"
-                      >
-                        Subcategorie
-                      </span>
+                      <div class="w-10 h-10 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0 border border-gray-200 flex items-center justify-center">
+                        <img
+                          v-if="cat.image?.src"
+                          :src="cat.image.src"
+                          :alt="cat.name"
+                          class="w-full h-full object-cover"
+                        />
+                        <span v-else class="text-base select-none">{{ cat.level === 1 ? '🌿' : '📁' }}</span>
+                      </div>
+                      <div class="min-w-0">
+                        <div class="flex items-center gap-2">
+                          <span
+                            class="text-gray-900"
+                            :class="cat.level === 0 ? 'font-bold' : 'font-medium text-gray-700'"
+                          >
+                            {{ cat.name }}
+                          </span>
+                          <span
+                            v-if="cat.level === 1"
+                            class="text-[10px] uppercase font-semibold tracking-wider px-1.5 py-0.2 rounded bg-amber-50 text-amber-700 border border-amber-200/50"
+                          >
+                            Subcategorie
+                          </span>
+                        </div>
+                        <p v-if="cat.description" class="text-xs text-gray-400 truncate max-w-xs mt-0.5">
+                          {{ stripHtml(cat.description) }}
+                        </p>
+                      </div>
                     </div>
                   </td>
                   <td class="px-6 py-4 text-xs text-gray-600">
@@ -396,6 +435,17 @@ const handleDelete = async (id: number) => {
               rows="3"
               class="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white"
             ></textarea>
+          </div>
+
+          <div>
+            <ProductImageUploader
+              v-model="editForm.image"
+              label="Imagine Categorie"
+              helper-text="Format: JPG, PNG, WEBP. Salvare pe server."
+              empty-title="Încarcă imagine categorie"
+              empty-subtitle="Apasă sau trage imaginea aici"
+              :compact="true"
+            />
           </div>
 
           <div class="flex justify-end gap-3 pt-3 border-t border-gray-100">

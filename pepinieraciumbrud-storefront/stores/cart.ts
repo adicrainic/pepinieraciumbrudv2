@@ -38,6 +38,14 @@ export const useCartStore = defineStore('cart', {
       return `${val} lei`
     },
 
+    formattedSubtotal: (state) => {
+      if (!state.cart || !state.cart.totals) return '0,00 lei'
+      const price = parseFloat(state.cart.totals.total_items || '0')
+      const minorUnit = state.cart.totals.currency_minor_unit ?? 2
+      const val = (price / Math.pow(10, minorUnit)).toFixed(2).replace('.', ',')
+      return `${val} lei`
+    },
+
     items: (state): CartItem[] => {
       return state.cart?.items || []
     }
@@ -79,7 +87,7 @@ export const useCartStore = defineStore('cart', {
           this.cart = await storeApi.updateCartItem(key, quantity)
         }
       } catch (err: any) {
-        this.error = err.message || 'Eroare la actualizarea cantității.'
+        this.error = err.data?.message || err.message || 'Eroare la actualizarea cantității.'
       } finally {
         this.loading = false
       }

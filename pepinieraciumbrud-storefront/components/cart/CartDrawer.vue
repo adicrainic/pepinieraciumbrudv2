@@ -42,6 +42,15 @@ onMounted(() => {
 
       <!-- Drawer Content -->
       <div class="flex-1 overflow-y-auto p-6">
+        <!-- Error notification -->
+        <div
+          v-if="cartStore.error"
+          class="p-3 mb-4 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-center justify-between"
+        >
+          <span>{{ cartStore.error }}</span>
+          <button @click="cartStore.error = null" class="font-bold text-rose-600 hover:text-rose-800 ml-2">&times;</button>
+        </div>
+
         <!-- Empty cart message -->
         <div
           v-if="!cartStore.items || cartStore.items.length === 0"
@@ -81,7 +90,7 @@ onMounted(() => {
         <div class="flex items-center justify-between text-sm">
           <span class="text-text-muted">Subtotal produse</span>
           <span class="font-bold text-primary-dark font-sans text-base">
-            {{ cartStore.formattedTotal }}
+            {{ cartStore.formattedSubtotal }}
           </span>
         </div>
         <p class="text-[11px] text-text-muted leading-relaxed">

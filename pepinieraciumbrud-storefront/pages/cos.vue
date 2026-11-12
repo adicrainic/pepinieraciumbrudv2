@@ -23,6 +23,14 @@ onMounted(() => {
       Coșul Tău de Cumpărături
     </h1>
 
+    <div
+      v-if="cartStore.error"
+      class="p-4 mb-6 rounded-2xl bg-rose-50 border border-rose-200 text-sm text-rose-700 flex items-center justify-between"
+    >
+      <span>{{ cartStore.error }}</span>
+      <button @click="cartStore.error = null" class="font-bold text-rose-600 hover:text-rose-800 ml-2">&times;</button>
+    </div>
+
     <div v-if="!cartStore.items || cartStore.items.length === 0" class="bg-white rounded-3xl border border-border p-12 text-center max-w-xl mx-auto my-12">
       <div class="text-4xl mb-4">🛒</div>
       <h2 class="font-serif text-2xl font-bold text-text mb-2">Coșul tău este gol</h2>
@@ -59,7 +67,7 @@ onMounted(() => {
         <div class="space-y-3 text-sm">
           <div class="flex justify-between text-text-muted">
             <span>Subtotal</span>
-            <span class="font-semibold text-text">{{ cartStore.formattedTotal }}</span>
+            <span class="font-semibold text-text">{{ cartStore.formattedSubtotal }}</span>
           </div>
           <div class="flex justify-between text-text-muted">
             <span>Livrare</span>

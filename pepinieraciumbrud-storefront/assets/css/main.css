@@ -5,15 +5,14 @@
 @layer base {
   html {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    color: #1D2B21;
-    background-color: #FAF9F4;
+    color: #192C20;
+    background-color: #FAFCFA;
     scroll-behavior: smooth;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Playfair Display', Georgia, serif;
-    font-feature-settings: 'lnum' 1;
-    color: #143D24;
+    color: #1C5B36;
   }
 }
 
@@ -30,12 +29,12 @@
   }
   .section-eyebrow::before {
     content: '';
-    @apply inline-block w-6 h-px bg-primary;
+    @apply inline-block w-6 h-0.5 bg-primary rounded-full;
   }
   .petal-pattern {
     background-image:
-      radial-gradient(circle at 20% 20%, rgba(242, 167, 184, 0.25) 0, transparent 40%),
-      radial-gradient(circle at 85% 70%, rgba(76, 140, 87, 0.3) 0, transparent 45%);
+      radial-gradient(circle at 20% 20%, rgba(244, 139, 159, 0.2) 0, transparent 40%),
+      radial-gradient(circle at 85% 70%, rgba(76, 181, 122, 0.25) 0, transparent 45%);
   }
 }
 

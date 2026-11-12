@@ -8,9 +8,98 @@ const props = defineProps<{
 
 const cartStore = useCartStore()
 
+const isUpdating = ref(false)
+const localQuantity = ref<number | string>(props.item.quantity)
+let debounceTimer: ReturnType<typeof setTimeout> | null = null
+
+watch(() => props.item.quantity, (newVal) => {
+  localQuantity.value = newVal
+})
+
 const formatItemPrice = (priceStr: string, minorUnit: number = 2) => {
   const num = parseFloat(priceStr || '0') / Math.pow(10, minorUnit)
   return `${num.toFixed(2).replace('.', ',')} lei`
+}
+
+const displayLineTotal = computed(() => {
+  const unitPrice = parseFloat(props.item.prices.price || '0')
+  const minorUnit = props.item.prices.currency_minor_unit ?? 2
+  const qty = Number(localQuantity.value)
+  if (!isNaN(qty) && qty > 0) {
+    const total = (unitPrice * qty) / Math.pow(10, minorUnit)
+    return `${total.toFixed(2).replace('.', ',')} lei`
+  }
+  return formatItemPrice(props.item.totals.line_total, props.item.totals.currency_minor_unit)
+})
+
+const commitQuantity = async (valToCommit?: number) => {
+  if (debounceTimer) {
+    clearTimeout(debounceTimer)
+    debounceTimer = null
+  }
+  let val = Math.floor(Number(valToCommit !== undefined ? valToCommit : localQuantity.value))
+  if (isNaN(val) || val < 1) {
+    localQuantity.value = props.item.quantity
+    return
+  }
+  if (val !== props.item.quantity) {
+    isUpdating.value = true
+    try {
+      await cartStore.updateItem(props.item.key, val)
+    } catch {
+      localQuantity.value = props.item.quantity
+    } finally {
+      isUpdating.value = false
+    }
+  }
+}
+
+const handleInput = () => {
+  if (debounceTimer) {
+    clearTimeout(debounceTimer)
+  }
+  const val = Math.floor(Number(localQuantity.value))
+  if (!isNaN(val) && val >= 1 && val !== props.item.quantity) {
+    debounceTimer = setTimeout(() => {
+      commitQuantity(val)
+    }, 400)
+  }
+}
+
+const handleEnter = (event: Event) => {
+  (event.target as HTMLInputElement)?.blur()
+}
+
+const changeQuantity = async (delta: number) => {
+  if (debounceTimer) {
+    clearTimeout(debounceTimer)
+    debounceTimer = null
+  }
+  let current = Math.floor(Number(localQuantity.value))
+  if (isNaN(current) || current < 1) {
+    current = props.item.quantity
+  }
+  const target = current + delta
+  if (target <= 0) {
+    isUpdating.value = true
+    try {
+      await cartStore.removeItem(props.item.key)
+    } finally {
+      isUpdating.value = false
+    }
+    return
+  }
+  localQuantity.value = target
+  if (target !== props.item.quantity) {
+    isUpdating.value = true
+    try {
+      await cartStore.updateItem(props.item.key, target)
+    } catch {
+      localQuantity.value = props.item.quantity
+    } finally {
+      isUpdating.value = false
+    }
+  }
 }
 
 const itemImage = computed(() => {
@@ -43,20 +132,42 @@ const itemImage = computed(() => {
       </div>
 
       <!-- Quantity Controls -->
-      <div class="flex items-center space-x-2 mt-2">
+      <div class="flex items-center space-x-1.5 mt-2">
         <button
-          @click="cartStore.updateItem(item.key, item.quantity - 1)"
-          class="w-6 h-6 rounded-md bg-surface-warm border border-border flex items-center justify-center text-xs hover:bg-border text-text"
+          type="button"
+          @click="changeQuantity(-1)"
+          :disabled="isUpdating || cartStore.loading"
+          class="w-7 h-7 rounded-lg bg-surface-warm border border-border flex items-center justify-center text-xs font-bold hover:bg-border text-text disabled:opacity-40 disabled:cursor-not-allowed transition-colors select-none"
+          title="Scade cantitatea"
+          aria-label="Scade cantitatea"
         >
           -
         </button>
-        <span class="text-xs font-semibold px-1 min-w-[20px] text-center">{{ item.quantity }}</span>
+        <input
+          type="number"
+          min="1"
+          step="1"
+          v-model.number="localQuantity"
+          @input="handleInput"
+          @change="commitQuantity()"
+          @blur="commitQuantity()"
+          @keydown.enter.prevent="handleEnter"
+          :disabled="isUpdating || cartStore.loading"
+          class="w-16 h-7 text-center text-xs font-semibold bg-white border border-border rounded-lg text-text focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary disabled:bg-surface-warm disabled:cursor-not-allowed [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          title="Cantitate"
+          aria-label="Cantitate produs"
+        />
         <button
-          @click="cartStore.updateItem(item.key, item.quantity + 1)"
-          class="w-6 h-6 rounded-md bg-surface-warm border border-border flex items-center justify-center text-xs hover:bg-border text-text"
+          type="button"
+          @click="changeQuantity(1)"
+          :disabled="isUpdating || cartStore.loading"
+          class="w-7 h-7 rounded-lg bg-surface-warm border border-border flex items-center justify-center text-xs font-bold hover:bg-border text-text disabled:opacity-40 disabled:cursor-not-allowed transition-colors select-none"
+          title="Crește cantitatea"
+          aria-label="Crește cantitatea"
         >
           +
         </button>
+        <span class="text-[11px] text-text-muted pl-0.5">buc.</span>
       </div>
     </div>
 
@@ -73,7 +184,7 @@ const itemImage = computed(() => {
       </button>
 
       <span class="text-sm font-bold text-primary-dark">
-        {{ formatItemPrice(item.totals.line_total, item.totals.currency_minor_unit) }}
+        {{ displayLineTotal }}
       </span>
     </div>
   </div>

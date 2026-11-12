@@ -117,7 +117,7 @@ const resetForm = () => {
                 <strong>Program comenzi & asistență:</strong><br />
                 <div>{{ settings.schedule_weekdays }}</div>
                 <div v-if="settings.schedule_saturday">{{ settings.schedule_saturday }}</div>
-                <div v-if="settings.schedule_sunday && settings.schedule_sunday !== 'Duminică: Închis'" class="text-text-muted">{{ settings.schedule_sunday }}</div>
+                <div v-if="settings.schedule_sunday" class="text-text-muted">{{ settings.schedule_sunday }}</div>
               </div>
             </div>
           </div>

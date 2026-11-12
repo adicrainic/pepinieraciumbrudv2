@@ -85,7 +85,7 @@ final class PCS_Categories_Routes extends PCS_Base_Routes {
 
     private function sanitize_category_body( WP_REST_Request $request ): array {
         $body = [];
-        $fields = [ 'name', 'slug', 'parent', 'description', 'display', 'image' ];
+        $fields = [ 'name', 'slug', 'parent', 'description', 'display' ];
         foreach ( $fields as $field ) {
             $val = $request->get_param( $field );
             if ( null !== $val ) {
@@ -96,6 +96,28 @@ final class PCS_Categories_Routes extends PCS_Base_Routes {
         if ( isset( $body['slug'] ) ) $body['slug'] = sanitize_title( $body['slug'] );
         if ( isset( $body['parent'] ) ) $body['parent'] = (int) $body['parent'];
         if ( isset( $body['description'] ) ) $body['description'] = wp_kses_post( $body['description'] );
+
+        // Handle category image
+        if ( $request->has_param( 'image' ) ) {
+            $image = $request->get_param( 'image' );
+            if ( empty( $image ) || ! is_array( $image ) ) {
+                $body['image'] = [ 'id' => 0 ];
+            } elseif ( ! empty( $image['id'] ) ) {
+                $body['image'] = [
+                    'id' => absint( $image['id'] ),
+                ];
+                if ( ! empty( $image['src'] ) ) {
+                    $body['image']['src'] = esc_url_raw( $image['src'] );
+                }
+            } elseif ( ! empty( $image['src'] ) ) {
+                $body['image'] = [
+                    'src' => esc_url_raw( $image['src'] ),
+                ];
+            } else {
+                $body['image'] = [ 'id' => 0 ];
+            }
+        }
+
         return $body;
     }
 }

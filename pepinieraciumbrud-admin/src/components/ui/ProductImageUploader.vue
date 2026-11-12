@@ -12,14 +12,20 @@ interface ImageValue {
 
 const props = withDefaults(
   defineProps<{
-    modelValue?: ImageValue
+    modelValue?: ImageValue | null
     label?: string
     helperText?: string
+    emptyTitle?: string
+    emptySubtitle?: string
+    compact?: boolean
   }>(),
   {
     modelValue: () => ({ src: '' }),
     label: 'Imagine Produs',
-    helperText: 'Imaginile sunt stocate local pe server. Formate acceptate: JPG, PNG, GIF, WEBP.'
+    helperText: 'Imaginile sunt stocate local pe server. Formate acceptate: JPG, PNG, GIF, WEBP.',
+    emptyTitle: 'Încarcă imagine produs',
+    emptySubtitle: 'Trage fișierul aici sau apasă pentru a deschide formularul de încărcare',
+    compact: false
   }
 )
 
@@ -208,7 +214,7 @@ const removeImage = () => {
     title: ''
   })
   customUrlInput.value = ''
-  uiStore.addNotification('info', 'Imaginea a fost eliminată din produs.')
+  uiStore.addNotification('info', 'Imaginea a fost eliminată.')
 }
 
 const formatFileSize = (bytes: number): string => {
@@ -238,22 +244,24 @@ onMounted(() => {
     <!-- MAIN DISPLAY CARD -->
     <div
       v-if="currentImageSrc"
-      class="bg-gray-50 border border-gray-200 rounded-2xl p-4 flex flex-col sm:flex-row items-center gap-4 transition-all hover:border-gray-300"
+      class="bg-gray-50 border border-gray-200 rounded-2xl transition-all hover:border-gray-300"
+      :class="compact ? 'p-3 flex flex-col sm:flex-row items-center gap-3' : 'p-4 flex flex-col sm:flex-row items-center gap-4'"
     >
       <!-- Thumbnail Preview -->
       <div
-        class="relative group w-32 h-32 flex-shrink-0 rounded-xl overflow-hidden bg-white border border-gray-200 shadow-sm flex items-center justify-center cursor-pointer"
+        class="relative group flex-shrink-0 rounded-xl overflow-hidden bg-white border border-gray-200 shadow-sm flex items-center justify-center cursor-pointer"
+        :class="compact ? 'w-24 h-24' : 'w-32 h-32'"
         @click="isLightboxOpen = true"
         title="Apasă pentru previzualizare mărită"
       >
         <img
           :src="currentImageSrc"
-          alt="Imagine produs"
+          :alt="label"
           class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           @error="($event.target as HTMLImageElement).src = 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\' fill=\'%23ccc\'><rect width=\'100%\' height=\'100%\'/><text x=\'50%\' y=\'50%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'12\' fill=\'%23666\'>Fără imagine</text></svg>'"
         />
         <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 text-white">
-          <span class="text-xs font-semibold flex items-center gap-1 bg-black/50 px-2 py-1 rounded-md">
+          <span class="text-[11px] font-semibold flex items-center gap-1 bg-black/50 px-2 py-1 rounded-md">
             🔍 Mărește
           </span>
         </div>
@@ -274,29 +282,29 @@ onMounted(() => {
           </span>
         </div>
 
-        <div class="flex flex-wrap items-center gap-2 pt-1">
+        <div class="flex flex-wrap items-center gap-1.5 pt-1">
           <button
             type="button"
             @click="openModal('upload')"
-            class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-300 hover:bg-gray-50 rounded-xl text-xs font-semibold text-gray-700 shadow-sm transition-colors"
+            class="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-white border border-gray-300 hover:bg-gray-50 rounded-xl text-xs font-semibold text-gray-700 shadow-sm transition-colors"
           >
             <span>🔄</span>
-            <span>Schimbă imaginea</span>
+            <span>Schimbă</span>
           </button>
 
           <button
             type="button"
             @click="openModal('library')"
-            class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-300 hover:bg-gray-50 rounded-xl text-xs font-semibold text-gray-700 shadow-sm transition-colors"
+            class="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-white border border-gray-300 hover:bg-gray-50 rounded-xl text-xs font-semibold text-gray-700 shadow-sm transition-colors"
           >
             <span>📁</span>
-            <span>Alege din galerie</span>
+            <span>Galerie</span>
           </button>
 
           <button
             type="button"
             @click="removeImage"
-            class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 border border-rose-200 hover:bg-rose-100 rounded-xl text-xs font-semibold text-rose-700 transition-colors"
+            class="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-rose-50 border border-rose-200 hover:bg-rose-100 rounded-xl text-xs font-semibold text-rose-700 transition-colors"
           >
             <span>🗑️</span>
             <span>Șterge</span>
@@ -308,8 +316,9 @@ onMounted(() => {
     <!-- DROPZONE EMPTY STATE -->
     <div
       v-else
-      class="border-2 border-dashed rounded-2xl p-6 sm:p-8 text-center transition-all cursor-pointer"
+      class="border-2 border-dashed rounded-2xl text-center transition-all cursor-pointer"
       :class="[
+        compact ? 'p-4 sm:p-5' : 'p-6 sm:p-8',
         isDragging
           ? 'border-primary bg-primary/5 scale-[1.01]'
           : 'border-gray-300 hover:border-primary hover:bg-gray-50/50'
@@ -319,24 +328,27 @@ onMounted(() => {
       @drop.prevent="handleDrop"
       @click="openModal('upload')"
     >
-      <div class="flex flex-col items-center justify-center space-y-3">
-        <div class="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center text-2xl shadow-inner">
+      <div class="flex flex-col items-center justify-center" :class="compact ? 'space-y-2' : 'space-y-3'">
+        <div
+          class="rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-inner"
+          :class="compact ? 'w-11 h-11 text-xl' : 'w-14 h-14 text-2xl'"
+        >
           📸
         </div>
 
         <div>
           <p class="text-sm font-semibold text-gray-800">
-            Încarcă imagine produs
+            {{ emptyTitle }}
           </p>
           <p class="text-xs text-gray-500 mt-1">
-            Trage fișierul aici sau apasă pentru a deschide formularul de încărcare
+            {{ emptySubtitle }}
           </p>
         </div>
 
         <div class="flex items-center gap-2 pt-1">
           <button
             type="button"
-            class="inline-flex items-center gap-1.5 px-4 py-2 bg-primary text-white rounded-xl text-xs font-semibold hover:bg-primary-dark transition-colors shadow-sm"
+            class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-primary text-white rounded-xl text-xs font-semibold hover:bg-primary-dark transition-colors shadow-sm"
             @click.stop="openModal('upload')"
           >
             <span>⬆️</span>
@@ -345,7 +357,7 @@ onMounted(() => {
 
           <button
             type="button"
-            class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-white border border-gray-300 rounded-xl text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-300 rounded-xl text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
             @click.stop="openModal('library')"
           >
             <span>📁 Galerie</span>

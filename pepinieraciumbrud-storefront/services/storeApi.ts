@@ -98,10 +98,11 @@ export class StoreApiService {
     return products && products.length > 0 ? products[0] : null
   }
 
-  async getCategories(params: Record<string, any> = { per_page: 100 }): Promise<Category[]> {
+  async getCategories(params: Record<string, any> = {}): Promise<Category[]> {
     const base = this.getApiBase()
     const query = new URLSearchParams()
-    Object.entries(params).forEach(([k, v]) => {
+    const finalParams = { per_page: 100, hide_empty: false, ...params }
+    Object.entries(finalParams).forEach(([k, v]) => {
       if (v !== undefined && v !== null && v !== '') {
         query.append(k, String(v))
       }

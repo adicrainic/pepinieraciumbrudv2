@@ -15,6 +15,12 @@ const searchResults = ref<Product[]>([])
 const isSearching = ref(false)
 let searchTimeout: any = null
 
+const cartItemCountFormatted = computed(() => {
+  const count = cartStore.itemCount
+  if (count > 9999) return '9999+'
+  return count
+})
+
 onMounted(() => {
   window.addEventListener('scroll', () => {
     isScrolled.value = window.scrollY > 20
@@ -61,41 +67,49 @@ const handleSearch = () => {
 </script>
 
 <template>
-  <div class="hidden md:block bg-primary-dark text-white/90 text-xs">
+  <div class="hidden md:block bg-gradient-to-r from-primary-dark via-[#247545] to-primary-dark text-white/95 text-xs border-b border-white/10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-between">
-      <span>🚚 Livrare în toată țara · Ambalare specială pentru rădăcini</span>
+      <span class="flex items-center gap-2">
+        <span class="inline-block w-1.5 h-1.5 rounded-full bg-accent-light"></span>
+        🚚 Livrare în toată țara · Ambalare specială pentru rădăcini
+      </span>
       <span class="flex items-center gap-4">
         <span v-if="settings.contact_phone">📞 {{ settings.contact_phone }}</span>
-        <NuxtLink to="/livrare-si-plata" class="hover:text-accent transition-colors">Livrare &amp; plată</NuxtLink>
+        <NuxtLink to="/livrare-si-plata" class="hover:text-accent-light transition-colors">Livrare &amp; plată</NuxtLink>
       </span>
     </div>
   </div>
   <header
     class="sticky top-0 z-40 transition-all duration-300 backdrop-blur-md"
     :class="[
-      isScrolled ? 'bg-background/90 shadow-soft border-b border-border py-3' : 'bg-background border-b border-border py-4'
+      isScrolled ? 'bg-background/95 shadow-soft border-b border-border/80 py-3' : 'bg-background border-b border-border/60 py-4'
     ]"
   >
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between">
         <!-- Logo -->
-        <NuxtLink to="/" class="flex items-center space-x-3 group">
-          <div class="w-11 h-11 rounded-xl bg-primary flex items-center justify-center text-white shadow-sm group-hover:bg-primary-dark transition-colors overflow-hidden">
+        <NuxtLink to="/" class="flex items-center gap-3.5 group">
+          <div class="flex items-center justify-center flex-shrink-0">
             <img
               v-if="settings.logo_url"
               :src="settings.logo_url"
               :alt="settings.site_title"
-              class="max-h-full max-w-full object-contain p-1"
+              class="h-11 sm:h-12 w-auto object-contain transition-transform duration-200 group-hover:scale-105 select-none"
             />
-            <svg v-else class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <svg
+              v-else
+              class="h-10 w-10 sm:h-12 sm:w-12 text-primary transition-transform duration-200 group-hover:scale-105"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17.98.3 1.34.3C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75C7 8 17 8 17 8z"/>
             </svg>
           </div>
-          <div>
-            <span class="font-serif text-xl sm:text-2xl font-bold tracking-tight text-primary-dark block leading-none">
+          <div class="flex flex-col justify-center">
+            <span class="font-serif text-xl sm:text-2xl font-bold tracking-tight text-primary-dark block leading-tight">
               {{ settings.site_title }}
             </span>
-            <span class="text-[11px] tracking-wider uppercase text-text-muted font-sans font-medium">
+            <span class="text-[11px] sm:text-xs tracking-wider uppercase text-text-muted font-sans font-medium block leading-snug">
               {{ settings.site_tagline }}
             </span>
           </div>
@@ -158,9 +172,9 @@ const handleSearch = () => {
               </svg>
               <span
                 v-if="cartStore.itemCount > 0"
-                class="absolute -top-1.5 -right-1.5 bg-rose-500 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center text-[10px]"
+                class="absolute top-0 right-0 -translate-y-1/3 translate-x-1/3 bg-rose-500 text-white font-bold rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center text-[10px] leading-none shadow-sm whitespace-nowrap tracking-tight tabular-nums select-none"
               >
-                {{ cartStore.itemCount }}
+                {{ cartItemCountFormatted }}
               </span>
             </div>
             <span class="hidden sm:inline text-xs font-semibold text-text">
@@ -188,7 +202,7 @@ const handleSearch = () => {
             v-model="searchQuery"
             @input="onSearchInput"
             type="text"
-            placeholder="Căutați soiuri de măr, păr, cireș, trandafiri, viță de vie..."
+            placeholder="Căutați soiuri de măr, păr, cireș, trandafiri, arbuști..."
             class="w-full bg-surface-warm border border-border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white text-text pr-20"
             autoFocus
           />

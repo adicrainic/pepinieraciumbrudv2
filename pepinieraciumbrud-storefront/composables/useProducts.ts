@@ -42,8 +42,8 @@ export const useProducts = () => {
     if (categorySlugs.includes('arbusti-fructiferi') || categorySlugs.includes('afin') || categorySlugs.includes('zmeur') || categorySlugs.includes('coacaz') || /afin|zmeur|coac[aă]z|mur|berry|blueberry|raspberry/.test(textToMatch)) {
       return '/plants/berry.svg'
     }
-    if (categorySlugs.includes('vita-de-vie') || categorySlugs.includes('soiuri-de-masa') || categorySlugs.includes('soiuri-de-vin') || /vi[tț][aă]|strugur|grape|vine/.test(textToMatch)) {
-      return '/plants/grape.svg'
+    if (categorySlugs.includes('arbusti-ornamentali') || categorySlugs.includes('arbusti') || /ornamental|tuia|ienup[aă]r|buxus|hortens|gard viu|lemn c[aâ]nesc|spiraea/.test(textToMatch)) {
+      return '/plants/ornamental.svg'
     }
 
     return '/plants/default.svg'

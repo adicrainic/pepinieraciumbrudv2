@@ -456,14 +456,14 @@ const removeLogo = () => {
               <!-- Header Simulation -->
               <div class="p-3 bg-gray-50 rounded-xl border border-gray-200">
                 <div class="flex items-center space-x-3">
-                  <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white overflow-hidden flex-shrink-0">
+                  <div class="flex items-center justify-center flex-shrink-0">
                     <img
                       v-if="form.logo_url"
                       :src="form.logo_url"
                       alt="Logo"
-                      class="max-h-full max-w-full object-contain p-1"
+                      class="h-10 w-auto object-contain"
                     />
-                    <svg v-else class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <svg v-else class="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17.98.3 1.34.3C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75C7 8 17 8 17 8z"/>
                     </svg>
                   </div>
@@ -501,9 +501,16 @@ const removeLogo = () => {
                     <span>📍</span>
                     <span class="text-white/80">{{ form.contact_address || 'Fără adresă' }}</span>
                   </div>
-                  <div class="flex items-center gap-2 text-white/70 text-[11px] pt-1 border-t border-white/10">
-                    <span>🕒</span>
-                    <span>{{ form.schedule_weekdays }}</span>
+                  <div
+                    v-if="form.schedule_weekdays || form.schedule_saturday || form.schedule_sunday"
+                    class="flex items-start gap-2 text-white/70 text-[11px] pt-1 border-t border-white/10"
+                  >
+                    <span class="shrink-0 mt-0.5">🕒</span>
+                    <div class="space-y-0.5">
+                      <div v-if="form.schedule_weekdays" class="text-white/60 text-[10px]">{{ form.schedule_weekdays }}</div>
+                      <div v-if="form.schedule_saturday" class="text-white/60 text-[10px]">{{ form.schedule_saturday }}</div>
+                      <div v-if="form.schedule_sunday" class="text-white/60 text-[10px]">{{ form.schedule_sunday }}</div>
+                    </div>
                   </div>
                 </div>
               </div>

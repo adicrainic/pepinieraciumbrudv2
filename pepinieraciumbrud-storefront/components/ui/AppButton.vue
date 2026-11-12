@@ -20,17 +20,17 @@ const props = withDefaults(defineProps<Props>(), {
 const variantClasses = computed(() => {
   switch (props.variant) {
     case 'primary':
-      return 'bg-primary text-white hover:bg-primary-dark shadow-sm hover:shadow-soft'
+      return 'bg-primary text-white hover:bg-primary-dark shadow-sm hover:shadow-soft active:scale-[0.98]'
     case 'secondary':
-      return 'bg-surface-warm text-primary hover:bg-border'
+      return 'bg-surface-warm text-primary-dark hover:bg-primary-100/70 active:scale-[0.98]'
     case 'outline':
-      return 'border border-primary text-primary hover:bg-primary hover:text-white'
+      return 'border border-primary text-primary hover:bg-primary hover:text-white active:scale-[0.98]'
     case 'ghost':
-      return 'text-primary hover:bg-primary-50'
+      return 'text-primary hover:bg-primary-50 active:scale-[0.98]'
     case 'warm':
-      return 'bg-rose-500 text-white hover:bg-rose-600 shadow-sm'
+      return 'bg-rose-500 text-white hover:bg-rose-600 shadow-sm active:scale-[0.98]'
     default:
-      return 'bg-primary text-white hover:bg-primary-dark'
+      return 'bg-primary text-white hover:bg-primary-dark active:scale-[0.98]'
   }
 })
 

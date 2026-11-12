@@ -28,11 +28,25 @@ if (product.value) {
   setProductJsonLd(product.value)
 }
 
+const validateQuantity = () => {
+  if (!quantity.value || quantity.value < 1) {
+    quantity.value = 1
+  } else {
+    quantity.value = Math.floor(quantity.value)
+  }
+}
+
+const handleEnter = (event: Event) => {
+  (event.target as HTMLInputElement)?.blur()
+}
+
 const handleAddToCart = async () => {
   if (!product.value) return
   isAdding.value = true
   try {
-    await cartStore.addItem(product.value.id, quantity.value)
+    const qty = Math.max(1, Math.floor(quantity.value || 1))
+    quantity.value = qty
+    await cartStore.addItem(product.value.id, qty)
   } finally {
     isAdding.value = false
   }
@@ -112,16 +126,32 @@ const handleAddToCart = async () => {
         <div class="pt-4 border-t border-border flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
           <div class="flex items-center border border-border rounded-xl bg-surface-warm p-1">
             <button
-              @click="quantity = Math.max(1, quantity - 1)"
-              class="w-10 h-10 flex items-center justify-center text-lg hover:bg-border rounded-lg"
+              type="button"
+              @click="quantity = Math.max(1, (quantity || 1) - 1)"
+              class="w-10 h-10 flex items-center justify-center text-lg hover:bg-border rounded-lg disabled:opacity-40 disabled:cursor-not-allowed select-none transition-colors"
               :disabled="quantity <= 1"
+              title="Scade cantitatea"
+              aria-label="Scade cantitatea"
             >
               -
             </button>
-            <span class="w-12 text-center font-bold text-sm">{{ quantity }}</span>
+            <input
+              type="number"
+              min="1"
+              step="1"
+              v-model.number="quantity"
+              @blur="validateQuantity"
+              @keydown.enter.prevent="handleEnter"
+              class="w-16 h-10 text-center font-bold text-sm bg-transparent border-0 focus:outline-none focus:ring-1 focus:ring-primary rounded-lg [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              title="Cantitate"
+              aria-label="Cantitate produs"
+            />
             <button
-              @click="quantity++"
-              class="w-10 h-10 flex items-center justify-center text-lg hover:bg-border rounded-lg"
+              type="button"
+              @click="quantity = (quantity || 0) + 1"
+              class="w-10 h-10 flex items-center justify-center text-lg hover:bg-border rounded-lg select-none transition-colors"
+              title="Crește cantitatea"
+              aria-label="Crește cantitatea"
             >
               +
             </button>

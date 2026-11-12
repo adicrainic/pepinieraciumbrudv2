@@ -51,6 +51,11 @@ final class PCS_API {
         add_filter( 'rest_allowed_cors_headers', [ $this, 'filter_allowed_cors_headers' ], 99 );
         add_filter( 'rest_exposed_cors_headers', [ $this, 'filter_exposed_cors_headers' ], 99 );
         add_filter( 'rest_pre_serve_request', [ $this, 'cors_pre_serve' ], 99 );
+
+        // Allow bulk / wholesale purchasing (quantities > 500)
+        add_filter( 'woocommerce_store_api_product_quantity_maximum', fn() => 99999 );
+        add_filter( 'woocommerce_store_api_product_quantity_limit', fn() => 99999 );
+        add_filter( 'woocommerce_product_backorders_allowed', '__return_true' );
     }
 
     public function register_routes(): void {

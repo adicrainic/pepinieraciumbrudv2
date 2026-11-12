@@ -25,9 +25,9 @@ const handleAddToCart = async () => {
 </script>
 
 <template>
-  <div class="group relative bg-white border border-border hover:border-primary/40 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-petal hover:-translate-y-1 flex flex-col h-full">
+  <div class="group relative bg-white border border-border hover:border-primary/50 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-petal hover:-translate-y-1 flex flex-col h-full">
     <!-- Image with Link -->
-    <NuxtLink :to="`/produse/${product.slug || product.id}`" class="block aspect-square w-full overflow-hidden bg-surface-warm relative">
+    <NuxtLink :to="`/produse/${product.slug || product.id}`" class="block aspect-square w-full overflow-hidden bg-surface-warm/60 relative">
       <img
         :src="getProductImage(product)"
         :alt="product.name"

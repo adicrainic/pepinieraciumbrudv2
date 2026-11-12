@@ -9,7 +9,7 @@ const { setPageSeo } = useSeo()
 
 setPageSeo({
   title: 'Catalog Produse – Pomi Fructiferi și Trandafiri',
-  description: 'Descoperiți catalogul complet Pepiniera Ciumbrud: pomi fructiferi altoiți, trandafiri nobili, arbuști fructiferi și viță de vie.'
+  description: 'Descoperiți catalogul complet Pepiniera Ciumbrud: pomi fructiferi altoiți, trandafiri nobili, arbuști fructiferi și arbuști ornamentali.'
 })
 
 const selectedCategory = ref(route.query.category?.toString() || '')
