@@ -13,3 +13,20 @@ export interface SiteSettings {
   footer_copyright: string
 }
 
+export interface EmailConfigStatus {
+  enabled: boolean
+  host: string
+  port: number
+  auth: boolean
+  user: string
+  secure: string
+  from: string
+  from_name: string
+}
+
+export interface EmailTestResult {
+  success: boolean
+  message: string
+  error?: string | null
+  config: EmailConfigStatus
+}

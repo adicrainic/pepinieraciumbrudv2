@@ -3,6 +3,7 @@ import { useProducts } from '~/composables/useProducts'
 import { useSeo } from '~/composables/useSeo'
 import ProductGrid from '~/components/product/ProductGrid.vue'
 import AppButton from '~/components/ui/AppButton.vue'
+import SCurve from '~/components/ui/SCurve.vue'
 
 const { fetchProducts, fetchCategories } = useProducts()
 const { setPageSeo } = useSeo()
@@ -30,10 +31,10 @@ const stats = [
 ]
 
 const benefits = [
-  { icon: '🌿', title: 'Material Certificat', text: 'Garanție de prindere și autenticitate' },
-  { icon: '📦', title: 'Livrare în Toată Țara', text: 'Ambalare specială cu rădăcini umede' },
-  { icon: '❄️', title: 'Soiuri Aclimatizate', text: 'Rezistente la ger și boli specifice' },
-  { icon: '💬', title: 'Consultanță Gratuită', text: 'Sfaturi pentru plantare și tăiere' },
+  { title: 'Material Certificat', text: 'Garanție de prindere și autenticitate' },
+  { title: 'Livrare în Toată Țara', text: 'Ambalare specială cu rădăcini umede' },
+  { title: 'Soiuri Aclimatizate', text: 'Rezistente la ger și boli specifice' },
+  { title: 'Consultanță Gratuită', text: 'Sfaturi pentru plantare și tăiere' },
 ]
 
 const preferredOrder = ['pomi-fructiferi', 'trandafiri', 'arbusti-fructiferi', 'arbusti-ornamentali']
@@ -93,147 +94,183 @@ const steps = [
 
 <template>
   <div>
-    <!-- Hero -->
-    <section class="group relative overflow-hidden bg-primary-dark">
+    <!-- Shared clip-path: the reversed-S edge from the logo -->
+    <svg width="0" height="0" class="absolute" aria-hidden="true">
+      <defs>
+        <clipPath id="s-clip" clipPathUnits="objectBoundingBox">
+          <path d="M0.06,0 A0.12,0.25 0 0 1 0.06,0.5 A0.12,0.25 0 0 0 0.06,1 L1,1 L1,0 Z" />
+        </clipPath>
+      </defs>
+    </svg>
+
+    <!-- Hero (Fullwidth panoramic photo with white S shape in the middle) -->
+    <section class="group relative overflow-hidden bg-primary-dark min-h-[42rem] lg:min-h-[48rem] flex items-center justify-center">
+      <!-- Full-width panoramic background photo - NOT cropped -->
       <img
         src="/images/hero_garden.jpg"
         alt="Grădina de trandafiri din Ciumbrud"
-        class="absolute inset-0 w-full h-full object-cover transition-transform duration-[2500ms] ease-out group-hover:scale-105"
+        class="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-[2500ms] ease-out group-hover:scale-105"
         fetchpriority="high"
       />
-      <!-- Fresh, luminous botanical overlay -->
-      <div class="absolute inset-0 bg-gradient-to-r from-primary-dark/90 via-primary-dark/60 to-primary-dark/25"></div>
-      <div class="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-primary-dark/85 via-primary-dark/40 to-transparent"></div>
-      <div class="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-primary-light/20 blur-3xl pointer-events-none"></div>
 
-      <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 flex items-center lg:min-h-[calc(100svh-17rem)]">
-        <div class="max-w-2xl lg:max-w-3xl">
-          <span class="inline-flex items-center gap-2 px-4 py-1.5 mb-5 rounded-full text-xs font-semibold tracking-widest uppercase bg-white/15 text-white backdrop-blur-md border border-white/30 shadow-sm">
-            <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span> Ciumbrud, Alba · Satul Rozelor
-          </span>
-          <h1 class="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-normal leading-[1.25] text-white mb-6 [text-shadow:0_2px_12px_rgba(0,0,0,0.35)]">
-            Puieți care prind <span class="italic text-accent font-semibold inline-block px-1">rădăcini</span><br class="hidden sm:inline" /> și rodesc ani la rând
-          </h1>
-          <p class="text-base sm:text-lg text-white/95 max-w-xl mb-7 leading-relaxed font-normal">
-            Pomi fructiferi, arbuști ornamentali, arbuști fructiferi și trandafiri nobili — cultivați cu meșteșug în satul renumit în toată România pentru trandafiri.
-          </p>
-          <div class="flex flex-col sm:flex-row gap-4 mb-10">
-            <AppButton variant="warm" size="lg" to="/produse" class="sm:w-auto shadow-lg hover:shadow-xl transition-all">Explorează Catalogul</AppButton>
-            <AppButton variant="outline" size="lg" to="/produse?category=trandafiri" class="sm:w-auto border-white/80 text-white hover:bg-white hover:text-primary-dark backdrop-blur-sm">🌹 Colecția de Trandafiri</AppButton>
+      <!-- Subtle cinematic gradient overlay to let sunrise and roses shine while keeping text crisp -->
+      <div class="absolute inset-0 bg-gradient-to-b from-primary-dark/80 via-primary-dark/55 to-primary-dark/85"></div>
+      <div class="absolute inset-0 bg-radial from-transparent via-transparent to-primary-dark/60 pointer-events-none"></div>
+
+      <!-- The Grand White S Shape in the Middle -->
+      <div class="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[90%] max-h-[38rem] w-auto flex items-center justify-center">
+        <SCurve rose :width="2.5" class="h-full w-auto text-white/30 drop-shadow-[0_2px_20px_rgba(0,0,0,0.5)]" />
+      </div>
+
+      <!-- Hero Content Centered in the Middle -->
+      <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center flex flex-col items-center">
+        <!-- Center Emblem: White Reversed S + Rose -->
+        <div class="mb-6 flex flex-col items-center">
+          <div class="w-16 h-20 sm:w-20 sm:h-24 relative flex items-center justify-center">
+            <SCurve rose :width="3" class="w-full h-full text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.4)]" />
           </div>
-          <dl class="grid grid-cols-3 gap-6 max-w-lg border-t border-white/20 pt-6">
-            <div v-for="st in stats" :key="st.label">
-              <dt class="font-serif text-3xl sm:text-4xl font-bold text-white">{{ st.value }}</dt>
-              <dd class="text-xs text-white/80 mt-1 font-medium">{{ st.label }}</dd>
-            </div>
-          </dl>
+          <span class="inline-flex items-center gap-2 px-4 py-1.5 mt-2 rounded-full text-[11px] sm:text-xs font-medium tracking-[0.28em] uppercase bg-white/10 text-white backdrop-blur-md border border-white/25 shadow-sm">
+            <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span> Ciumbrud, Alba · Satul Rozelor · Din 2000
+          </span>
         </div>
+
+        <!-- Main Title -->
+        <h1 class="font-serif text-4xl sm:text-6xl lg:text-7xl font-medium leading-[1.05] text-white mb-6 [text-shadow:0_2px_16px_rgba(0,0,0,0.45)] max-w-3xl text-balance">
+          Puieți care prind <em class="text-rose-200 font-medium not-italic">rădăcini</em>,<br class="hidden sm:inline" /> și rodesc ani la rând
+        </h1>
+
+        <!-- Subtitle -->
+        <p class="text-base sm:text-lg text-white/90 max-w-2xl mb-10 leading-relaxed font-light [text-shadow:0_1px_8px_rgba(0,0,0,0.35)]">
+          Pomi fructiferi, arbuști ornamentali, arbuști fructiferi și trandafiri nobili — cultivați cu meșteșug în satul renumit în toată România pentru trandafiri.
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 mb-14 justify-center">
+          <AppButton variant="warm" size="lg" to="/produse" class="shadow-xl hover:shadow-2xl">Explorează Catalogul</AppButton>
+          <AppButton variant="outline" size="lg" to="/produse?category=trandafiri" class="border-white text-white hover:bg-white hover:text-primary backdrop-blur-sm">Colecția de Trandafiri</AppButton>
+        </div>
+
+        <!-- Stats Bar Centered at Bottom of Hero -->
+        <dl class="grid grid-cols-3 gap-6 sm:gap-12 max-w-2xl w-full border-t border-white/20 pt-8">
+          <div v-for="(st, i) in stats" :key="st.label" :class="i > 0 ? 'border-l border-white/15' : ''">
+            <dt class="font-serif text-3xl sm:text-4xl font-medium text-white leading-none [text-shadow:0_2px_10px_rgba(0,0,0,0.3)]">{{ st.value }}</dt>
+            <dd class="text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-white/75 mt-2 font-medium">{{ st.label }}</dd>
+          </div>
+        </dl>
       </div>
     </section>
 
     <!-- Benefits band -->
-    <section class="bg-gradient-to-r from-primary-dark via-[#247545] to-primary-dark text-white border-y border-white/10 shadow-sm">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 grid grid-cols-2 lg:grid-cols-4 gap-5">
-        <div v-for="b in benefits" :key="b.title" class="flex items-start gap-3.5 p-3 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/10 transition-transform hover:-translate-y-0.5">
-          <div class="shrink-0 w-11 h-11 rounded-xl bg-white/15 flex items-center justify-center text-xl shadow-inner">{{ b.icon }}</div>
+    <section class="bg-white border-y border-primary/15">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 lg:grid-cols-4">
+        <div v-for="(b, i) in benefits" :key="b.title" class="py-7 px-5 flex items-start gap-4" :class="i > 0 ? 'lg:border-l border-primary/15' : ''">
+          <span class="font-serif italic text-accent text-2xl leading-none">0{{ i + 1 }}</span>
           <div>
-            <h4 class="font-semibold text-sm text-white">{{ b.title }}</h4>
-            <p class="text-xs text-white/80 mt-0.5 leading-snug">{{ b.text }}</p>
+            <h4 class="font-sans text-[11px] uppercase tracking-[0.2em] font-medium text-primary-dark">{{ b.title }}</h4>
+            <p class="text-xs text-text-muted mt-1.5 leading-snug">{{ b.text }}</p>
           </div>
         </div>
       </div>
     </section>
 
     <!-- Categories -->
-    <section class="py-20 bg-background">
+    <section class="py-24 bg-white relative overflow-hidden">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-4">
           <div>
             <span class="section-eyebrow">Categorii</span>
-            <h2 class="font-serif text-3xl sm:text-4xl font-bold text-primary-dark max-w-xl text-balance">Ce doriți să plantați în grădina dumneavoastră?</h2>
+            <h2 class="section-title max-w-xl">Ce doriți să plantați în grădina dumneavoastră?</h2>
           </div>
-          <NuxtLink to="/produse" class="text-sm font-semibold text-primary hover:text-primary-dark inline-flex items-center gap-1 group">
-            <span>Vezi toate produsele</span>
-            <span class="group-hover:translate-x-1 transition-transform">→</span>
+          <NuxtLink to="/produse" class="link-underline text-[11px] uppercase tracking-[0.25em] font-medium text-primary inline-flex items-center gap-2 pb-1 self-start md:self-auto">
+            Vezi toate produsele <span>→</span>
           </NuxtLink>
         </div>
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
-          <NuxtLink v-for="c in categoryCards" :key="c.to" :to="c.to" class="group block">
-            <div class="arch overflow-hidden aspect-[3/4] bg-surface-warm border border-border group-hover:border-primary/50 group-hover:shadow-petal transition-all duration-300 relative">
-              <img :src="c.img" :alt="c.title" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              <div class="absolute inset-0 bg-gradient-to-t from-primary-dark/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-x-5 gap-y-12 sm:gap-x-8">
+          <NuxtLink v-for="(c, i) in categoryCards" :key="c.to" :to="c.to" class="group block" :class="i % 2 === 1 ? 'lg:mt-12' : ''">
+            <div
+              class="overflow-hidden aspect-[3/4] bg-surface-warm border border-border group-hover:border-primary transition-colors duration-300 relative"
+              :class="i % 2 === 0 ? 'petal' : 'petal-alt'"
+            >
+              <img :src="c.img" :alt="c.title" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
             </div>
-            <h3 class="font-serif text-lg sm:text-xl font-bold text-text group-hover:text-primary transition-colors mt-4">{{ c.title }}</h3>
-            <p class="text-xs text-text-muted mt-1 leading-snug">{{ c.text }}</p>
+            <div class="flex items-baseline gap-3 mt-5">
+              <span class="font-serif italic text-accent text-lg">0{{ i + 1 }}</span>
+              <h3 class="font-serif text-2xl font-medium text-text">{{ c.title }}</h3>
+            </div>
+            <p class="text-xs text-text-muted mt-1.5 leading-snug pl-8">{{ c.text }}</p>
           </NuxtLink>
         </div>
       </div>
     </section>
 
     <!-- Featured products -->
-    <section class="py-20 bg-surface-warm/70 border-y border-border/60">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
-          <div>
-            <span class="section-eyebrow">Disponibile Acum</span>
-            <h2 class="font-serif text-3xl sm:text-4xl font-bold text-primary-dark">Produse Recomandate pentru Sezon</h2>
-          </div>
-          <AppButton variant="outline" to="/produse" class="mt-4 md:mt-0">Vezi Toate Produsele</AppButton>
+    <section class="py-24 bg-surface-warm relative overflow-hidden">
+      <SCurve class="pointer-events-none absolute -left-16 top-4 h-[90%] w-auto text-primary/[0.05] hidden md:block" />
+      <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-14">
+          <span class="section-eyebrow">Disponibile Acum</span>
+          <h2 class="section-title">Produse recomandate pentru sezon</h2>
         </div>
         <ProductGrid :products="products" :loading="productsStatus === 'pending'" />
+        <div class="mt-14 flex justify-center">
+          <AppButton variant="outline" to="/produse">Vezi toate produsele</AppButton>
+        </div>
       </div>
     </section>
 
     <!-- Roses spotlight -->
-    <section class="py-20 bg-background">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-rose-50 via-rose-50/80 to-pink-50 border border-rose-200/80 shadow-soft grid md:grid-cols-2 items-center">
-          <div class="p-8 sm:p-14 relative z-10">
-            <span class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-rose-600 font-semibold mb-3">🌹 Specialitatea casei</span>
-            <h2 class="font-serif text-3xl sm:text-4xl font-bold text-rose-700 mb-4 text-balance">Trandafiri nobili, altoiți la Ciumbrud</h2>
-            <p class="text-text-muted leading-relaxed mb-8 max-w-md">Teahibrizi, cățărători, floribunda și pomișor — soiuri parfumate și rezistente, crescute în satul renumit pentru trandafiri.</p>
-            <AppButton variant="warm" size="lg" to="/produse?category=trandafiri" class="shadow-md hover:shadow-lg">Vezi Trandafirii</AppButton>
-          </div>
-          <div class="relative h-72 md:h-full min-h-[18rem]">
-            <img src="/plants/rose.svg" alt="Trandafiri" class="absolute inset-0 w-full h-full object-cover md:rounded-l-[8rem]" />
+    <section class="relative bg-primary text-white overflow-hidden">
+      <SCurve class="pointer-events-none absolute left-[42%] -top-8 h-[120%] w-auto text-accent/40 hidden md:block" :width="2" />
+      <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 items-center">
+        <div class="py-16 md:py-24 relative z-10 pr-0 md:pr-10">
+          <span class="section-eyebrow section-eyebrow-light">Specialitatea casei</span>
+          <h2 class="font-serif text-4xl sm:text-5xl font-medium leading-[1.08] text-white mb-6 text-balance">Trandafiri nobili, <em class="text-rose-200">altoiți la Ciumbrud</em></h2>
+          <p class="text-white/70 leading-relaxed mb-9 max-w-md font-light">Teahibrizi, cățărători, floribunda și pomișor — soiuri parfumate și rezistente, crescute în satul renumit pentru trandafiri.</p>
+          <AppButton variant="warm" size="lg" to="/produse?category=trandafiri">Vezi trandafirii</AppButton>
+        </div>
+        <div class="relative h-80 md:h-[34rem] md:-mr-8">
+          <div class="absolute inset-0 hero-s-clip">
+            <img src="/plants/rose.svg" alt="Trandafiri" class="w-full h-full object-cover" />
           </div>
         </div>
       </div>
     </section>
 
     <!-- Steps -->
-    <section class="pb-20 bg-background">
+    <section class="py-24 bg-white">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-14">
+        <div class="text-center mb-16">
           <span class="section-eyebrow">Cum funcționează</span>
-          <h2 class="font-serif text-3xl sm:text-4xl font-bold text-primary-dark">De la pepinieră în grădina ta</h2>
+          <h2 class="section-title">De la pepinieră în grădina ta</h2>
         </div>
-        <div class="grid md:grid-cols-3 gap-6">
-          <div v-for="st in steps" :key="st.n" class="bg-white border border-border rounded-2xl p-8 shadow-soft hover:border-primary/40 hover:shadow-md transition-all hover:-translate-y-1">
-            <div class="w-12 h-12 rounded-2xl bg-primary-50 text-primary font-bold flex items-center justify-center text-lg mb-5 border border-primary-100 font-serif">{{ st.n }}</div>
-            <h3 class="font-serif text-xl font-bold text-text mb-2">{{ st.title }}</h3>
-            <p class="text-sm text-text-muted leading-relaxed">{{ st.text }}</p>
+        <div class="grid md:grid-cols-3 gap-10 md:gap-0">
+          <div v-for="(st, i) in steps" :key="st.n" class="relative md:px-10" :class="i > 0 ? 'md:border-l border-primary/15' : ''">
+            <span class="font-serif text-7xl font-light text-transparent leading-none block mb-5" style="-webkit-text-stroke: 1px #2E2C2A">{{ st.n }}</span>
+            <div class="w-10 h-0.5 bg-accent mb-5"></div>
+            <h3 class="font-serif text-2xl font-medium text-text mb-3">{{ st.title }}</h3>
+            <p class="text-sm text-text-muted leading-relaxed font-light">{{ st.text }}</p>
           </div>
         </div>
       </div>
     </section>
 
     <!-- About -->
-    <section class="py-20 bg-gradient-to-br from-primary-dark via-primary-dark to-[#134026] text-white relative overflow-hidden">
-      <div class="absolute -right-24 -top-24 w-96 h-96 rounded-full bg-primary-light/25 blur-3xl pointer-events-none"></div>
-      <div class="absolute -left-24 -bottom-24 w-96 h-96 rounded-full bg-primary/20 blur-3xl pointer-events-none"></div>
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 grid lg:grid-cols-2 gap-12 items-center">
+    <section class="py-24 bg-surface-warm relative overflow-hidden">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 grid lg:grid-cols-2 gap-16 items-center">
         <div class="space-y-6">
-          <span class="inline-block px-3.5 py-1 rounded-full text-xs font-semibold bg-white/15 text-accent-light uppercase tracking-wider border border-white/20 backdrop-blur-xs">Despre Ciumbrud</span>
-          <h2 class="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight text-white">Pepiniera Ciumbrud — Satul Rozelor și Tradiția Pomiculturii</h2>
-          <p class="text-white/85 leading-relaxed">Localitatea Ciumbrud din județul Alba este renumită în toată țara pentru meșteșugul altoirii și cultivării plantelor. Pământul roditor și microclimatul special de pe valea Mureșului ne permit să obținem puieți viguroși, cu rădăcini bine dezvoltate.</p>
-          <p class="text-white/85 leading-relaxed">Fiecare pom fructifer și fiecare butaș de trandafir este îngrijit individual, respectând toate normele fitosanitare europene.</p>
-          <AppButton variant="warm" to="/despre-noi" class="shadow-lg hover:shadow-xl">Citește Mai Mult Despre Noi</AppButton>
+          <span class="section-eyebrow">Despre Ciumbrud</span>
+          <h2 class="section-title">Satul rozelor și tradiția pomiculturii</h2>
+          <p class="text-text-muted leading-relaxed font-light">Localitatea Ciumbrud din județul Alba este renumită în toată țara pentru meșteșugul altoirii și cultivării plantelor. Pământul roditor și microclimatul special de pe valea Mureșului ne permit să obținem puieți viguroși, cu rădăcini bine dezvoltate.</p>
+          <p class="text-text-muted leading-relaxed font-light">Fiecare pom fructifer și fiecare butaș de trandafir este îngrijit individual, respectând toate normele fitosanitare europene.</p>
+          <AppButton variant="primary" to="/despre-noi">Citește mai mult</AppButton>
         </div>
-        <div class="bg-white/10 backdrop-blur-md p-8 sm:p-10 rounded-3xl border border-white/20 space-y-6 shadow-2xl">
-          <div class="border-l-4 border-accent-light pl-5"><span class="text-3xl sm:text-4xl font-serif font-bold text-accent-light">100%</span><p class="text-xs uppercase tracking-wider text-white/80 mt-1">Aclimatizate în România</p></div>
-          <div class="border-l-4 border-accent-light pl-5"><span class="text-3xl sm:text-4xl font-serif font-bold text-accent-light">+30 Ani</span><p class="text-xs uppercase tracking-wider text-white/80 mt-1">Experiență în altoire și selecție</p></div>
-          <div class="border-l-4 border-accent-light pl-5"><span class="text-3xl sm:text-4xl font-serif font-bold text-accent-light">Livrare Sigură</span><p class="text-xs uppercase tracking-wider text-white/80 mt-1">Pachete termoizolate pentru protecția rădăcinilor</p></div>
+        <div class="relative bg-primary text-white p-10 sm:p-14 petal">
+          <SCurve rose class="absolute right-6 top-6 h-24 w-auto text-white/30" />
+          <div class="space-y-8 relative">
+            <div class="border-b border-white/15 pb-6"><span class="text-4xl font-serif font-medium">100%</span><p class="text-[11px] uppercase tracking-[0.2em] text-white/70 mt-2">Aclimatizate în România</p></div>
+            <div class="border-b border-white/15 pb-6"><span class="text-4xl font-serif font-medium">+30 ani</span><p class="text-[11px] uppercase tracking-[0.2em] text-white/70 mt-2">Experiență în altoire și selecție</p></div>
+            <div><span class="text-4xl font-serif font-medium">Livrare sigură</span><p class="text-[11px] uppercase tracking-[0.2em] text-white/70 mt-2">Pachete termoizolate pentru protecția rădăcinilor</p></div>
+          </div>
         </div>
       </div>
     </section>

@@ -98,6 +98,23 @@ final class PCS_Settings_Routes extends PCS_Base_Routes {
                 'permission_callback' => [ $this, 'require_admin' ],
             ],
         ] );
+
+        // Admin email routes
+        register_rest_route( $this->namespace, '/admin/email/status', [
+            [
+                'methods'             => 'GET',
+                'callback'            => [ $this, 'get_email_status' ],
+                'permission_callback' => [ $this, 'require_admin' ],
+            ],
+        ] );
+
+        register_rest_route( $this->namespace, '/admin/email/test', [
+            [
+                'methods'             => 'POST',
+                'callback'            => [ $this, 'send_test_email' ],
+                'permission_callback' => [ $this, 'require_admin' ],
+            ],
+        ] );
     }
 
     /**
@@ -186,6 +203,31 @@ final class PCS_Settings_Routes extends PCS_Base_Routes {
             'message'  => 'Setările au fost salvate cu succes.',
             'settings' => $this->fetch_all_settings(),
         ] );
+    }
+
+    /**
+     * Admin handler: GET /pcs/v1/admin/email/status
+     */
+    public function get_email_status( WP_REST_Request $request ): WP_REST_Response {
+        return $this->success( PCS_Mailer::instance()->get_config_summary() );
+    }
+
+    /**
+     * Admin handler: POST /pcs/v1/admin/email/test
+     */
+    public function send_test_email( WP_REST_Request $request ): WP_REST_Response {
+        $params = $request->get_json_params();
+        if ( empty( $params ) || ! is_array( $params ) ) {
+            $params = $request->get_params();
+        }
+
+        $to = sanitize_email( trim( (string) ( $params['to'] ?? '' ) ) );
+        if ( empty( $to ) || ! is_email( $to ) ) {
+            $to = PCS_Mailer::instance()->get_default_from_email();
+        }
+
+        $result = PCS_Mailer::instance()->send_test_email( $to );
+        return $this->success( $result );
     }
 }
 

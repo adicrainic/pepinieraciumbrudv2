@@ -30,8 +30,8 @@ const handleLogout = async () => {
   >
     <!-- Brand -->
     <div class="h-16 flex items-center px-6 border-b border-white/10 gap-3">
-      <div class="w-8 h-8 rounded-lg bg-accent text-primary-dark font-bold flex items-center justify-center flex-shrink-0">
-        🌿
+      <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center flex-shrink-0 overflow-hidden">
+        <img src="/logo.jpg" alt="Pepiniera Ciumbrud" class="w-full h-full object-contain p-0.5" />
       </div>
       <div v-if="!uiStore.sidebarCollapsed" class="overflow-hidden whitespace-nowrap">
         <h1 class="font-serif font-bold text-sm tracking-wide">Pepiniera Ciumbrud</h1>

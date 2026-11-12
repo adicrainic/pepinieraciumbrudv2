@@ -2,9 +2,9 @@ import type { SiteSettings } from '~/types/settings'
 
 export const defaultSiteSettings: SiteSettings = {
   site_title: 'Pepiniera Ciumbrud',
-  site_tagline: 'Tradiție & Calitate din 1990',
+  site_tagline: 'Pepiniera de familie din 2000',
   site_description: 'Producător autorizat de material săditor pomicol, trandafiri și plante ornamentale de cea mai bună calitate, aclimatizate pentru România.',
-  logo_url: '',
+  logo_url: '/logo.jpg',
   contact_phone: '+40 700 000 000',
   contact_email: 'contact@pepinieraciumbrud.ro',
   contact_address: 'Sat Ciumbrud, Jud. Alba, România',
@@ -25,7 +25,7 @@ export const useSiteSettings = () => {
     try {
       const data = await $fetch<Partial<SiteSettings>>(`${wpBase}/pcs/v1/settings`)
       if (data && typeof data === 'object') {
-        settings.value = { ...defaultSiteSettings, ...data }
+        settings.value = { ...defaultSiteSettings, ...data, logo_url: data.logo_url || defaultSiteSettings.logo_url }
       }
     } catch (err) {
       // Graceful fallback to default settings if endpoint fails or network is offline

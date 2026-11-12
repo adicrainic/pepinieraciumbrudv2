@@ -1,5 +1,5 @@
 import { api } from './api'
-import type { SiteSettings } from '@/types/settings'
+import type { SiteSettings, EmailConfigStatus, EmailTestResult } from '@/types/settings'
 
 export const settingsService = {
   /**
@@ -16,6 +16,21 @@ export const settingsService = {
   async updateSettings(data: Partial<SiteSettings>): Promise<{ message: string; settings: SiteSettings }> {
     const res = await api.post<{ message: string; settings: SiteSettings }>('/admin/settings', data)
     return res.data
+  },
+
+  /**
+   * Fetch current SMTP email configuration status.
+   */
+  async getEmailStatus(): Promise<EmailConfigStatus> {
+    const res = await api.get<EmailConfigStatus>('/admin/email/status')
+    return res.data
+  },
+
+  /**
+   * Send test email to verify SMTP configuration.
+   */
+  async sendTestEmail(to?: string): Promise<EmailTestResult> {
+    const res = await api.post<EmailTestResult>('/admin/email/test', { to })
+    return res.data
   }
 }
-

@@ -30,6 +30,7 @@ require_once PCS_API_PLUGIN_DIR . 'includes/class-pcs-dashboard-routes.php';
 require_once PCS_API_PLUGIN_DIR . 'includes/class-pcs-media-routes.php';
 require_once PCS_API_PLUGIN_DIR . 'includes/class-pcs-settings-routes.php';
 require_once PCS_API_PLUGIN_DIR . 'includes/class-pcs-contact-routes.php';
+require_once PCS_API_PLUGIN_DIR . 'includes/class-pcs-mailer.php';
 
 /**
  * Main plugin class.
@@ -46,6 +47,9 @@ final class PCS_API {
     }
 
     private function __construct() {
+        // Initialize SMTP Mailer
+        PCS_Mailer::instance();
+
         add_action( 'rest_api_init', [ $this, 'register_routes' ] );
         add_action( 'init', [ $this, 'handle_cors' ], 1 );
         add_filter( 'rest_allowed_cors_headers', [ $this, 'filter_allowed_cors_headers' ], 99 );

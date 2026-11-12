@@ -4,7 +4,7 @@ import AdminLayout from '@/layouts/AdminLayout.vue'
 import { settingsService } from '@/services/settingsService'
 import { mediaService } from '@/services/mediaService'
 import { useUiStore } from '@/stores/ui'
-import type { SiteSettings } from '@/types/settings'
+import type { SiteSettings, EmailConfigStatus, EmailTestResult } from '@/types/settings'
 
 const uiStore = useUiStore()
 
@@ -13,6 +13,12 @@ const saving = ref(false)
 const uploadingLogo = ref(false)
 const logoUploadError = ref('')
 const fileInput = ref<HTMLInputElement | null>(null)
+
+const emailStatus = ref<EmailConfigStatus | null>(null)
+const loadingEmailStatus = ref(false)
+const testEmailRecipient = ref('')
+const sendingTestEmail = ref(false)
+const testEmailResult = ref<EmailTestResult | null>(null)
 
 const defaultSettings: SiteSettings = {
   site_title: 'Pepiniera Ciumbrud',
@@ -49,8 +55,53 @@ const fetchSettings = async () => {
   }
 }
 
+const fetchEmailStatus = async () => {
+  loadingEmailStatus.value = true
+  try {
+    const status = await settingsService.getEmailStatus()
+    emailStatus.value = status
+    if (!testEmailRecipient.value && status.from) {
+      testEmailRecipient.value = status.from
+    }
+  } catch (err: any) {
+    console.error('Failed to fetch email status', err)
+  } finally {
+    loadingEmailStatus.value = false
+  }
+}
+
+const handleSendTestEmail = async () => {
+  if (!testEmailRecipient.value) {
+    uiStore.addNotification('error', 'Introduceți o adresă de email validă pentru test.')
+    return
+  }
+  sendingTestEmail.value = true
+  testEmailResult.value = null
+  try {
+    const res = await settingsService.sendTestEmail(testEmailRecipient.value)
+    testEmailResult.value = res
+    if (res.success) {
+      uiStore.addNotification('success', res.message)
+    } else {
+      uiStore.addNotification('error', res.message || 'Trimiterea emailului a eșuat.')
+    }
+  } catch (err: any) {
+    const errMsg = err.response?.data?.message || err.message || 'Eroare la trimiterea emailului de test.'
+    testEmailResult.value = {
+      success: false,
+      message: errMsg,
+      error: errMsg,
+      config: emailStatus.value || ({} as any)
+    }
+    uiStore.addNotification('error', errMsg)
+  } finally {
+    sendingTestEmail.value = false
+  }
+}
+
 onMounted(() => {
   fetchSettings()
+  fetchEmailStatus()
 })
 
 const handleSave = async () => {
@@ -513,6 +564,90 @@ const removeLogo = () => {
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+
+            <!-- Email & SMTP Diagnostics Card -->
+            <div class="bg-white rounded-2xl border border-border p-5 shadow-sm space-y-4">
+              <div class="flex items-center justify-between border-b border-border pb-2.5">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-sm">📧</span>
+                  <span class="text-xs font-bold uppercase tracking-wider text-gray-700">Serviciu Email (SMTP)</span>
+                </div>
+                <span
+                  v-if="emailStatus?.enabled"
+                  class="text-[10px] px-2 py-0.5 bg-emerald-50 text-emerald-700 font-medium rounded-full"
+                >
+                  SMTP Activ
+                </span>
+                <span
+                  v-else
+                  class="text-[10px] px-2 py-0.5 bg-amber-50 text-amber-700 font-medium rounded-full"
+                >
+                  Neconfigurat
+                </span>
+              </div>
+
+              <div class="space-y-2 text-xs text-gray-600">
+                <div class="flex justify-between py-1 border-b border-gray-100">
+                  <span class="text-gray-400">Server SMTP:</span>
+                  <span class="font-medium text-gray-800">{{ emailStatus?.host || 'Mail local (inactiv)' }}</span>
+                </div>
+                <div class="flex justify-between py-1 border-b border-gray-100">
+                  <span class="text-gray-400">Port / Securitate:</span>
+                  <span class="font-medium text-gray-800">{{ emailStatus?.port }} / {{ emailStatus?.secure || 'none' }}</span>
+                </div>
+                <div class="flex justify-between py-1 border-b border-gray-100">
+                  <span class="text-gray-400">Expeditor:</span>
+                  <span class="font-medium text-gray-800 truncate max-w-[170px]" :title="emailStatus?.from">{{ emailStatus?.from }}</span>
+                </div>
+              </div>
+
+              <!-- Test Email Action -->
+              <div class="pt-2 border-t border-border space-y-2.5">
+                <label class="block text-[11px] font-semibold text-gray-700">Testare Trimitere Email</label>
+                <div class="flex gap-2">
+                  <input
+                    v-model="testEmailRecipient"
+                    type="email"
+                    placeholder="email@exemplu.ro"
+                    class="flex-1 px-3 py-1.5 rounded-lg border border-border text-xs focus:ring-1 focus:ring-primary focus:border-primary outline-none"
+                    :disabled="sendingTestEmail"
+                  />
+                  <button
+                    @click="handleSendTestEmail"
+                    :disabled="sendingTestEmail"
+                    class="px-3 py-1.5 bg-primary hover:bg-primary-dark text-white rounded-lg text-xs font-medium transition-colors disabled:opacity-50 shrink-0 flex items-center gap-1.5"
+                  >
+                    <svg
+                      v-if="sendingTestEmail"
+                      class="animate-spin h-3.5 w-3.5 text-white"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                    </svg>
+                    <span>{{ sendingTestEmail ? 'Trimite...' : 'Trimite Test' }}</span>
+                  </button>
+                </div>
+
+                <div
+                  v-if="testEmailResult"
+                  :class="[
+                    'p-2.5 rounded-lg text-xs',
+                    testEmailResult.success ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-rose-50 text-rose-800 border border-rose-200'
+                  ]"
+                >
+                  <div class="font-medium">{{ testEmailResult.success ? '✅ ' : '❌ ' }}{{ testEmailResult.message }}</div>
+                  <div v-if="testEmailResult.error" class="text-[10px] mt-1 text-rose-700 font-mono break-all">
+                    {{ testEmailResult.error }}
+                  </div>
+                </div>
+
+                <p class="text-[10px] text-gray-400">
+                  Datele SMTP se configurează în fișierul <code class="font-mono text-gray-600">wp-config.php</code> pe server sau local.
+                </p>
               </div>
             </div>
 

@@ -20,29 +20,30 @@ const props = withDefaults(defineProps<Props>(), {
 const variantClasses = computed(() => {
   switch (props.variant) {
     case 'primary':
-      return 'bg-primary text-white hover:bg-primary-dark shadow-sm hover:shadow-soft active:scale-[0.98]'
+      return 'bg-primary text-white border border-primary hover:bg-white hover:text-primary active:scale-[0.98]'
     case 'secondary':
-      return 'bg-surface-warm text-primary-dark hover:bg-primary-100/70 active:scale-[0.98]'
+      return 'bg-surface-warm text-primary border border-border hover:border-primary active:scale-[0.98]'
     case 'outline':
       return 'border border-primary text-primary hover:bg-primary hover:text-white active:scale-[0.98]'
     case 'ghost':
       return 'text-primary hover:bg-primary-50 active:scale-[0.98]'
     case 'warm':
-      return 'bg-rose-500 text-white hover:bg-rose-600 shadow-sm active:scale-[0.98]'
+      return 'bg-accent text-white border border-accent hover:bg-primary hover:border-primary active:scale-[0.98]'
     default:
-      return 'bg-primary text-white hover:bg-primary-dark active:scale-[0.98]'
+      return 'bg-primary text-white border border-primary hover:bg-white hover:text-primary active:scale-[0.98]'
   }
 })
 
 const sizeClasses = computed(() => {
+  // Square-ish with one "petal" corner, echoing the logo's curves
   switch (props.size) {
     case 'sm':
-      return 'px-3.5 py-1.5 text-xs rounded-full'
+      return 'px-4 py-2 text-[11px] uppercase tracking-[0.18em] rounded-tr-xl rounded-bl-xl font-medium'
     case 'lg':
-      return 'px-6 py-3 text-base rounded-full font-medium'
+      return 'px-8 py-4 text-xs uppercase tracking-[0.22em] rounded-tr-[1.25rem] rounded-bl-[1.25rem] font-medium'
     case 'md':
     default:
-      return 'px-5 py-2 text-sm rounded-full font-medium'
+      return 'px-6 py-3 text-xs uppercase tracking-[0.2em] rounded-tr-2xl rounded-bl-2xl font-medium'
   }
 })
 </script>

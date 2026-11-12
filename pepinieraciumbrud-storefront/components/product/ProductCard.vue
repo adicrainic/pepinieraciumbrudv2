@@ -25,9 +25,9 @@ const handleAddToCart = async () => {
 </script>
 
 <template>
-  <div class="group relative bg-white border border-border hover:border-primary/50 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-petal hover:-translate-y-1 flex flex-col h-full">
+  <div class="group relative bg-white flex flex-col h-full">
     <!-- Image with Link -->
-    <NuxtLink :to="`/produse/${product.slug || product.id}`" class="block aspect-square w-full overflow-hidden bg-surface-warm/60 relative">
+    <NuxtLink :to="`/produse/${product.slug || product.id}`" class="block aspect-[4/5] w-full overflow-hidden bg-surface-warm relative rounded-tr-[4rem] rounded-bl-[4rem] border border-border group-hover:border-primary transition-colors duration-300">
       <img
         :src="getProductImage(product)"
         :alt="product.name"
@@ -50,14 +50,14 @@ const handleAddToCart = async () => {
     </NuxtLink>
 
     <!-- Content -->
-    <div class="p-5 flex flex-col flex-1">
+    <div class="px-6 pt-5 pb-6 flex flex-col flex-1">
       <!-- Category Tag -->
-      <div v-if="product.categories && product.categories.length > 0" class="text-xs uppercase tracking-wider text-text-muted font-medium mb-1.5">
+      <div v-if="product.categories && product.categories.length > 0" class="text-[10px] uppercase tracking-[0.25em] text-accent font-medium mb-2">
         {{ product.categories[0].name }}
       </div>
 
       <!-- Title -->
-      <h3 class="font-serif text-lg font-semibold text-text group-hover:text-primary transition-colors line-clamp-2 leading-snug mb-2">
+      <h3 class="font-serif text-2xl font-medium text-text line-clamp-2 leading-tight mb-2">
         <NuxtLink :to="`/produse/${product.slug || product.id}`">
           {{ product.name }}
         </NuxtLink>
@@ -71,10 +71,10 @@ const handleAddToCart = async () => {
       ></div>
 
       <!-- Price & Button (Pinned to Bottom) -->
-      <div class="mt-auto pt-3 border-t border-border flex items-center justify-between">
+      <div class="mt-auto pt-4 border-t border-primary/15 flex items-center justify-between">
         <div>
           <span class="text-xs text-text-muted block leading-none mb-1">Preț</span>
-          <span class="text-lg font-bold text-primary-dark font-sans">
+          <span class="text-lg font-medium text-primary-dark font-sans tracking-wide">
             {{ formatPrice(product.prices) }}
           </span>
         </div>

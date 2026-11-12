@@ -10,7 +10,7 @@ await useAsyncData('site-settings', () => fetchSettings())
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col bg-background selection:bg-accent-light selection:text-primary-dark">
+  <div class="min-h-screen flex flex-col bg-background selection:bg-accent selection:text-white font-sans">
     <TheHeader />
     <MobileMenu />
     <CartDrawer />

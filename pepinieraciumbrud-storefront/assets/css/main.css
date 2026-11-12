@@ -4,41 +4,75 @@
 
 @layer base {
   html {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    color: #192C20;
-    background-color: #FAFCFA;
+    font-family: 'Jost', system-ui, -apple-system, sans-serif;
+    color: #2E2C2A;
+    background-color: #FAF6EE;
     scroll-behavior: smooth;
+    letter-spacing: 0.01em;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', Georgia, serif;
-    color: #1C5B36;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    color: #22201E;
+    font-weight: 500;
+    letter-spacing: -0.005em;
   }
+
+  /* serif headings look small at same size, bump them */
+  .font-serif { font-weight: 500; }
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+  .text-balance { text-wrap: balance; }
+
+  /* Organic shapes taken from the logo curves & rose petals */
+  .petal      { border-radius: 0 6rem 0 6rem; }
+  .petal-alt  { border-radius: 6rem 0 6rem 0; }
+  .arch       { border-radius: 0 6rem 0 6rem; }
+  .arch-lg    { border-radius: 0 8rem 0 8rem; }
+
+  .hero-s-clip { clip-path: url(#s-clip); }
 }
 
-
 @layer components {
+  /* Eyebrow: tiny reversed-S + rose dot, then label */
   .section-eyebrow {
-    @apply inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-primary font-semibold mb-2;
+    @apply inline-flex items-center gap-3 text-[11px] uppercase tracking-[0.32em] text-primary font-medium mb-3;
   }
   .section-eyebrow::before {
     content: '';
-    @apply inline-block w-6 h-0.5 bg-primary rounded-full;
+    width: 14px;
+    height: 22px;
+    flex-shrink: 0;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 60' fill='none'%3E%3Cpath d='M20 5 A12.5 12.5 0 0 1 20 30 A12.5 12.5 0 0 0 20 55 H32' stroke='%232E2C2A' stroke-width='3' stroke-linecap='round'/%3E%3Ccircle cx='20' cy='3' r='3' fill='%23C8102E'/%3E%3C/svg%3E") center/contain no-repeat;
   }
+  .section-eyebrow-light { @apply text-white; }
+  .section-eyebrow-light::before {
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 60' fill='none'%3E%3Cpath d='M20 5 A12.5 12.5 0 0 1 20 30 A12.5 12.5 0 0 0 20 55 H32' stroke='%23FAF6EE' stroke-width='3' stroke-linecap='round'/%3E%3Ccircle cx='20' cy='3' r='3' fill='%23C8102E'/%3E%3C/svg%3E") center/contain no-repeat;
+  }
+
+  .section-title {
+    @apply font-serif text-4xl sm:text-5xl font-medium leading-[1.1] text-primary-dark text-balance;
+  }
+
+  /* Hairline ornament: line – S – line */
+  .s-divider {
+    @apply flex items-center justify-center gap-4 text-primary;
+  }
+  .s-divider::before, .s-divider::after {
+    content: ''; @apply h-px flex-1 bg-primary/20;
+  }
+
+  .link-underline {
+    background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+    transition: background-size .35s ease;
+  }
+  .link-underline:hover, .link-underline.router-link-active { background-size: 100% 1px; }
+
   .petal-pattern {
     background-image:
-      radial-gradient(circle at 20% 20%, rgba(244, 139, 159, 0.2) 0, transparent 40%),
-      radial-gradient(circle at 85% 70%, rgba(76, 181, 122, 0.25) 0, transparent 45%);
+      radial-gradient(circle at 15% 20%, rgba(200, 16, 46, 0.08) 0, transparent 40%),
+      radial-gradient(circle at 85% 75%, rgba(47, 107, 58, 0.10) 0, transparent 45%);
   }
-}
-
-@layer utilities {
-  .arch { border-radius: 9999px 9999px 1.5rem 1.5rem; }
-  .arch-lg { border-radius: 9999px 9999px 2.5rem 2.5rem; }
+  .s-curve-bg, .s-curve-bg-dark { position: relative; }
 }

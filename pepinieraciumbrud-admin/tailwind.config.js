@@ -8,18 +8,18 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#2E8B57',
-          light: '#4CB57A',
-          dark: '#1C5B36',
-          50: '#F0FDF4',
-          100: '#DCFCE7',
+          DEFAULT: '#111111',
+          light: '#3A3A3A',
+          dark: '#000000',
+          50: '#F6F6F5',
+          100: '#EBEBEA',
         },
         accent: {
-          DEFAULT: '#61C98B',
-          warm: '#DC7E4A',
-          'warm-dark': '#BC6332'
+          DEFAULT: '#C8102E',
+          warm: '#C8102E',
+          'warm-dark': '#9E0C24'
         },
-        sidebar: '#1C5B36',
+        sidebar: '#0A0A0A',
         border: '#E5E7EB',
         background: '#F9FAFB',
         surface: '#FFFFFF'
