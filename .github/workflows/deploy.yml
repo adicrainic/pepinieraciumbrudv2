@@ -1,15 +1,29 @@
 name: Deploy to Production
 
 on:
-  push:
-    branches: [ main ]
   workflow_dispatch:
+  # Se va decomenta după pregătirea serverului VPS și configurarea GitHub Secrets (SSH_HOST, SSH_USER, SSH_KEY):
+  # push:
+  #   branches: [ main ]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Check server configuration
+        id: check_config
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+        run: |
+          if [ -z "$SSH_HOST" ]; then
+            echo "configured=false" >> $GITHUB_OUTPUT
+            echo "⚠️ Server secrets (SSH_HOST) nu sunt încă configurate. Deploy-ul a fost omis în siguranță."
+          else
+            echo "configured=true" >> $GITHUB_OUTPUT
+          fi
+
       - name: Deploy via SSH
+        if: steps.check_config.outputs.configured == 'true'
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -19,4 +33,5 @@ jobs:
           script: |
             cd /var/www/pepinieraciumbrudV2
             ./deploy/deploy.sh main
+
 
