@@ -36,7 +36,7 @@ abstract class PCS_Base_Routes {
         }
 
         if ( ! $raw_token ) {
-            return new WP_Error( 'pcs_no_token', 'Authentication token required', [ 'status' => 401 ] );
+            return new WP_Error( 'pcs_no_token', 'Este necesar un token de autentificare.', [ 'status' => 401 ] );
         }
 
         $payload = PCS_JWT::validate( $raw_token );
@@ -50,7 +50,7 @@ abstract class PCS_Base_Routes {
         $user    = get_user_by( 'id', (int) $user_id );
 
         if ( ! $user || ! user_can( $user, 'manage_woocommerce' ) ) {
-            return new WP_Error( 'pcs_forbidden', 'Insufficient permissions', [ 'status' => 403 ] );
+            return new WP_Error( 'pcs_forbidden', 'Permisiuni insuficiente. Rol de administrator necesar.', [ 'status' => 403 ] );
         }
 
         // Set current user for this request context

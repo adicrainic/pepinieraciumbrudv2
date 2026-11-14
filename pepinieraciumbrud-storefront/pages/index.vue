@@ -3,7 +3,7 @@ import { useProducts } from '~/composables/useProducts'
 import { useSeo } from '~/composables/useSeo'
 import ProductGrid from '~/components/product/ProductGrid.vue'
 import AppButton from '~/components/ui/AppButton.vue'
-import SCurve from '~/components/ui/SCurve.vue'
+import LogoMark from '~/components/ui/LogoMark.vue'
 
 const { fetchProducts, fetchCategories } = useProducts()
 const { setPageSeo } = useSeo()
@@ -104,7 +104,7 @@ const steps = [
     </svg>
 
     <!-- Hero (Fullwidth panoramic photo with white S shape in the middle) -->
-    <section class="group relative overflow-hidden bg-primary-dark min-h-[42rem] lg:min-h-[48rem] flex items-center justify-center">
+    <section class="group relative overflow-hidden bg-neutral-900 min-h-[42rem] lg:min-h-[48rem] flex items-center justify-center">
       <!-- Full-width panoramic background photo - NOT cropped -->
       <img
         src="/images/hero_garden.jpg"
@@ -114,20 +114,20 @@ const steps = [
       />
 
       <!-- Subtle cinematic gradient overlay to let sunrise and roses shine while keeping text crisp -->
-      <div class="absolute inset-0 bg-gradient-to-b from-primary-dark/80 via-primary-dark/55 to-primary-dark/85"></div>
-      <div class="absolute inset-0 bg-radial from-transparent via-transparent to-primary-dark/60 pointer-events-none"></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/75"></div>
+      <div class="absolute inset-0 bg-radial from-transparent via-transparent to-black/40 pointer-events-none"></div>
 
       <!-- The Grand White S Shape in the Middle -->
       <div class="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[90%] max-h-[38rem] w-auto flex items-center justify-center">
-        <SCurve rose :width="2.5" class="h-full w-auto text-white/30 drop-shadow-[0_2px_20px_rgba(0,0,0,0.5)]" />
+        <LogoMark :rose="false" class="h-full w-auto text-white/15 drop-shadow-[0_2px_20px_rgba(0,0,0,0.5)]" />
       </div>
 
       <!-- Hero Content Centered in the Middle -->
       <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center flex flex-col items-center">
         <!-- Center Emblem: White Reversed S + Rose -->
         <div class="mb-6 flex flex-col items-center">
-          <div class="w-16 h-20 sm:w-20 sm:h-24 relative flex items-center justify-center">
-            <SCurve rose :width="3" class="w-full h-full text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.4)]" />
+          <div class="w-20 h-28 sm:w-24 sm:h-36 relative flex items-center justify-center">
+            <LogoMark class="w-full h-full text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.4)]" />
           </div>
           <span class="inline-flex items-center gap-2 px-4 py-1.5 mt-2 rounded-full text-[11px] sm:text-xs font-medium tracking-[0.28em] uppercase bg-white/10 text-white backdrop-blur-md border border-white/25 shadow-sm">
             <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span> Ciumbrud, Alba · Satul Rozelor · Din 2000
@@ -146,8 +146,13 @@ const steps = [
 
         <!-- CTA Buttons -->
         <div class="flex flex-col sm:flex-row gap-4 mb-14 justify-center">
-          <AppButton variant="warm" size="lg" to="/produse" class="shadow-xl hover:shadow-2xl">Explorează Catalogul</AppButton>
-          <AppButton variant="outline" size="lg" to="/produse?category=trandafiri" class="border-white text-white hover:bg-white hover:text-primary backdrop-blur-sm">Colecția de Trandafiri</AppButton>
+          <AppButton variant="primary" size="lg" to="/produse" class="shadow-xl hover:shadow-2xl">Explorează Catalogul</AppButton>
+          <NuxtLink
+            to="/produse?category=trandafiri"
+            class="inline-flex items-center justify-center px-8 py-4 text-xs uppercase tracking-[0.22em] rounded-tr-[1.25rem] rounded-bl-[1.25rem] font-medium border border-white/60 bg-white/10 text-white backdrop-blur-md hover:bg-white hover:text-primary-dark transition-all duration-200 shadow-lg"
+          >
+            Colecția de Trandafiri
+          </NuxtLink>
         </div>
 
         <!-- Stats Bar Centered at Bottom of Hero -->
@@ -186,18 +191,31 @@ const steps = [
           </NuxtLink>
         </div>
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-x-5 gap-y-12 sm:gap-x-8">
-          <NuxtLink v-for="(c, i) in categoryCards" :key="c.to" :to="c.to" class="group block" :class="i % 2 === 1 ? 'lg:mt-12' : ''">
+          <NuxtLink
+            v-for="(c, i) in categoryCards"
+            :key="c.to"
+            :to="c.to"
+            class="group relative bg-white rounded-2xl border border-border/80 hover:border-primary/60 shadow-sm hover:shadow-soft transition-all duration-300 flex flex-col h-full p-4 sm:p-5 cursor-pointer"
+            :class="i % 2 === 1 ? 'lg:mt-12' : ''"
+          >
             <div
-              class="overflow-hidden aspect-[3/4] bg-surface-warm border border-border group-hover:border-primary transition-colors duration-300 relative"
+              class="overflow-hidden aspect-[3/4] bg-surface-warm relative mb-4 transition-all duration-300"
               :class="i % 2 === 0 ? 'petal' : 'petal-alt'"
             >
               <img :src="c.img" :alt="c.title" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
             </div>
-            <div class="flex items-baseline gap-3 mt-5">
-              <span class="font-serif italic text-accent text-lg">0{{ i + 1 }}</span>
-              <h3 class="font-serif text-2xl font-medium text-text">{{ c.title }}</h3>
+            <div class="flex items-baseline gap-2.5">
+              <span class="font-serif italic text-accent text-lg flex-shrink-0 transition-transform duration-300 group-hover:scale-110">0{{ i + 1 }}</span>
+              <h3 class="font-serif text-xl sm:text-2xl font-medium text-text group-hover:text-primary transition-colors duration-300 flex items-center justify-between w-full">
+                <span>{{ c.title }}</span>
+                <span class="text-accent text-base inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
+              </h3>
             </div>
-            <p class="text-xs text-text-muted mt-1.5 leading-snug pl-8">{{ c.text }}</p>
+            <p class="text-xs text-text-muted mt-2 leading-relaxed flex-1 pl-6">{{ c.text }}</p>
+            <div class="mt-4 pt-3 pl-6 border-t border-border/60 flex items-center justify-between text-[11px] uppercase tracking-[0.2em] font-semibold text-primary group-hover:text-accent transition-colors">
+              <span>Vezi soiurile</span>
+              <span class="inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
+            </div>
           </NuxtLink>
         </div>
       </div>
@@ -205,7 +223,7 @@ const steps = [
 
     <!-- Featured products -->
     <section class="py-24 bg-surface-warm relative overflow-hidden">
-      <SCurve class="pointer-events-none absolute -left-16 top-4 h-[90%] w-auto text-primary/[0.05] hidden md:block" />
+      <LogoMark :rose="false" class="pointer-events-none absolute -left-16 top-4 h-[90%] w-auto text-primary/[0.05] hidden md:block" />
       <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-14">
           <span class="section-eyebrow">Disponibile Acum</span>
@@ -218,24 +236,7 @@ const steps = [
       </div>
     </section>
 
-    <!-- Roses spotlight -->
-    <section class="relative bg-primary text-white overflow-hidden">
-      <SCurve class="pointer-events-none absolute left-[42%] -top-8 h-[120%] w-auto text-accent/40 hidden md:block" :width="2" />
-      <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 items-center">
-        <div class="py-16 md:py-24 relative z-10 pr-0 md:pr-10">
-          <span class="section-eyebrow section-eyebrow-light">Specialitatea casei</span>
-          <h2 class="font-serif text-4xl sm:text-5xl font-medium leading-[1.08] text-white mb-6 text-balance">Trandafiri nobili, <em class="text-rose-200">altoiți la Ciumbrud</em></h2>
-          <p class="text-white/70 leading-relaxed mb-9 max-w-md font-light">Teahibrizi, cățărători, floribunda și pomișor — soiuri parfumate și rezistente, crescute în satul renumit pentru trandafiri.</p>
-          <AppButton variant="warm" size="lg" to="/produse?category=trandafiri">Vezi trandafirii</AppButton>
-        </div>
-        <div class="relative h-80 md:h-[34rem] md:-mr-8">
-          <div class="absolute inset-0 hero-s-clip">
-            <img src="/plants/rose.svg" alt="Trandafiri" class="w-full h-full object-cover" />
-          </div>
-        </div>
-      </div>
-    </section>
-
+    
     <!-- Steps -->
     <section class="py-24 bg-white">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -245,7 +246,7 @@ const steps = [
         </div>
         <div class="grid md:grid-cols-3 gap-10 md:gap-0">
           <div v-for="(st, i) in steps" :key="st.n" class="relative md:px-10" :class="i > 0 ? 'md:border-l border-primary/15' : ''">
-            <span class="font-serif text-7xl font-light text-transparent leading-none block mb-5" style="-webkit-text-stroke: 1px #2E2C2A">{{ st.n }}</span>
+            <span class="font-serif text-7xl font-light text-transparent leading-none block mb-5" style="-webkit-text-stroke: 1px #B21111">{{ st.n }}</span>
             <div class="w-10 h-0.5 bg-accent mb-5"></div>
             <h3 class="font-serif text-2xl font-medium text-text mb-3">{{ st.title }}</h3>
             <p class="text-sm text-text-muted leading-relaxed font-light">{{ st.text }}</p>
@@ -265,7 +266,7 @@ const steps = [
           <AppButton variant="primary" to="/despre-noi">Citește mai mult</AppButton>
         </div>
         <div class="relative bg-primary text-white p-10 sm:p-14 petal">
-          <SCurve rose class="absolute right-6 top-6 h-24 w-auto text-white/30" />
+          <LogoMark class="absolute right-6 top-6 h-24 w-auto text-white/30" />
           <div class="space-y-8 relative">
             <div class="border-b border-white/15 pb-6"><span class="text-4xl font-serif font-medium">100%</span><p class="text-[11px] uppercase tracking-[0.2em] text-white/70 mt-2">Aclimatizate în România</p></div>
             <div class="border-b border-white/15 pb-6"><span class="text-4xl font-serif font-medium">+30 ani</span><p class="text-[11px] uppercase tracking-[0.2em] text-white/70 mt-2">Experiență în altoire și selecție</p></div>

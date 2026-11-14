@@ -4,26 +4,72 @@ import AdminLayout from '@/layouts/AdminLayout.vue'
 import { dashboardService } from '@/services/dashboardService'
 import { ordersService } from '@/services/ordersService'
 import { productsService } from '@/services/productsService'
+import { messagesService } from '@/services/messagesService'
 import { getStatusBadge, getStatusLabel } from '@/utils/order'
 import type { Order } from '@/types/order'
-import type { Product } from '@/types/product'
+import type { Product, InventoryItem } from '@/types/product'
 
 const stats = ref<any>({})
 const recentOrders = ref<Order[]>([])
 const products = ref<Product[]>([])
+const criticalStockCount = ref(0)
+const unreadMessagesCount = ref(0)
+const pendingOrdersCount = ref(0)
 const loading = ref(true)
 
 onMounted(async () => {
   try {
-    const [dashData, ordersData, prodData] = await Promise.allSettled([
+    const [dashData, ordersData, prodData, messagesData, invData] = await Promise.allSettled([
       dashboardService.getDashboard(),
       ordersService.list({ per_page: 5 }),
-      productsService.list({ per_page: 6 })
+      productsService.list({ per_page: 6 }),
+      messagesService.list({ per_page: 1 }),
+      dashboardService.getInventory()
     ])
 
-    if (dashData.status === 'fulfilled') stats.value = dashData.value
+    let pendingCount: number | null = null
+    if (dashData.status === 'fulfilled' && dashData.value) {
+      stats.value = dashData.value
+      const pendingObj = Array.isArray(dashData.value.orders_total)
+        ? dashData.value.orders_total.find((s: any) => s.slug === 'pending')
+        : null
+      if (pendingObj && pendingObj.total !== undefined) {
+        pendingCount = Number(pendingObj.total) || 0
+      }
+    }
+
+    if (pendingCount !== null) {
+      pendingOrdersCount.value = pendingCount
+    } else {
+      try {
+        const pendingList = await ordersService.list({ status: 'pending', per_page: 100 })
+        pendingOrdersCount.value = pendingList.length
+      } catch {
+        pendingOrdersCount.value = 0
+      }
+    }
+
     if (ordersData.status === 'fulfilled') recentOrders.value = ordersData.value
     if (prodData.status === 'fulfilled') products.value = prodData.value
+    if (messagesData.status === 'fulfilled' && messagesData.value) {
+      unreadMessagesCount.value = messagesData.value.unread_count ?? 0
+    }
+    if (invData.status === 'fulfilled' && Array.isArray(invData.value)) {
+      let lowCount = 0
+      for (const item of (invData.value as InventoryItem[])) {
+        const qty = item.stock_quantity
+        const status = item.stock_status
+        const threshold = item.low_stock_amount !== null && item.low_stock_amount !== undefined
+          ? item.low_stock_amount
+          : item.effective_threshold
+
+        const isOutOfStock = status === 'outofstock' || (qty !== null && qty <= 0)
+        if (!isOutOfStock && qty !== null && qty <= threshold) {
+          lowCount++
+        }
+      }
+      criticalStockCount.value = lowCount
+    }
   } finally {
     loading.value = false
   }
@@ -59,56 +105,89 @@ onMounted(async () => {
           </div>
         </div>
 
-        <div class="bg-white p-6 rounded-2xl border border-border shadow-sm flex items-center justify-between">
+        <RouterLink
+          to="/comenzi?status=pending"
+          class="bg-white p-6 rounded-2xl border border-border shadow-sm flex items-center justify-between hover:border-blue-400 hover:shadow-md transition-all group block"
+        >
           <div>
             <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1">
-              Comenzi Totale
+              Comenzi Noi
             </span>
-            <span class="text-2xl font-bold text-gray-900">
-              {{ recentOrders.length }}
-            </span>
+            <div class="flex items-baseline gap-2">
+              <span class="text-2xl font-bold transition-colors" :class="pendingOrdersCount > 0 ? 'text-blue-700' : 'text-gray-900 group-hover:text-blue-700'">
+                {{ pendingOrdersCount }}
+              </span>
+              <span
+                v-if="pendingOrdersCount > 0"
+                class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800"
+              >
+                {{ pendingOrdersCount === 1 ? '1 nouă' : `${pendingOrdersCount} noi` }}
+              </span>
+            </div>
             <span class="text-[11px] text-gray-500 font-medium block mt-1">
-              Înregistrate în magazin
+              {{ pendingOrdersCount === 1 ? '1 comandă nouă de preluat' : (pendingOrdersCount === 0 ? 'Nicio comandă nouă' : `${pendingOrdersCount} comenzi noi de preluat`) }}
             </span>
           </div>
-          <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center text-2xl">
+          <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-700 group-hover:bg-blue-100 flex items-center justify-center text-2xl transition-colors">
             📦
           </div>
-        </div>
+        </RouterLink>
 
-        <div class="bg-white p-6 rounded-2xl border border-border shadow-sm flex items-center justify-between">
+        <RouterLink
+          to="/inventar?status=low_stock"
+          class="bg-white p-6 rounded-2xl border border-border shadow-sm flex items-center justify-between hover:border-amber-400 hover:shadow-md transition-all group block"
+        >
           <div>
             <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1">
-              Monedă Magazin
+              Stoc Critic
             </span>
-            <span class="text-2xl font-bold text-gray-900">
-              RON (Lei)
-            </span>
+            <div class="flex items-baseline gap-2">
+              <span class="text-2xl font-bold transition-colors" :class="criticalStockCount > 0 ? 'text-amber-600' : 'text-gray-900 group-hover:text-amber-600'">
+                {{ criticalStockCount }}
+              </span>
+              <span
+                v-if="criticalStockCount > 0"
+                class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800"
+              >
+                {{ criticalStockCount === 1 ? '1 articol' : `${criticalStockCount} articole` }}
+              </span>
+            </div>
             <span class="text-[11px] text-gray-500 font-medium block mt-1">
-              Regiunea România (AB)
+              {{ criticalStockCount > 0 ? 'Atinge pragul de alertă' : 'Toate stocurile sunt optime' }}
             </span>
           </div>
-          <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center text-2xl">
-            💰
+          <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-700 group-hover:bg-amber-100 flex items-center justify-center text-2xl transition-colors">
+            ⚠️
           </div>
-        </div>
+        </RouterLink>
 
-        <div class="bg-white p-6 rounded-2xl border border-border shadow-sm flex items-center justify-between">
+        <RouterLink
+          to="/mesaje"
+          class="bg-white p-6 rounded-2xl border border-border shadow-sm flex items-center justify-between hover:border-primary/40 hover:shadow-md transition-all group block"
+        >
           <div>
             <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1">
-              Stare Servicii
+              Mesaje Noi
             </span>
-            <span class="text-2xl font-bold text-emerald-700">
-              Activ
-            </span>
-            <span class="text-[11px] text-emerald-600 font-medium block mt-1">
-              Store API & REST Proxy Conectate
+            <div class="flex items-baseline gap-2">
+              <span class="text-2xl font-bold text-gray-900 group-hover:text-primary transition-colors">
+                {{ unreadMessagesCount }}
+              </span>
+              <span
+                v-if="unreadMessagesCount > 0"
+                class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700"
+              >
+                {{ unreadMessagesCount === 1 ? '1 nou' : `${unreadMessagesCount} noi` }}
+              </span>
+            </div>
+            <span class="text-[11px] text-gray-500 font-medium block mt-1">
+              {{ unreadMessagesCount === 1 ? '1 mesaj de contact necitit' : (unreadMessagesCount === 0 ? 'Toate mesajele sunt citite' : `${unreadMessagesCount} mesaje de contact necitite`) }}
             </span>
           </div>
-          <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center text-2xl">
-            ⚡
+          <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-700 group-hover:bg-purple-100 flex items-center justify-center text-2xl transition-colors">
+            💬
           </div>
-        </div>
+        </RouterLink>
       </div>
 
       <!-- Quick Action Cards -->

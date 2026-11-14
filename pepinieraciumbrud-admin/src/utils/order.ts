@@ -1,5 +1,5 @@
 export const orderStatusTranslations: Record<string, string> = {
-  'pending': 'În așteptare (Pending)',
+  'pending': 'În așteptare (Nouă)',
   'processing': 'În procesare',
   'on-hold': 'În așteptare plată',
   'completed': 'Finalizată (Livrată)',
@@ -31,4 +31,112 @@ export const getStatusBadge = (status: string): string => {
     default:
       return 'bg-gray-50 text-gray-700 border-gray-200'
   }
+}
+
+const statusNameMap: Record<string, string> = {
+  'Pending payment': 'În așteptarea plății',
+  'Pending': 'În așteptare (Nouă)',
+  'Processing': 'În procesare',
+  'On hold': 'În așteptare plată',
+  'On-hold': 'În așteptare plată',
+  'Completed': 'Finalizată (Livrată)',
+  'Cancelled': 'Anulată',
+  'Refunded': 'Rambursată',
+  'Failed': 'Eșuată',
+  'Checkout draft': 'Ciornă finalizare',
+  'Plată în așteptare': 'În așteptarea plății'
+}
+
+const emailNameMap: Record<string, string> = {
+  'Processing order': 'Comandă în procesare',
+  'New order': 'Comandă nouă',
+  'Completed order': 'Comandă finalizată',
+  'Cancelled order': 'Comandă anulată',
+  'Failed order': 'Comandă eșuată',
+  'Customer on-hold order': 'Comandă în așteptare',
+  'Customer note': 'Notă client',
+  'Customer invoice': 'Factură client',
+  'Reset password': 'Resetare parolă',
+  'New account': 'Cont nou'
+}
+
+/**
+ * Format and translate order notes into clean, friendly Romanian.
+ */
+export const formatOrderNote = (note: string): string => {
+  if (!note) return ''
+
+  let text = note
+
+  // Order status changed from X to Y.
+  text = text.replace(
+    /(?:Order status changed from|Am schimbat starea comenzii din)\s+([^.]+?)\s+(?:to|în)\s+([^.]+?)\./gi,
+    (_, from, to) => {
+      const fromLabel = statusNameMap[from.trim()] || from.trim()
+      const toLabel = statusNameMap[to.trim()] || to.trim()
+      return `Starea comenzii a fost modificată din '${fromLabel}' în '${toLabel}'.`
+    }
+  )
+
+  // Stock hold
+  text = text.replace(
+    /Stock hold of (\d+) minutes applied to:/gi,
+    'Rezervare stoc timp de $1 minute aplicată pentru:'
+  )
+
+  // Stock levels reduced
+  text = text.replace(
+    /(?:Stock levels reduced|Nivelurile stocurilor s-au redus):\s*(.*)/gi,
+    'Nivel stoc redus: $1'
+  )
+
+  // Stock levels increased
+  text = text.replace(
+    /(?:Stock levels increased|Nivelurile stocurilor au crescut):\s*(.*)/gi,
+    'Nivel stoc restabilit: $1'
+  )
+
+  // Payment upon delivery
+  text = text.replace(/Payment to be made upon delivery\./gi, 'Plată ramburs la livrare.')
+  text = text.replace(/Payment to be made upon delivery/gi, 'Plată ramburs la livrare')
+  text = text.replace(/Plata care se va face la livrare\./gi, 'Plată ramburs la livrare.')
+
+  // Email sent
+  text = text.replace(
+    /(?:Email\s*"([^"]+)"\s*sent\.|Emailul\s*[„«]([^”»]+)[”»]\s*este trimis\.)/gi,
+    (_, e1, e2) => {
+      const raw = (e1 || e2 || '').trim()
+      const emailLabel = emailNameMap[raw] || raw
+      return `Emailul «${emailLabel}» a fost trimis.`
+    }
+  )
+
+  // Email failed to send
+  text = text.replace(
+    /Email "([^"]+)" failed to send:\s*(.*)/gi,
+    (_, rawEmail, reason) => {
+      const emailLabel = emailNameMap[rawEmail.trim()] || rawEmail.trim()
+      let cleanReason = (reason || '').trim()
+      if (cleanReason.toLowerCase().includes('could not instantiate mail function')) {
+        cleanReason = 'Funcția de mail nu a putut fi inițializată (SMTP neconfigurat la acel moment).'
+      }
+      return `Emailul «${emailLabel}» nu a putut fi trimis: ${cleanReason}`
+    }
+  )
+
+  // Unpaid order cancelled
+  text = text.replace(
+    /Unpaid order cancelled - time limit reached\./gi,
+    'Comanda neplătită a fost anulată automat (timp expirat).'
+  )
+
+  // Awaiting payments
+  text = text.replace(/Awaiting cash on delivery payment/gi, 'În așteptarea plății ramburs la livrare')
+  text = text.replace(/Awaiting BACS payment/gi, 'În așteptarea transferului bancar')
+  text = text.replace(/Awaiting cheque payment/gi, 'În așteptarea plății prin cec')
+
+  // Added by customer during checkout
+  text = text.replace(/Added by customer during checkout:/gi, 'Adăugată de client la plasarea comenzii:')
+
+  return text
 }

@@ -10,6 +10,24 @@ export const useProducts = () => {
     return `${num.toFixed(2).replace('.', ',')} lei`
   }
 
+  const formatRegularPrice = (prices: any): string | null => {
+    if (!prices || !prices.regular_price) return null
+    const current = parseFloat(prices.price || '0')
+    const regular = parseFloat(prices.regular_price || '0')
+    if (regular <= current) return null
+    const minorUnit = prices.currency_minor_unit ?? 2
+    const num = regular / Math.pow(10, minorUnit)
+    return `${num.toFixed(2).replace('.', ',')} lei`
+  }
+
+  const getDiscountPercent = (prices: any): number => {
+    if (!prices || !prices.regular_price || !prices.price) return 0
+    const current = parseFloat(prices.price || '0')
+    const regular = parseFloat(prices.regular_price || '0')
+    if (regular <= 0 || regular <= current) return 0
+    return Math.round(((regular - current) / regular) * 100)
+  }
+
   const getProductImage = (product: Product): string => {
     if (product.images && product.images.length > 0 && product.images[0].src) {
       return product.images[0].src
@@ -53,6 +71,10 @@ export const useProducts = () => {
     return await storeApi.getProducts(params)
   }
 
+  const fetchProductsPaged = async (params: Record<string, any> = {}) => {
+    return await storeApi.getProductsPaged(params)
+  }
+
   const fetchProductBySlug = async (slug: string) => {
     return await storeApi.getProductBySlug(slug)
   }
@@ -63,8 +85,11 @@ export const useProducts = () => {
 
   return {
     formatPrice,
+    formatRegularPrice,
+    getDiscountPercent,
     getProductImage,
     fetchProducts,
+    fetchProductsPaged,
     fetchProductBySlug,
     fetchCategories
   }

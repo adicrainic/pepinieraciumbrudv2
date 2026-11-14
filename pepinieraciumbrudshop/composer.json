@@ -1,0 +1,17 @@
+{
+  "name": "pepinieraciumbrud/shop",
+  "description": "Pepiniera Ciumbrud - Headless WooCommerce Backend & Migrations",
+  "type": "project",
+  "require": {
+    "robmorgan/phinx": "^0.16"
+  },
+  "config": {
+    "allow-plugins": {}
+  },
+  "scripts": {
+    "migrate": "phinx migrate -c database/phinx.php",
+    "rollback": "phinx rollback -c database/phinx.php",
+    "status": "phinx status -c database/phinx.php"
+  }
+}
+

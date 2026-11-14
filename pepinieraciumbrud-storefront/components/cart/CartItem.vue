@@ -6,6 +6,10 @@ const props = defineProps<{
   item: CartItemType
 }>()
 
+const emit = defineEmits<{
+  (e: 'navigate'): void
+}>()
+
 const cartStore = useCartStore()
 
 const isUpdating = ref(false)
@@ -108,24 +112,44 @@ const itemImage = computed(() => {
   }
   return '/placeholder-plant.svg'
 })
+
+const itemPath = computed(() => {
+  if (props.item.permalink) {
+    try {
+      const url = new URL(props.item.permalink)
+      const parts = url.pathname.split('/').filter(Boolean)
+      const slug = parts[parts.length - 1]
+      if (slug) return `/produse/${slug}`
+    } catch {
+      // fallback to id
+    }
+  }
+  return `/produse/${props.item.id}`
+})
 </script>
 
 <template>
   <div class="flex items-center space-x-4 py-4 border-b border-border last:border-0">
     <!-- Thumbnail -->
-    <div class="w-16 h-16 rounded-xl bg-surface-warm overflow-hidden flex-shrink-0 border border-border">
+    <NuxtLink
+      :to="itemPath"
+      @click="emit('navigate')"
+      class="w-16 h-16 rounded-xl bg-surface-warm overflow-hidden flex-shrink-0 border border-border hover:border-primary transition-colors block"
+    >
       <img
         :src="itemImage"
         :alt="item.name"
         class="w-full h-full object-cover"
         onerror="this.src='/placeholder-plant.svg'"
       />
-    </div>
+    </NuxtLink>
 
     <!-- Details -->
     <div class="flex-1 min-w-0">
       <h4 class="text-sm font-semibold text-text truncate font-serif">
-        {{ item.name }}
+        <NuxtLink :to="itemPath" @click="emit('navigate')" class="hover:text-primary transition-colors">
+          {{ item.name }}
+        </NuxtLink>
       </h4>
       <div class="text-xs text-text-muted mt-0.5">
         {{ formatItemPrice(item.prices.price, item.prices.currency_minor_unit) }} / buc.

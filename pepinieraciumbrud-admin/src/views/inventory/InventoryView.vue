@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import AdminLayout from '@/layouts/AdminLayout.vue'
 import { dashboardService } from '@/services/dashboardService'
 import { useUiStore } from '@/stores/ui'
@@ -12,6 +13,7 @@ interface RowEditState {
   manage_stock: boolean
 }
 
+const route = useRoute()
 const uiStore = useUiStore()
 const inventory = ref<InventoryItem[]>([])
 const loading = ref(true)
@@ -37,8 +39,20 @@ const fetchInventory = async () => {
 }
 
 onMounted(() => {
+  if (route.query.status && ['all', 'low_stock', 'outofstock', 'instock'].includes(route.query.status as string)) {
+    statusFilter.value = route.query.status as any
+  }
   fetchInventory()
 })
+
+watch(
+  () => route.query.status,
+  (newStatus) => {
+    if (newStatus && ['all', 'low_stock', 'outofstock', 'instock'].includes(newStatus as string)) {
+      statusFilter.value = newStatus as any
+    }
+  }
+)
 
 // Helper functions for reading current value (edited or original)
 const getRowQuantity = (item: InventoryItem): number | string => {
@@ -682,7 +696,7 @@ const revertAllDirty = () => {
 
                     <!-- Link to full product edit -->
                     <RouterLink
-                      :to="`/produse/${item.id}/edit`"
+                      :to="`/produse/${item.id}?from=inventar`"
                       class="p-1.5 text-gray-400 hover:text-primary hover:bg-gray-100 rounded-xl transition-colors"
                       title="Editează detaliile complete ale produsului"
                     >

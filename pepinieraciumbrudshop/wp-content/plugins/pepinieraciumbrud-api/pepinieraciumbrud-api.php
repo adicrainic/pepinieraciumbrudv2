@@ -60,6 +60,25 @@ final class PCS_API {
         add_filter( 'woocommerce_store_api_product_quantity_maximum', fn() => 99999 );
         add_filter( 'woocommerce_store_api_product_quantity_limit', fn() => 99999 );
         add_filter( 'woocommerce_product_backorders_allowed', '__return_true' );
+
+        // New orders status & lifecycle:
+        // Set new orders default and COD status to 'pending' (În așteptare)
+        add_filter( 'woocommerce_cod_process_payment_order_status', [ $this, 'filter_new_order_status' ], 10, 2 );
+        add_filter( 'woocommerce_default_order_status', [ $this, 'filter_default_order_status' ] );
+
+        // Prevent automatic cancellation of unpaid orders after hold_stock_minutes
+        add_filter( 'woocommerce_cancel_unpaid_order', '__return_false' );
+
+        // Stock management for pending orders
+        remove_action( 'woocommerce_order_status_pending', 'wc_maybe_increase_stock_levels' );
+        add_action( 'woocommerce_order_status_pending', 'wc_maybe_reduce_stock_levels' );
+
+        // Handle checkout order processing (Store API & classic checkout)
+        add_action( 'woocommerce_store_api_checkout_order_processed', [ $this, 'on_checkout_order_processed' ], 20, 1 );
+        add_action( 'woocommerce_checkout_order_processed', [ $this, 'on_checkout_order_processed' ], 20, 1 );
+
+        // Prevent duplicate customer confirmation email when transitioning from pending to processing
+        add_filter( 'woocommerce_email_enabled_customer_processing_order', [ $this, 'filter_customer_processing_email_enabled' ], 10, 2 );
     }
 
     public function register_routes(): void {
@@ -240,6 +259,75 @@ final class PCS_API {
             header( 'Vary: Origin' );
         }
         return $served;
+    }
+
+    /**
+     * Filter new order status for COD payments to 'pending' (În așteptare).
+     */
+    public function filter_new_order_status( string $status, ?WC_Order $order = null ): string {
+        return 'pending';
+    }
+
+    /**
+     * Filter default order status to 'pending' (În așteptare).
+     */
+    public function filter_default_order_status( string $status ): string {
+        return 'pending';
+    }
+
+    /**
+     * Handle checkout order processing for new orders:
+     * - Reduce stock immediately
+     * - Add note for COD payment
+     * - Trigger admin "New order" email notification
+     * - Trigger customer "Order confirmation" email notification
+     */
+    public function on_checkout_order_processed( mixed $order ): void {
+        if ( is_numeric( $order ) ) {
+            $order = wc_get_order( (int) $order );
+        }
+        if ( ! $order instanceof WC_Order ) {
+            return;
+        }
+
+        $order_id = $order->get_id();
+
+        // 1. Ensure stock is reduced for the new order
+        wc_maybe_reduce_stock_levels( $order_id );
+
+        // 2. Add COD note if payment method is COD
+        if ( 'cod' === $order->get_payment_method() ) {
+            $order->add_order_note( __( 'Plată la livrare (Ramburs). Comandă primită în așteptare.', 'pepinieraciumbrud-api' ) );
+        }
+
+        // 3. Trigger Admin New Order notification email
+        $mailer = WC()->mailer();
+        $emails = $mailer ? $mailer->get_emails() : [];
+        if ( isset( $emails['WC_Email_New_Order'] ) && $emails['WC_Email_New_Order']->is_enabled() ) {
+            if ( ! $order->get_new_order_email_sent() ) {
+                $emails['WC_Email_New_Order']->trigger( $order_id, $order );
+            }
+        }
+
+        // 4. Trigger Customer Order Received / Confirmation email
+        if ( isset( $emails['WC_Email_Customer_Processing_Order'] ) && $emails['WC_Email_Customer_Processing_Order']->is_enabled() ) {
+            if ( ! $order->get_meta( '_pcs_customer_order_email_sent' ) ) {
+                $emails['WC_Email_Customer_Processing_Order']->trigger( $order_id, $order );
+                $order->update_meta_data( '_pcs_customer_order_email_sent', 'yes' );
+                $order->save();
+            }
+        }
+    }
+
+    /**
+     * Prevent duplicate customer confirmation email when an order is transitioned
+     * from 'pending' to 'processing' by store staff in the admin panel.
+     */
+    public function filter_customer_processing_email_enabled( bool $enabled, mixed $order = null ): bool {
+        if ( $order instanceof WC_Order && 'yes' === $order->get_meta( '_pcs_customer_order_email_sent' ) && did_action( 'woocommerce_order_status_pending_to_processing_notification' ) ) {
+            return false;
+        }
+        return $enabled;
     }
 }
 

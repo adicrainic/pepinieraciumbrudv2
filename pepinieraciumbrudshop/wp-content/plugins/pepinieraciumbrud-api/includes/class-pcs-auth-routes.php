@@ -48,7 +48,7 @@ final class PCS_Auth_Routes extends PCS_Base_Routes {
         $attempts  = (int) get_transient( $ip_key );
 
         if ( $attempts >= 5 ) {
-            return $this->error( 'pcs_rate_limit', 'Too many login attempts. Please wait 60 seconds.', 429 );
+            return $this->error( 'pcs_rate_limit', 'Prea multe încercări de autentificare. Vă rugăm să așteptați 60 de secunde.', 429 );
         }
 
         $user = wp_authenticate( $username, $password );

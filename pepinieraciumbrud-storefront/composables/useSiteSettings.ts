@@ -5,7 +5,7 @@ export const defaultSiteSettings: SiteSettings = {
   site_tagline: 'Pepiniera de familie din 2000',
   site_description: 'Producător autorizat de material săditor pomicol, trandafiri și plante ornamentale de cea mai bună calitate, aclimatizate pentru România.',
   logo_url: '/logo.jpg',
-  contact_phone: '+40 700 000 000',
+  contact_phone: '+40 765 152 832',
   contact_email: 'contact@pepinieraciumbrud.ro',
   contact_address: 'Sat Ciumbrud, Jud. Alba, România',
   schedule_weekdays: 'Luni – Vineri: 08:00 – 17:00',

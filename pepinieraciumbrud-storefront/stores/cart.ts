@@ -46,8 +46,29 @@ export const useCartStore = defineStore('cart', {
       return `${val} lei`
     },
 
+    hasShippingCost: (state): boolean => {
+      if (!state.cart || !state.cart.totals) return false
+      return parseFloat(state.cart.totals.total_shipping || '0') > 0
+    },
+
+    formattedShipping: (state): string => {
+      if (!state.cart || !state.cart.totals) return '0,00 lei'
+      const price = parseFloat(state.cart.totals.total_shipping || '0')
+      const minorUnit = state.cart.totals.currency_minor_unit ?? 2
+      const val = (price / Math.pow(10, minorUnit)).toFixed(2).replace('.', ',')
+      return `${val} lei`
+    },
+
     items: (state): CartItem[] => {
       return state.cart?.items || []
+    },
+
+    getItemQuantity: (state) => {
+      return (productId: number): number => {
+        if (!state.cart || !state.cart.items) return 0
+        const found = state.cart.items.find((item) => item.id === productId)
+        return found ? found.quantity : 0
+      }
     }
   },
 
@@ -62,6 +83,18 @@ export const useCartStore = defineStore('cart', {
       } finally {
         this.loading = false
       }
+    },
+
+    clearLocalCart() {
+      if (this.cart) {
+        this.cart.items = []
+        this.cart.items_count = 0
+        if (this.cart.totals) {
+          this.cart.totals.total_items = '0'
+          this.cart.totals.total_price = '0'
+        }
+      }
+      this.isOpen = false
     },
 
     async addItem(productId: number, quantity: number = 1) {

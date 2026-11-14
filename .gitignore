@@ -7,6 +7,7 @@ node_modules/
 vendor/
 
 # Build and runtime outputs
+dist
 dist/
 dist-ssr/
 .nuxt/
@@ -32,13 +33,14 @@ pnpm-debug.log*
 .DS_Store
 Thumbs.db
 
-# Local environment overrides
-.env.local
-.env.*.local
+# Environment files (local / production secrets - NEVER commit to git)
+.env
+.env.*
+!.env.example
+!.env.*.example
 
 # WordPress specific
 pepinieraciumbrudshop/wp-config.php
 pepinieraciumbrudshop/wp-content/upgrade/
 pepinieraciumbrudshop/wp-content/cache/
-pepinieraciumbrudshop/wp-content/uploads/wc-logs/
-
+pepinieraciumbrudshop/wp-content/uploads/

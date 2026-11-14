@@ -87,6 +87,26 @@ export class StoreApiService {
     return this.fetchWithHeaders<Product[]>(url, {}, false)
   }
 
+  async getProductsPaged(params: Record<string, any> = {}): Promise<{ items: Product[]; total: number; totalPages: number }> {
+    const base = this.getApiBase()
+    const query = new URLSearchParams()
+    Object.entries(params).forEach(([k, v]) => {
+      if (v !== undefined && v !== null && v !== '') {
+        query.append(k, String(v))
+      }
+    })
+    const response = await $fetch.raw<Product[]>(`${base}/products${query.toString() ? `?${query.toString()}` : ''}`, {
+      headers: { Accept: 'application/json' },
+      credentials: 'include'
+    })
+    const items = (response._data as Product[]) || []
+    return {
+      items,
+      total: parseInt(response.headers.get('X-WP-Total') || String(items.length), 10),
+      totalPages: parseInt(response.headers.get('X-WP-TotalPages') || '1', 10)
+    }
+  }
+
   async getProduct(id: number): Promise<Product> {
     const base = this.getApiBase()
     return this.fetchWithHeaders<Product>(`${base}/products/${id}`, {}, false)

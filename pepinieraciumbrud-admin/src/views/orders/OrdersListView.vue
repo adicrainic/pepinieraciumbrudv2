@@ -1,19 +1,42 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import AdminLayout from '@/layouts/AdminLayout.vue'
 import { ordersService } from '@/services/ordersService'
 import { useUiStore } from '@/stores/ui'
 import { getStatusBadge, getStatusLabel } from '@/utils/order'
 import type { Order } from '@/types/order'
 
+const route = useRoute()
+const router = useRouter()
 const uiStore = useUiStore()
 const orders = ref<Order[]>([])
 const loading = ref(true)
 
+const currentStatus = ref<string>((route.query.status as string) || 'all')
+
+const statusFilters = [
+  { id: 'all', label: 'Toate Comenzile' },
+  { id: 'pending', label: 'Comenzi Noi' },
+  { id: 'processing', label: 'În procesare' },
+  { id: 'completed', label: 'Finalizate' },
+  { id: 'cancelled', label: 'Anulate' }
+]
+
+const setStatus = (status: string) => {
+  currentStatus.value = status
+  router.push({ query: status === 'all' ? {} : { status } })
+  fetchOrders()
+}
+
 const fetchOrders = async () => {
   loading.value = true
   try {
-    orders.value = await ordersService.list({ per_page: 50 })
+    const params: Record<string, any> = { per_page: 50 }
+    if (currentStatus.value && currentStatus.value !== 'all') {
+      params.status = currentStatus.value
+    }
+    orders.value = await ordersService.list(params)
   } catch (err) {
     uiStore.addNotification('error', 'Nu s-au putut încărca comenzile.')
   } finally {
@@ -22,8 +45,19 @@ const fetchOrders = async () => {
 }
 
 onMounted(() => {
+  if (route.query.status) {
+    currentStatus.value = route.query.status as string
+  }
   fetchOrders()
 })
+
+watch(
+  () => route.query.status,
+  (newStatus) => {
+    currentStatus.value = (newStatus as string) || 'all'
+    fetchOrders()
+  }
+)
 </script>
 
 <template>
@@ -47,6 +81,19 @@ onMounted(() => {
         </button>
       </div>
 
+      <!-- Status Tabs -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-1">
+        <button
+          v-for="filter in statusFilters"
+          :key="filter.id"
+          @click="setStatus(filter.id)"
+          class="px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors"
+          :class="currentStatus === filter.id ? 'bg-primary text-white shadow-sm' : 'bg-white border border-border text-gray-600 hover:bg-gray-50'"
+        >
+          {{ filter.label }}
+        </button>
+      </div>
+
       <div class="bg-white rounded-2xl border border-border overflow-hidden shadow-sm">
         <div v-if="loading" class="py-16 text-center text-xs text-gray-400">
           Se încarcă comenzile...
@@ -54,7 +101,7 @@ onMounted(() => {
 
         <div v-else-if="orders.length === 0" class="py-16 text-center text-xs text-gray-500">
           <div class="text-3xl mb-2">📦</div>
-          Nu există comenzi plasate încă.
+          {{ currentStatus !== 'all' ? 'Nu există comenzi cu acest status.' : 'Nu există comenzi plasate încă.' }}
         </div>
 
         <div v-else class="overflow-x-auto">

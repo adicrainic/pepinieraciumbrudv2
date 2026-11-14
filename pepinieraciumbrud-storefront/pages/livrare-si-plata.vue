@@ -26,6 +26,7 @@ setPageSeo({
           <li><strong>Sezonul de toamnă:</strong> Livrările încep de regulă după primele brume (sfârșitul lunii octombrie – noiembrie), când pomii au intrat în repaus vegetativ.</li>
           <li><strong>Sezonul de primăvară:</strong> Livrările se reiau imediat ce solul permite plantarea (februarie – aprilie).</li>
           <li><strong>Timp de tranzit:</strong> 24-48 ore de la predarea coletului către curier.</li>
+          <li><strong>Cost estimativ transport:</strong> Între <strong>25 și 35 lei</strong> pentru coletele standard în orice localitate din România (fără kilometri suplimentari). Pentru comenzi voluminoase, costul exact vă este comunicat telefonic la confirmarea comenzii.</li>
         </ul>
       </div>
 

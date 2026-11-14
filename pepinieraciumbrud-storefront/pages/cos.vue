@@ -59,33 +59,49 @@ onMounted(() => {
       </div>
 
       <!-- Order Summary Card -->
-      <div class="bg-white rounded-3xl border border-border p-6 sm:p-8 shadow-sm space-y-6">
+      <div class="bg-white rounded-3xl border border-border p-6 sm:p-8 shadow-sm space-y-6 lg:sticky lg:top-24">
         <h3 class="font-serif text-xl font-bold text-primary-dark border-b border-border pb-4">
           Sumar Comandă
         </h3>
 
         <div class="space-y-3 text-sm">
           <div class="flex justify-between text-text-muted">
-            <span>Subtotal</span>
+            <span>Subtotal ({{ cartStore.itemCount }} buc.)</span>
             <span class="font-semibold text-text">{{ cartStore.formattedSubtotal }}</span>
           </div>
-          <div class="flex justify-between text-text-muted">
-            <span>Livrare</span>
-            <span class="text-xs text-primary font-medium">Calculată la pasul următor</span>
+          <div class="flex justify-between items-start gap-2 text-text-muted">
+            <span>Livrare curier rapid</span>
+            <span v-if="cartStore.hasShippingCost" class="font-semibold text-text">
+              {{ cartStore.formattedShipping }}
+            </span>
+            <span v-else class="text-xs text-leaf-700 font-medium text-right">
+              ~25–35 lei (confirmată telefonic)
+            </span>
           </div>
           <div class="border-t border-border pt-3 flex justify-between text-base font-bold text-primary-dark">
-            <span>Total estimat</span>
+            <span>Total produse</span>
             <span>{{ cartStore.formattedTotal }}</span>
           </div>
         </div>
 
+        <div class="bg-surface-warm/60 border border-border rounded-xl p-3.5 text-xs text-text-muted space-y-2">
+          <div class="flex items-center gap-2 text-text font-medium">
+            <span>🛡️</span>
+            <span>Garanție de prindere & soi autentic</span>
+          </div>
+          <div class="flex items-center gap-2 text-text font-medium">
+            <span>📦</span>
+            <span>Rădăcini protejate în hidrogel și rumeguș umed</span>
+          </div>
+        </div>
+
         <AppButton to="/comanda" variant="warm" size="lg" class="w-full">
-          Continuă cu Comanda
+          Continuă spre Finalizare →
         </AppButton>
 
         <div class="text-center">
           <NuxtLink to="/produse" class="text-xs text-text-muted hover:text-primary underline">
-            Continuă cumpărăturile
+            ← Continuă cumpărăturile
           </NuxtLink>
         </div>
       </div>

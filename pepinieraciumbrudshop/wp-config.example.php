@@ -39,10 +39,20 @@ define( 'WP_DEBUG', false );
 /* Add any custom values between this line and the "stop editing" line. */
 
 // Pepinieraciumbrud - Headless API Proxy credentials (server-side only, never exposed to browser)
+// In production, generate WooCommerce Keys under WooCommerce > Settings > Advanced > REST API
 define( 'PCS_WC_CONSUMER_KEY',    'ck_your_consumer_key_here' );
 define( 'PCS_WC_CONSUMER_SECRET', 'cs_your_consumer_secret_here' );
+
+// Local: 'http://localhost/pepinieraciumbrudV2/pepinieraciumbrudshop/wp-json/wc/v3'
+// Production: 'https://api.pepinieraciumbrud.ro/wp-json/wc/v3'
 define( 'PCS_WC_API_URL',         'http://localhost/pepinieraciumbrudV2/pepinieraciumbrudshop/wp-json/wc/v3' );
+
+// Strong random secret string for JWT signing
 define( 'PCS_JWT_SECRET',         'your_jwt_secret_key_here' );
+
+// Allowed Origins for CORS:
+// Local: 'http://localhost:3000' and 'http://localhost:5173'
+// Production: 'https://pepinieraciumbrud.ro' and 'https://admin.pepinieraciumbrud.ro'
 define( 'PCS_STOREFRONT_ORIGIN',  'http://localhost:3000' );
 define( 'PCS_ADMIN_ORIGIN',       'http://localhost:5173' );
 

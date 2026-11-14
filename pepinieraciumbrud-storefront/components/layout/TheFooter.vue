@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import SCurve from '~/components/ui/SCurve.vue'
+import LogoMark from '~/components/ui/LogoMark.vue'
 import { useSiteSettings } from '~/composables/useSiteSettings'
 
 const { settings } = useSiteSettings()
@@ -7,7 +7,7 @@ const { settings } = useSiteSettings()
 
 <template>
    <footer class="relative overflow-hidden bg-primary text-white mt-0">
-    <SCurve rose class="pointer-events-none absolute -right-10 -bottom-10 h-[130%] w-auto text-white/[0.06]" />
+    <LogoMark :rose="false" class="pointer-events-none absolute -right-10 -bottom-10 h-[130%] w-auto text-white/[0.06]" />
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
         <!-- Brand Info -->
@@ -79,7 +79,7 @@ const { settings } = useSiteSettings()
               v-if="settings.schedule_weekdays || settings.schedule_saturday || settings.schedule_sunday"
               class="text-white/65 text-xs pt-1 flex items-start gap-1.5"
             >
-              <span class="shrink-0 mt-1.5 w-1.5 h-1.5 rounded-full bg-accent"></span>
+              <span class="shrink-0 mt-1.5 w-1.5 h-1.5 rounded-full bg-white/70"></span>
               <div class="space-y-0.5">
                 <div v-if="settings.schedule_weekdays" class="text-white/60">{{ settings.schedule_weekdays }}</div>
                 <div v-if="settings.schedule_saturday" class="text-white/60">{{ settings.schedule_saturday }}</div>

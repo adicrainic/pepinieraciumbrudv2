@@ -78,6 +78,7 @@ onMounted(() => {
             v-for="item in cartStore.items"
             :key="item.key"
             :item="item"
+            @navigate="cartStore.closeDrawer()"
           />
         </div>
       </div>
@@ -87,17 +88,28 @@ onMounted(() => {
         v-if="cartStore.items && cartStore.items.length > 0"
         class="p-6 border-t border-border bg-surface-warm/50 space-y-4"
       >
-        <div class="flex items-center justify-between text-sm">
-          <span class="text-text-muted">Subtotal produse</span>
-          <span class="font-bold text-primary-dark font-sans text-base">
-            {{ cartStore.formattedSubtotal }}
-          </span>
+        <div class="space-y-1.5 text-sm">
+          <div class="flex items-center justify-between">
+            <span class="text-text-muted">Subtotal produse</span>
+            <span class="font-bold text-primary-dark font-sans text-base">
+              {{ cartStore.formattedSubtotal }}
+            </span>
+          </div>
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-text-muted">Livrare curier rapid</span>
+            <span v-if="cartStore.hasShippingCost" class="font-semibold text-text">
+              {{ cartStore.formattedShipping }}
+            </span>
+            <span v-else class="text-leaf-700 font-medium">
+              ~25–35 lei (confirmată telefonic)
+            </span>
+          </div>
         </div>
         <p class="text-[11px] text-text-muted leading-relaxed">
-          Taxele de transport se calculează la pasul următor. Livrare prin curier rapid în toată România.
+          Ambalare specială cu rădăcini hidratate. Livrare prin curier rapid în toată România.
         </p>
 
-        <div class="grid grid-cols-2 gap-3 pt-2">
+        <div class="grid grid-cols-2 gap-3 pt-1">
           <AppButton
             variant="secondary"
             to="/cos"

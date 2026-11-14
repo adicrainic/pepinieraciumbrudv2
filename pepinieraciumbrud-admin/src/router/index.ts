@@ -34,6 +34,7 @@ const router = createRouter({
     },
     {
       path: '/produse/:id',
+      alias: ['/produse/:id/edit'],
       name: 'product-edit',
       component: () => import('@/views/products/ProductEditView.vue'),
       meta: { requiresAuth: true }
@@ -81,6 +82,10 @@ const router = createRouter({
       name: 'settings',
       component: () => import('@/views/settings/SettingsView.vue'),
       meta: { requiresAuth: true }
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      redirect: '/dashboard'
     }
   ]
 })

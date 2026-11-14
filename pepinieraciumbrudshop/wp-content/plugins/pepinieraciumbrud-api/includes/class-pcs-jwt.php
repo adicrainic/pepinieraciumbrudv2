@@ -49,7 +49,7 @@ final class PCS_JWT {
         $parts = explode( '.', $token );
 
         if ( 3 !== count( $parts ) ) {
-            return new WP_Error( 'pcs_jwt_malformed', 'Token malformat', [ 'status' => 401 ] );
+            return new WP_Error( 'pcs_jwt_malformed', 'Token de autentificare malformat.', [ 'status' => 401 ] );
         }
 
         [ $header, $body, $sig ] = $parts;
@@ -57,17 +57,17 @@ final class PCS_JWT {
         $expected = self::sign( "$header.$body" );
 
         if ( ! hash_equals( $expected, $sig ) ) {
-            return new WP_Error( 'pcs_jwt_invalid_sig', 'Invalid token signature', [ 'status' => 401 ] );
+            return new WP_Error( 'pcs_jwt_invalid_sig', 'Semnătura token-ului este invalidă.', [ 'status' => 401 ] );
         }
 
         $payload = json_decode( self::b64_decode( $body ), true );
 
         if ( ! $payload ) {
-            return new WP_Error( 'pcs_jwt_decode_fail', 'Could not decode token', [ 'status' => 401 ] );
+            return new WP_Error( 'pcs_jwt_decode_fail', 'Nu s-a putut decoda token-ul.', [ 'status' => 401 ] );
         }
 
         if ( isset( $payload['exp'] ) && $payload['exp'] < time() ) {
-            return new WP_Error( 'pcs_jwt_expired', 'Token expired', [ 'status' => 401 ] );
+            return new WP_Error( 'pcs_jwt_expired', 'Sesiunea a expirat. Vă rugăm să vă autentificați din nou.', [ 'status' => 401 ] );
         }
 
         return $payload;

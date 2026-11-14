@@ -63,14 +63,14 @@ final class PCS_WC_Proxy {
         }
 
         if ( $response->is_error() ) {
-            return $response->as_error() ?: new WP_Error( 'pcs_wc_error', 'WooCommerce API error', [ 'status' => $response->get_status() ] );
+            return $response->as_error() ?: new WP_Error( 'pcs_wc_error', 'Eroare în comunicarea cu WooCommerce', [ 'status' => $response->get_status() ] );
         }
 
         $status = $response->get_status();
         $data = $server->response_to_data( $response, 'embed' );
 
         if ( $status >= 400 ) {
-            $message = is_array( $data ) && isset( $data['message'] ) ? $data['message'] : 'WooCommerce API error';
+            $message = is_array( $data ) && isset( $data['message'] ) ? $data['message'] : 'Eroare în comunicarea cu WooCommerce';
             return new WP_Error( 'pcs_wc_error', $message, [ 'status' => $status ] );
         }
 

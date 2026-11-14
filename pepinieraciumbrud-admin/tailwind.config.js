@@ -8,16 +8,16 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#111111',
-          light: '#3A3A3A',
-          dark: '#000000',
-          50: '#F6F6F5',
-          100: '#EBEBEA',
+          DEFAULT: '#B21111',
+          light: '#C92A2A',
+          dark: '#7D0C0C',
+          50: '#FCF2F2',
+          100: '#F7DFDF',
         },
         accent: {
-          DEFAULT: '#C8102E',
-          warm: '#C8102E',
-          'warm-dark': '#9E0C24'
+          DEFAULT: '#B21111',
+          warm: '#B21111',
+          'warm-dark': '#7D0C0C'
         },
         sidebar: '#0A0A0A',
         border: '#E5E7EB',

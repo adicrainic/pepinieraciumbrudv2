@@ -19,6 +19,10 @@ const saving = ref(false)
 const categories = ref<Category[]>([])
 const selectedCategoryIds = ref<number[]>([])
 
+const fromInventory = computed(() => route.query.from === 'inventar')
+const backRoute = computed(() => (fromInventory.value ? '/inventar' : '/produse'))
+const backLabel = computed(() => (fromInventory.value ? 'Înapoi la Inventar' : 'Înapoi la Listă'))
+
 const formattedCategories = computed(() => {
   const list = [...categories.value].filter(c => c.slug !== 'uncategorized')
   const parents = list.filter(c => !c.parent || c.parent === 0)
@@ -60,6 +64,12 @@ const form = ref({
 })
 
 onMounted(async () => {
+  if (!id || isNaN(id)) {
+    uiStore.addNotification('error', 'ID produs invalid.')
+    router.push(backRoute.value)
+    return
+  }
+
   try {
     try {
       categories.value = await categoriesService.list()
@@ -100,7 +110,7 @@ onMounted(async () => {
     }
   } catch (err: any) {
     uiStore.addNotification('error', 'Nu s-a putut încărca produsul.')
-    router.push('/produse')
+    router.push(backRoute.value)
   } finally {
     loading.value = false
   }
@@ -136,17 +146,24 @@ const handleUpdate = async () => {
     }
 
     const payload: any = {
-      ...form.value,
-      attributes,
-      images: imagesPayload,
-      categories: selectedCategoryIds.value.map(id => ({ id })),
+      name: form.value.name,
+      regular_price: form.value.regular_price,
+      sale_price: form.value.sale_price,
+      sku: form.value.sku,
+      description: form.value.description,
+      short_description: form.value.short_description,
+      stock_status: form.value.stock_status,
       stock_quantity: form.value.stock_quantity === '' ? null : Number(form.value.stock_quantity),
       low_stock_amount: form.value.low_stock_amount === '' ? null : Number(form.value.low_stock_amount),
-      manage_stock: form.value.stock_quantity !== ''
+      manage_stock: form.value.stock_quantity !== '',
+      status: form.value.status,
+      attributes,
+      images: imagesPayload,
+      categories: selectedCategoryIds.value.map(id => ({ id }))
     }
     await productsService.update(id, payload)
     uiStore.addNotification('success', 'Produsul a fost actualizat.')
-    router.push('/produse')
+    router.push(backRoute.value)
   } catch (err: any) {
     uiStore.addNotification('error', 'Eroare la actualizare.')
   } finally {
@@ -161,18 +178,19 @@ const handleUpdate = async () => {
       <div class="flex items-center justify-between">
         <div>
           <h1 class="text-2xl font-serif font-bold text-gray-900">
-            Editare Produs #{{ id }}
+            Editare Produs <span v-if="form.name">: {{ form.name }}</span><span v-else>#{{ id }}</span>
           </h1>
           <p class="text-xs text-gray-500 mt-1">
-            Modifică prețul, stocul sau descrierea acestui soi
+            Modifică prețul, stocul sau descrierea acestui soi (ID: #{{ id }})
           </p>
         </div>
 
         <RouterLink
-          to="/produse"
-          class="px-3.5 py-2 border border-gray-300 rounded-xl text-xs font-semibold text-gray-600 hover:bg-gray-50"
+          :to="backRoute"
+          class="px-3.5 py-2 border border-gray-300 rounded-xl text-xs font-semibold text-gray-600 hover:bg-gray-50 flex items-center gap-1.5 transition-colors"
         >
-          Înapoi la Listă
+          <span>←</span>
+          <span>{{ backLabel }}</span>
         </RouterLink>
       </div>
 
@@ -260,7 +278,18 @@ const handleUpdate = async () => {
             </p>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-gray-700 mb-1">
+                Cod Produs / SKU
+              </label>
+              <input
+                v-model="form.sku"
+                type="text"
+                placeholder="Opțional (ex: MAR-FLOR-01)"
+                class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white"
+              />
+            </div>
             <div>
               <label class="block text-xs font-semibold text-gray-700 mb-1">
                 Preț Standard (RON) *
@@ -274,11 +303,12 @@ const handleUpdate = async () => {
             </div>
             <div>
               <label class="block text-xs font-semibold text-gray-700 mb-1">
-                Preț Redus
+                Preț Redus (Promoție)
               </label>
               <input
                 v-model="form.sale_price"
                 type="text"
+                placeholder="Opțional"
                 class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white"
               />
             </div>
@@ -422,8 +452,8 @@ const handleUpdate = async () => {
 
         <div class="flex justify-end gap-3">
           <RouterLink
-            to="/produse"
-            class="px-5 py-2.5 border border-gray-300 rounded-xl text-xs font-semibold text-gray-700 hover:bg-gray-50"
+            :to="backRoute"
+            class="px-5 py-2.5 border border-gray-300 rounded-xl text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
           >
             Anulează
           </RouterLink>

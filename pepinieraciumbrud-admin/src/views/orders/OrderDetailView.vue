@@ -3,8 +3,11 @@ import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import AdminLayout from '@/layouts/AdminLayout.vue'
 import { ordersService } from '@/services/ordersService'
+import { settingsService } from '@/services/settingsService'
 import { useUiStore } from '@/stores/ui'
+import { formatOrderNote } from '@/utils/order'
 import type { Order } from '@/types/order'
+import type { SiteSettings } from '@/types/settings'
 
 const route = useRoute()
 const uiStore = useUiStore()
@@ -16,15 +19,39 @@ const newNote = ref('')
 const loading = ref(true)
 const updating = ref(false)
 
+const defaultSettings: SiteSettings = {
+  site_title: 'Pepiniera Ciumbrud',
+  site_tagline: 'Tradiție & Calitate din 1990',
+  site_description: '',
+  logo_url: '',
+  contact_phone: '+40 700 000 000',
+  contact_email: 'contact@pepinieraciumbrud.ro',
+  contact_address: 'Sat Ciumbrud, Jud. Alba, România',
+  schedule_weekdays: 'Luni – Vineri: 08:00 – 17:00',
+  schedule_saturday: 'Sâmbătă: 08:00 – 13:00',
+  schedule_sunday: 'Duminică: Închis',
+  schedule_notes: '',
+  footer_copyright: 'Pepiniera Ciumbrud. Toate drepturile rezervate.'
+}
+
+const settings = ref<SiteSettings>({ ...defaultSettings })
+
 const fetchOrder = async () => {
   loading.value = true
   try {
-    const [ord, nts] = await Promise.all([
+    const [ord, nts, setts] = await Promise.all([
       ordersService.get(id),
-      ordersService.getNotes(id)
+      ordersService.getNotes(id),
+      settingsService.getSettings().catch((err) => {
+        console.error('Failed to load settings:', err)
+        return null
+      })
     ])
     order.value = ord
     notes.value = nts
+    if (setts) {
+      settings.value = { ...defaultSettings, ...setts }
+    }
   } catch (err) {
     uiStore.addNotification('error', 'Nu s-a putut încărca comanda.')
   } finally {
@@ -115,7 +142,7 @@ const handlePrintPackingSlip = () => {
                   :disabled="updating"
                   class="bg-gray-50 border border-gray-300 rounded-lg px-2.5 py-1 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-primary"
                 >
-                  <option value="pending">În așteptare (Pending)</option>
+                  <option value="pending">În așteptare (Nouă)</option>
                   <option value="processing">În procesare</option>
                   <option value="on-hold">În așteptare plată</option>
                   <option value="completed">Finalizată (Livrată)</option>
@@ -159,7 +186,7 @@ const handlePrintPackingSlip = () => {
                 :key="n.id"
                 class="p-3 bg-gray-50 rounded-xl text-xs space-y-1"
               >
-                <div class="text-gray-800">{{ n.note }}</div>
+                <div class="text-gray-800">{{ formatOrderNote(n.note) }}</div>
                 <div class="text-[10px] text-gray-400">
                   {{ new Date(n.date_created).toLocaleString('ro-RO') }}
                 </div>
@@ -222,16 +249,29 @@ const handlePrintPackingSlip = () => {
       <div v-if="order" class="print-only hidden font-sans text-gray-900 p-8 bg-white">
         <!-- Header -->
         <div class="flex justify-between items-start pb-6 border-b-2 border-gray-900 mb-6">
-          <div>
-            <div class="flex items-center gap-2 mb-1">
-              <span class="text-2xl">🌿</span>
-              <h2 class="text-xl font-bold tracking-tight uppercase">Pepiniera Ciumbrud S.R.L.</h2>
+          <div class="flex items-center gap-4">
+            <img
+              v-if="settings.logo_url"
+              :src="settings.logo_url"
+              :alt="settings.site_title || 'Logo'"
+              class="h-16 w-auto max-w-[180px] object-contain shrink-0"
+            />
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <span v-if="!settings.logo_url" class="text-2xl">🌿</span>
+                <h2 class="text-xl font-bold tracking-tight uppercase">
+                  {{ settings.site_title || 'Pepiniera Ciumbrud' }}
+                </h2>
+              </div>
+              <p class="text-xs text-gray-600">
+                <span>{{ settings.contact_address }}</span>
+                <span v-if="settings.contact_phone"> | Tel: {{ settings.contact_phone }}</span>
+                <span v-if="settings.contact_email"> | {{ settings.contact_email }}</span>
+              </p>
             </div>
-            <p class="text-xs text-gray-600">Producător Autorizat Material Săditor Pomicol & Viticol</p>
-            <p class="text-xs text-gray-600">Sat Ciumbrud, Jud. Alba | Tel: +40 700 000 000 | contact@pepinieraciumbrud.ro</p>
           </div>
-          <div class="text-right">
-            <div class="text-lg font-bold">AVIZ DE EXPEDIERE</div>
+          <div class="text-right shrink-0">
+            <div class="text-lg font-bold tracking-wider">AVIZ DE EXPEDIERE</div>
             <div class="text-xs font-semibold text-gray-700">Comandă #{{ order.id }}</div>
             <div class="text-xs text-gray-500">Data: {{ new Date(order.date_created).toLocaleDateString('ro-RO') }}</div>
           </div>
@@ -241,10 +281,16 @@ const handlePrintPackingSlip = () => {
         <div class="grid grid-cols-2 gap-8 mb-6 pb-6 border-b border-gray-200 text-xs">
           <div class="p-4 bg-gray-50 rounded-lg">
             <span class="font-bold uppercase tracking-wider text-[10px] text-gray-500 block mb-1">Expeditor:</span>
-            <div class="font-bold text-sm">PEPINIERA CIUMBRUD</div>
-            <div>Sat Ciumbrud, Comuna Aiud</div>
-            <div>Județul Alba, România</div>
-            <div>Tel: +40 700 000 000</div>
+            <div class="font-bold text-sm uppercase">
+              {{ settings.site_title || 'PEPINIERA CIUMBRUD' }}
+            </div>
+            <div class="text-gray-700 mt-0.5">{{ settings.contact_address }}</div>
+            <div class="mt-1">
+              Tel: <strong>{{ settings.contact_phone || 'Nespecificat' }}</strong>
+            </div>
+            <div v-if="settings.contact_email" class="text-gray-600">
+              Email: {{ settings.contact_email }}
+            </div>
           </div>
 
           <div class="p-4 bg-gray-50 rounded-lg border border-gray-300">
@@ -297,7 +343,7 @@ const handlePrintPackingSlip = () => {
               <span class="font-semibold text-gray-900">{{ order.payment_method_title || 'Ramburs' }}</span>
             </div>
             <div class="flex justify-between text-base font-bold text-gray-900 pt-2 border-t border-gray-300">
-              <span>TOTAL DE ÎNCASAT:</span>
+              <span>TOTAL PLATA:</span>
               <span class="text-lg font-black text-gray-900">{{ order.total }} {{ order.currency }}</span>
             </div>
           </div>
@@ -330,6 +376,12 @@ const handlePrintPackingSlip = () => {
     padding: 0 !important;
     margin: 0 !important;
     font-size: 12pt;
+    overflow: visible !important;
+    height: auto !important;
+  }
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
   .print-only {
     display: block !important;
