@@ -44,3 +44,16 @@ This file defines the core rules and persistent guidelines for all development o
 - All custom admin endpoints in `pepinieraciumbrud-api` require JWT authentication via `class-pcs-jwt.php`.
 - Storefront public API uses WooCommerce Store API endpoints (`/wp-json/wc/store/v1`) without secret credentials.
 
+---
+
+## 🧪 Automated Testing & Pre-Push Verification Protocol
+
+- **Before committing and pushing to GitHub**, always run `./.agents/skills/ship/scripts/pre-push-verify.sh` (or use the `ship` skill in `.agents/skills/ship/SKILL.md`).
+- This verifies:
+  1. No sensitive `.env` or `wp-config.php` files are staged.
+  2. `npm ci --legacy-peer-deps --dry-run` succeeds in both `pepinieraciumbrud-storefront/` and `pepinieraciumbrud-admin/`.
+  3. Phinx migrations apply cleanly (`composer migrate`).
+  4. All automated checks & integration tests pass (`./deploy/run-tests.sh`).
+  5. Both `pepinieraciumbrud-storefront` (`npm run build`) and `pepinieraciumbrud-admin` (`npm run build`) compile cleanly for production.
+
+

@@ -47,9 +47,9 @@ echo -e "${GREEN}✔ Database migrations applied successfully.${NC}"
 # 3. Run Automated Checks & Order Lifecycle Integration Tests
 echo -e "${BLUE}[3/7] 🧪 Running Automated Checks & Order Lifecycle Integration Tests...${NC}"
 cd "$ROOT_DIR/pepinieraciumbrud-storefront"
-npm install --prefer-offline --no-audit
+npm install --prefer-offline --no-audit --legacy-peer-deps
 cd "$ROOT_DIR/pepinieraciumbrud-admin"
-npm install --prefer-offline --no-audit
+npm install --prefer-offline --no-audit --legacy-peer-deps
 "$ROOT_DIR/deploy/run-tests.sh"
 echo -e "${GREEN}✔ All pre-build checks and integration tests passed.${NC}"
 

@@ -24,15 +24,15 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Install Storefront dependencies
         working-directory: pepinieraciumbrud-storefront
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       - name: Install Admin dependencies
         working-directory: pepinieraciumbrud-admin
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       - name: Run Automated Checks & Order Lifecycle Tests
         run: ./deploy/run-tests.sh --ci
