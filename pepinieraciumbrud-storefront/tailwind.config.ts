@@ -85,6 +85,12 @@ export default {
         serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
         sans: ['Jost', 'system-ui', '-apple-system', 'sans-serif'],
       },
+      fontSize: {
+        xs: ['0.84375rem', { lineHeight: '1.35rem' }],
+        sm: ['0.95rem', { lineHeight: '1.5rem' }],
+        base: ['1.0625rem', { lineHeight: '1.65rem' }],
+        lg: ['1.1875rem', { lineHeight: '1.75rem' }],
+      },
     },
   },
   plugins: [],

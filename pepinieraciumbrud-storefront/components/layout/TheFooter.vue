@@ -24,18 +24,18 @@ const { settings } = useSiteSettings()
             </div>
             <span class="font-serif text-2xl font-medium tracking-wide">Pepiniera Ciumbrud</span>
           </div>
-          <p class="text-[10px] uppercase tracking-[0.28em] text-rose-200">Pepiniera de familie din 2000</p>
-          <p class="text-xs text-white/75 leading-relaxed">
+          <p class="text-xs uppercase tracking-[0.22em] text-rose-200">Pepiniera de familie din 2000</p>
+          <p class="text-sm text-white/80 leading-relaxed">
             {{ settings.site_description }}
           </p>
-          <div class="pt-2 text-xs text-white/65">
+          <div class="pt-2 text-xs text-white/70">
             {{ settings.contact_address }}
           </div>
         </div>
 
         <!-- Links 1 -->
         <div>
-          <h4 class="text-[11px] font-medium uppercase tracking-[0.3em] text-white mb-5 pb-3 border-b border-white/15 inline-block pr-8">Produse</h4>
+          <h4 class="text-xs font-medium uppercase tracking-[0.26em] text-white mb-5 pb-3 border-b border-white/15 inline-block pr-8">Produse</h4>
           <ul class="space-y-2.5 text-sm text-white/80">
             <li><NuxtLink to="/produse?category=meri" class="hover:text-white transition-colors">Meri &amp; Peri</NuxtLink></li>
             <li><NuxtLink to="/produse?category=pruni" class="hover:text-white transition-colors">Pruni &amp; Cireși</NuxtLink></li>
@@ -48,7 +48,7 @@ const { settings } = useSiteSettings()
 
         <!-- Links 2 -->
         <div>
-          <h4 class="text-[11px] font-medium uppercase tracking-[0.3em] text-white mb-5 pb-3 border-b border-white/15 inline-block pr-8">Informații Utile</h4>
+          <h4 class="text-xs font-medium uppercase tracking-[0.26em] text-white mb-5 pb-3 border-b border-white/15 inline-block pr-8">Informații Utile</h4>
           <ul class="space-y-2.5 text-sm text-white/80">
             <li><NuxtLink to="/despre-noi" class="hover:text-white transition-colors">Despre Pepinieră</NuxtLink></li>
             <li><NuxtLink to="/livrare-si-plata" class="hover:text-white transition-colors">Livrare &amp; Plată</NuxtLink></li>
@@ -60,8 +60,8 @@ const { settings } = useSiteSettings()
 
         <!-- Contact Box -->
         <div class="space-y-3">
-          <h4 class="text-[11px] font-medium uppercase tracking-[0.3em] text-white mb-5 pb-3 border-b border-white/15 inline-block pr-8">Contact Direct</h4>
-          <p class="text-xs text-white/75">
+          <h4 class="text-xs font-medium uppercase tracking-[0.26em] text-white mb-5 pb-3 border-b border-white/15 inline-block pr-8">Contact Direct</h4>
+          <p class="text-sm text-white/80">
             Aveți întrebări despre plantare sau comenzi en-gros? Echipa noastră vă stă la dispoziție:
           </p>
           <div class="space-y-1.5 text-sm font-medium">

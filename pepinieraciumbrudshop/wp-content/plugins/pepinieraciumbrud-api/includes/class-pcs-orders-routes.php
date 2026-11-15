@@ -130,22 +130,31 @@ final class PCS_Orders_Routes extends PCS_Base_Routes {
      */
     public static function translate_order_note_text( string $note ): string {
         $status_map = [
-            'Pending payment'    => 'În așteptarea plății',
-            'Pending'            => 'În așteptare (Nouă)',
-            'Processing'         => 'În procesare',
-            'On hold'            => 'În așteptare plată',
-            'On-hold'            => 'În așteptare plată',
-            'Completed'          => 'Finalizată (Livrată)',
-            'Cancelled'          => 'Anulată',
-            'Refunded'           => 'Rambursată',
-            'Failed'             => 'Eșuată',
-            'Checkout draft'     => 'Ciornă finalizare',
-            'Plată în așteptare' => 'În așteptarea plății',
+            'Pending payment'       => 'În așteptarea plății',
+            'Pending'               => 'În așteptare (Nouă)',
+            'Processing'            => 'În procesare',
+            'Prepared'              => 'Procesată (Pregătită)',
+            'Procesată (Pregătită)' => 'Procesată (Pregătită)',
+            'Shipped'               => 'Predată Curier',
+            'Predată Curier'        => 'Predată Curier',
+            'On hold'               => 'În așteptare plată',
+            'On-hold'               => 'În așteptare plată',
+            'Completed'             => 'Finalizată (Livrată)',
+            'Finalizată'            => 'Finalizată (Livrată)',
+            'Cancelled'             => 'Anulată',
+            'Refunded'              => 'Rambursată',
+            'Failed'                => 'Eșuată',
+            'Checkout draft'        => 'Ciornă finalizare',
+            'Plată în așteptare'    => 'În așteptare (Nouă)',
         ];
 
         $email_map = [
-            'Processing order'       => 'Comandă în procesare',
-            'New order'              => 'Comandă nouă',
+            'Processing order'       => 'Comandă Nouă',
+            'Comandă în procesare'   => 'Comandă Nouă',
+            'New order'              => 'Comandă Nouă',
+            'Comandă nouă'           => 'Comandă Nouă',
+            'Comandă Nouă'           => 'Comandă Nouă',
+            'Comandă Noua'           => 'Comandă Nouă',
             'Completed order'        => 'Comandă finalizată',
             'Cancelled order'        => 'Comandă anulată',
             'Failed order'           => 'Comandă eșuată',
@@ -185,7 +194,7 @@ final class PCS_Orders_Routes extends PCS_Base_Routes {
 
         // Email sent
         $t = preg_replace_callback(
-            '/(?:Email\s*\"([^\"]+)\"\s*sent\.|Emailul\s*[„«]([^”»]+)[”»]\s*este trimis\.)/iu',
+            '/(?:Email\s*\"([^\"]+)\"\s*sent\.|Emailul\s*[„«]([^”»]+)[”»]\s*(?:este|a fost) trimis\.)/iu',
             function( $m ) use ( $email_map ) {
                 $raw = ! empty( $m[1] ) ? $m[1] : ( $m[2] ?? '' );
                 $name = $email_map[ trim( $raw ) ] ?? $raw;

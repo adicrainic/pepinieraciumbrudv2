@@ -105,7 +105,7 @@ onMounted(() => {
             </span>
           </div>
         </div>
-        <p class="text-[11px] text-text-muted leading-relaxed">
+        <p class="text-xs text-text-muted leading-relaxed">
           Ambalare specială cu rădăcini hidratate. Livrare prin curier rapid în toată România.
         </p>
 

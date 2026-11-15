@@ -68,6 +68,7 @@ const handleStatusChange = async (event: Event) => {
   updating.value = true
   try {
     order.value = await ordersService.updateStatus(id, select.value)
+    notes.value = await ordersService.getNotes(id)
     uiStore.addNotification('success', 'Statusul comenzii a fost modificat.')
   } catch (err) {
     uiStore.addNotification('error', 'Eroare la modificarea statusului.')
@@ -144,7 +145,8 @@ const handlePrintPackingSlip = () => {
                 >
                   <option value="pending">În așteptare (Nouă)</option>
                   <option value="processing">În procesare</option>
-                  <option value="on-hold">În așteptare plată</option>
+                  <option value="prepared">Procesată (Pregătită)</option>
+                  <option value="shipped">Predată Curier</option>
                   <option value="completed">Finalizată (Livrată)</option>
                   <option value="cancelled">Anulată</option>
                 </select>

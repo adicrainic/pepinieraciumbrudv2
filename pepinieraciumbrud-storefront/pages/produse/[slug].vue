@@ -301,7 +301,7 @@ const handleAddToCart = async () => {
                 :key="attr.name"
                 class="bg-surface-warm/70 border border-border/80 rounded-xl p-3.5 flex flex-col"
               >
-                <span class="text-[11px] uppercase tracking-wider font-semibold text-text-muted">
+                <span class="text-xs uppercase tracking-wider font-semibold text-text-muted">
                   {{ attr.name }}
                 </span>
                 <span class="text-sm font-medium text-text mt-0.5">

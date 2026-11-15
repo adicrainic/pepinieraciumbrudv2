@@ -39,6 +39,26 @@ final class PCS_API {
 
     private static ?self $instance = null;
 
+    /**
+     * Guard flag allowing WC_Email_New_Order (admin notification) only during initial checkout confirmation.
+     */
+    private bool $allowing_admin_new_order_email = false;
+
+    /**
+     * Guard flag allowing WC_Email_Customer_Processing_Order only during initial checkout confirmation.
+     */
+    private bool $allowing_customer_new_order_email = false;
+
+    /**
+     * Guard flag allowing WC_Email_Customer_Completed_Order only when order status transitions to 'shipped' (Predată Curier).
+     */
+    private bool $allowing_customer_shipped_email = false;
+
+    /**
+     * Guard flag allowing WC_Email_Customer_Cancelled_Order only when order status transitions to 'cancelled' (Anulată).
+     */
+    private bool $allowing_customer_cancelled_email = false;
+
     public static function instance(): self {
         if ( null === self::$instance ) {
             self::$instance = new self();
@@ -62,23 +82,62 @@ final class PCS_API {
         add_filter( 'woocommerce_product_backorders_allowed', '__return_true' );
 
         // New orders status & lifecycle:
-        // Set new orders default and COD status to 'pending' (În așteptare)
+        // Register custom order statuses: 'wc-prepared' (Procesată (Pregătită)) and 'wc-shipped' (Predată Curier)
+        add_action( 'init', [ $this, 'register_custom_order_statuses' ], 10 );
+        add_filter( 'wc_order_statuses', [ $this, 'add_custom_order_statuses' ], 10, 1 );
+        add_filter( 'woocommerce_reports_order_statuses', [ $this, 'include_custom_order_statuses_in_reports' ], 10, 1 );
+        add_filter( 'woocommerce_order_is_paid_statuses', [ $this, 'include_custom_paid_statuses' ], 10, 1 );
+
+        // Set new orders default and COD status to 'pending' (În așteptare (Nouă))
         add_filter( 'woocommerce_cod_process_payment_order_status', [ $this, 'filter_new_order_status' ], 10, 2 );
         add_filter( 'woocommerce_default_order_status', [ $this, 'filter_default_order_status' ] );
 
         // Prevent automatic cancellation of unpaid orders after hold_stock_minutes
         add_filter( 'woocommerce_cancel_unpaid_order', '__return_false' );
 
-        // Stock management for pending orders
+        // Stock management for pending and custom statuses
         remove_action( 'woocommerce_order_status_pending', 'wc_maybe_increase_stock_levels' );
         add_action( 'woocommerce_order_status_pending', 'wc_maybe_reduce_stock_levels' );
+        add_action( 'woocommerce_order_status_prepared', 'wc_maybe_reduce_stock_levels' );
+        add_action( 'woocommerce_order_status_shipped', 'wc_maybe_reduce_stock_levels' );
 
         // Handle checkout order processing (Store API & classic checkout)
         add_action( 'woocommerce_store_api_checkout_order_processed', [ $this, 'on_checkout_order_processed' ], 20, 1 );
         add_action( 'woocommerce_checkout_order_processed', [ $this, 'on_checkout_order_processed' ], 20, 1 );
 
-        // Prevent duplicate customer confirmation email when transitioning from pending to processing
+        // Handle all order status transitions uniformly (from any status to any status):
+        // - Moving to 'shipped' (Predată Curier) sends "Comanda ta de la Pepiniera Ciumbrud este pe drum!" once
+        // - Moving to 'cancelled' (Anulată) sends "Comanda ta nr. #... a fost anulată" once
+        // - Moving to any other status ('pending', 'processing', 'prepared', 'completed') sends NO email
+        add_action( 'woocommerce_order_status_changed', [ $this, 'on_order_status_changed' ], 20, 4 );
+
+        // Control email triggers strictly via guard flags so WooCommerce core's built-in
+        // status transition hooks never fire unexpected or duplicate emails:
+        // - 'new_order' (Admin) & 'customer_processing_order' (Customer) are ONLY sent on initial checkout ("Comandă Nouă")
+        // - 'customer_completed_order' ("...este pe drum!") is ONLY sent when moving to 'shipped' (Predată Curier), never on 'completed'
+        // - 'customer_cancelled_order' ("...a fost anulată") is ONLY sent once when moving to 'cancelled' (Anulată) from any status
+        // - 'cancelled_order' (Admin) & 'customer_on_hold_order' are disabled for order status transitions to avoid duplicate notifications
+        add_filter( 'woocommerce_email_enabled_new_order', [ $this, 'filter_new_order_email_enabled' ], 10, 2 );
         add_filter( 'woocommerce_email_enabled_customer_processing_order', [ $this, 'filter_customer_processing_email_enabled' ], 10, 2 );
+        add_filter( 'woocommerce_email_enabled_customer_completed_order', [ $this, 'filter_customer_completed_email_enabled' ], 10, 2 );
+        add_filter( 'woocommerce_email_enabled_customer_cancelled_order', [ $this, 'filter_customer_cancelled_email_enabled' ], 10, 2 );
+        add_filter( 'woocommerce_email_enabled_cancelled_order', [ $this, 'filter_admin_cancelled_email_enabled' ], 10, 2 );
+        add_filter( 'woocommerce_email_enabled_customer_on_hold_order', [ $this, 'filter_customer_on_hold_email_enabled' ], 10, 2 );
+        add_filter( 'woocommerce_email_title', [ $this, 'filter_email_title' ], 10, 2 );
+
+        // Enforce Pepiniera Ciumbrud Red & Warm Cream theme colors for WooCommerce emails
+        add_filter( 'option_woocommerce_email_base_color', fn() => '#B21111' );
+        add_filter( 'option_woocommerce_email_background_color', fn() => '#FAF6EE' );
+        add_filter( 'option_woocommerce_email_body_background_color', fn() => '#FFFFFF' );
+        add_filter( 'option_woocommerce_email_text_color', fn() => '#2E2C2A' );
+        add_filter( 'option_woocommerce_email_footer_text_color', fn() => '#5F5A54' );
+
+        // Email template overrides & customizations (Logo, "Produs" capitalization, no product images, detailed addresses with RO captions)
+        add_filter( 'woocommerce_locate_template', [ $this, 'locate_email_template' ], 20, 3 );
+        add_filter( 'woocommerce_locate_core_template', [ $this, 'locate_core_email_template' ], 20, 3 );
+        add_filter( 'woocommerce_email_order_items_args', [ $this, 'filter_email_order_items_args' ], 20, 1 );
+        add_filter( 'woocommerce_email_format_string', [ $this, 'filter_email_format_string' ], 20, 2 );
+        add_filter( 'gettext', [ $this, 'filter_woocommerce_gettext' ], 20, 3 );
     }
 
     public function register_routes(): void {
@@ -262,17 +321,124 @@ final class PCS_API {
     }
 
     /**
-     * Filter new order status for COD payments to 'pending' (În așteptare).
+     * Register custom WordPress post statuses for WooCommerce orders:
+     * - wc-prepared: Procesată (Pregătită)
+     * - wc-shipped:  Predată Curier
+     */
+    public function register_custom_order_statuses(): void {
+        register_post_status( 'wc-prepared', [
+            'label'                     => 'Procesată (Pregătită)',
+            'public'                    => true,
+            'exclude_from_search'       => false,
+            'show_in_admin_all_list'    => true,
+            'show_in_admin_status_list' => true,
+            /* translators: %s: number of orders */
+            'label_count'               => _n_noop(
+                'Procesată (Pregătită) <span class="count">(%s)</span>',
+                'Procesate (Pregătite) <span class="count">(%s)</span>',
+                'pepinieraciumbrud-api'
+            ),
+        ] );
+
+        register_post_status( 'wc-shipped', [
+            'label'                     => 'Predată Curier',
+            'public'                    => true,
+            'exclude_from_search'       => false,
+            'show_in_admin_all_list'    => true,
+            'show_in_admin_status_list' => true,
+            /* translators: %s: number of orders */
+            'label_count'               => _n_noop(
+                'Predată Curier <span class="count">(%s)</span>',
+                'Predate Curier <span class="count">(%s)</span>',
+                'pepinieraciumbrud-api'
+            ),
+        ] );
+    }
+
+    /**
+     * Add custom order statuses to WooCommerce order statuses list in the exact workflow order.
+     */
+    public function add_custom_order_statuses( array $order_statuses ): array {
+        $new_statuses = [];
+
+        foreach ( $order_statuses as $key => $label ) {
+            if ( 'wc-pending' === $key ) {
+                $new_statuses[ $key ] = 'În așteptare (Nouă)';
+                continue;
+            }
+            if ( 'wc-processing' === $key ) {
+                $new_statuses['wc-processing'] = 'În procesare';
+                $new_statuses['wc-prepared']   = 'Procesată (Pregătită)';
+                $new_statuses['wc-shipped']    = 'Predată Curier';
+                continue;
+            }
+            if ( 'wc-completed' === $key ) {
+                $new_statuses[ $key ] = 'Finalizată (Livrată)';
+                continue;
+            }
+            if ( 'wc-cancelled' === $key ) {
+                $new_statuses[ $key ] = 'Anulată';
+                continue;
+            }
+            $new_statuses[ $key ] = $label;
+        }
+
+        if ( ! isset( $new_statuses['wc-prepared'] ) ) {
+            $new_statuses['wc-prepared'] = 'Procesată (Pregătită)';
+        }
+        if ( ! isset( $new_statuses['wc-shipped'] ) ) {
+            $new_statuses['wc-shipped'] = 'Predată Curier';
+        }
+
+        return $new_statuses;
+    }
+
+    /**
+     * Include custom active order statuses in WooCommerce reports.
+     */
+    public function include_custom_order_statuses_in_reports( mixed $statuses ): mixed {
+        if ( is_array( $statuses ) ) {
+            $statuses[] = 'prepared';
+            $statuses[] = 'shipped';
+            return array_values( array_unique( $statuses ) );
+        }
+        return $statuses;
+    }
+
+    /**
+     * Include custom active order statuses in paid/valid order statuses.
+     */
+    public function include_custom_paid_statuses( array $statuses ): array {
+        $statuses[] = 'prepared';
+        $statuses[] = 'shipped';
+        return array_values( array_unique( $statuses ) );
+    }
+
+    /**
+     * Filter new order status for COD payments to 'pending' (În așteptare (Nouă)).
      */
     public function filter_new_order_status( string $status, ?WC_Order $order = null ): string {
         return 'pending';
     }
 
     /**
-     * Filter default order status to 'pending' (În așteptare).
+     * Filter default order status to 'pending' (În așteptare (Nouă)).
      */
     public function filter_default_order_status( string $status ): string {
         return 'pending';
+    }
+
+    /**
+     * Ensure the email title logged in order notes for the initial customer confirmation email
+     * is "Comandă Nouă" instead of "Comandă în procesare" to avoid confusion for the admin.
+     */
+    public function filter_email_title( string $title, mixed $email = null ): string {
+        if ( is_object( $email ) && isset( $email->id ) ) {
+            if ( in_array( $email->id, [ 'customer_processing_order', 'new_order' ], true ) ) {
+                return 'Comandă Nouă';
+            }
+        }
+        return $title;
     }
 
     /**
@@ -280,7 +446,7 @@ final class PCS_API {
      * - Reduce stock immediately
      * - Add note for COD payment
      * - Trigger admin "New order" email notification
-     * - Trigger customer "Order confirmation" email notification
+     * - Trigger customer "Comandă Nouă" confirmation email notification
      */
     public function on_checkout_order_processed( mixed $order ): void {
         if ( is_numeric( $order ) ) {
@@ -303,31 +469,250 @@ final class PCS_API {
         // 3. Trigger Admin New Order notification email
         $mailer = WC()->mailer();
         $emails = $mailer ? $mailer->get_emails() : [];
-        if ( isset( $emails['WC_Email_New_Order'] ) && $emails['WC_Email_New_Order']->is_enabled() ) {
+        if ( isset( $emails['WC_Email_New_Order'] ) ) {
             if ( ! $order->get_new_order_email_sent() ) {
-                $emails['WC_Email_New_Order']->trigger( $order_id, $order );
+                $this->allowing_admin_new_order_email = true;
+                try {
+                    $emails['WC_Email_New_Order']->title = 'Comandă Nouă';
+                    if ( $emails['WC_Email_New_Order']->is_enabled() ) {
+                        $emails['WC_Email_New_Order']->trigger( $order_id, $order );
+                    }
+                } finally {
+                    $this->allowing_admin_new_order_email = false;
+                }
             }
         }
 
-        // 4. Trigger Customer Order Received / Confirmation email
-        if ( isset( $emails['WC_Email_Customer_Processing_Order'] ) && $emails['WC_Email_Customer_Processing_Order']->is_enabled() ) {
+        // 4. Trigger Customer Order Received / Confirmation email (logged as "Emailul «Comandă Nouă» a fost trimis.")
+        if ( isset( $emails['WC_Email_Customer_Processing_Order'] ) ) {
             if ( ! $order->get_meta( '_pcs_customer_order_email_sent' ) ) {
-                $emails['WC_Email_Customer_Processing_Order']->trigger( $order_id, $order );
-                $order->update_meta_data( '_pcs_customer_order_email_sent', 'yes' );
-                $order->save();
+                $this->allowing_customer_new_order_email = true;
+                try {
+                    $emails['WC_Email_Customer_Processing_Order']->title = 'Comandă Nouă';
+                    if ( $emails['WC_Email_Customer_Processing_Order']->is_enabled() ) {
+                        $emails['WC_Email_Customer_Processing_Order']->trigger( $order_id, $order );
+                        $order->update_meta_data( '_pcs_customer_order_email_sent', 'yes' );
+                        $order->save();
+                    }
+                } finally {
+                    $this->allowing_customer_new_order_email = false;
+                }
             }
         }
     }
 
     /**
-     * Prevent duplicate customer confirmation email when an order is transitioned
-     * from 'pending' to 'processing' by store staff in the admin panel.
+     * Central handler for order status changes (from any status to any status).
+     * Only sends emails when the new status is 'shipped' (Predată Curier) or 'cancelled' (Anulată).
+     */
+    public function on_order_status_changed( int $order_id, string $from_status, string $to_status, ?WC_Order $order = null ): void {
+        if ( $from_status === $to_status ) {
+            return;
+        }
+
+        if ( 'shipped' === $to_status ) {
+            $this->on_order_status_shipped( $order_id, $order );
+        } elseif ( 'cancelled' === $to_status ) {
+            $this->on_order_status_cancelled( $order_id, $order );
+        }
+    }
+
+    /**
+     * Send "Comanda ta de la Pepiniera Ciumbrud este pe drum!" email when order status
+     * changes to 'shipped' (Predată Curier) from any status.
+     */
+    public function on_order_status_shipped( int $order_id, ?WC_Order $order = null ): void {
+        if ( ! $order instanceof WC_Order ) {
+            $order = wc_get_order( $order_id );
+        }
+        if ( ! $order instanceof WC_Order ) {
+            return;
+        }
+
+        $mailer = WC()->mailer();
+        $emails = $mailer ? $mailer->get_emails() : [];
+
+        if ( isset( $emails['WC_Email_Customer_Completed_Order'] ) ) {
+            $this->allowing_customer_shipped_email = true;
+            try {
+                if ( $emails['WC_Email_Customer_Completed_Order']->is_enabled() ) {
+                    $emails['WC_Email_Customer_Completed_Order']->trigger( $order_id, $order );
+                }
+            } finally {
+                $this->allowing_customer_shipped_email = false;
+            }
+        }
+    }
+
+    /**
+     * Send "Comanda ta nr. #... a fost anulată" email to the customer (exactly once)
+     * when order status changes to 'cancelled' (Anulată) from any status.
+     */
+    public function on_order_status_cancelled( int $order_id, ?WC_Order $order = null ): void {
+        if ( ! $order instanceof WC_Order ) {
+            $order = wc_get_order( $order_id );
+        }
+        if ( ! $order instanceof WC_Order ) {
+            return;
+        }
+
+        $mailer = WC()->mailer();
+        $emails = $mailer ? $mailer->get_emails() : [];
+
+        if ( isset( $emails['WC_Email_Customer_Cancelled_Order'] ) ) {
+            $this->allowing_customer_cancelled_email = true;
+            try {
+                if ( $emails['WC_Email_Customer_Cancelled_Order']->is_enabled() ) {
+                    $emails['WC_Email_Customer_Cancelled_Order']->trigger( $order_id, $order );
+                }
+            } finally {
+                $this->allowing_customer_cancelled_email = false;
+            }
+        }
+    }
+
+    /**
+     * Only allow WC_Email_New_Order (admin notification) during initial checkout confirmation,
+     * never on any subsequent order status transition (e.g. pending -> completed, cancelled -> processing, etc.).
+     */
+    public function filter_new_order_email_enabled( bool $enabled, mixed $order = null ): bool {
+        if ( null === $order ) {
+            return $enabled;
+        }
+        return $enabled && $this->allowing_admin_new_order_email;
+    }
+
+    /**
+     * Only allow WC_Email_Customer_Processing_Order during initial checkout confirmation,
+     * never when an order is moved to 'processing' (În procesare).
      */
     public function filter_customer_processing_email_enabled( bool $enabled, mixed $order = null ): bool {
-        if ( $order instanceof WC_Order && 'yes' === $order->get_meta( '_pcs_customer_order_email_sent' ) && did_action( 'woocommerce_order_status_pending_to_processing_notification' ) ) {
-            return false;
+        if ( null === $order ) {
+            return $enabled;
         }
-        return $enabled;
+        return $enabled && $this->allowing_customer_new_order_email;
+    }
+
+    /**
+     * Only allow WC_Email_Customer_Completed_Order ("...este pe drum!") when an order
+     * transitions to 'shipped' (Predată Curier), never when moving to 'completed' (Finalizată (Livrată)).
+     */
+    public function filter_customer_completed_email_enabled( bool $enabled, mixed $order = null ): bool {
+        if ( null === $order ) {
+            return $enabled;
+        }
+        return $enabled && $this->allowing_customer_shipped_email;
+    }
+
+    /**
+     * Only allow WC_Email_Customer_Cancelled_Order when explicitly triggered by on_order_status_cancelled()
+     * so it is sent exactly once when transitioning from ANY status to 'cancelled' (Anulată).
+     */
+    public function filter_customer_cancelled_email_enabled( bool $enabled, mixed $order = null ): bool {
+        if ( null === $order ) {
+            return true;
+        }
+        return $this->allowing_customer_cancelled_email;
+    }
+
+    /**
+     * Disable WC_Email_Cancelled_Order (admin cancellation email) on order status transitions
+     * so cancelling an order does not send duplicate "Comandă anulată" emails.
+     */
+    public function filter_admin_cancelled_email_enabled( bool $enabled, mixed $order = null ): bool {
+        if ( null === $order ) {
+            return $enabled;
+        }
+        return false;
+    }
+
+    /**
+     * Disable WC_Email_Customer_On_Hold_Order on order status transitions.
+     */
+    public function filter_customer_on_hold_email_enabled( bool $enabled, mixed $order = null ): bool {
+        if ( null === $order ) {
+            return $enabled;
+        }
+        return false;
+    }
+
+    /**
+     * Locate custom WooCommerce email templates from the plugin's templates/ directory.
+     */
+    public function locate_email_template( string $template, string $template_name, string $template_path ): string {
+        $custom = PCS_API_PLUGIN_DIR . 'templates/' . ltrim( $template_name, '/' );
+        if ( file_exists( $custom ) ) {
+            return $custom;
+        }
+        return $template;
+    }
+
+    /**
+     * Locate custom core WooCommerce email templates.
+     */
+    public function locate_core_email_template( string $core_file, string $template, string $template_base ): string {
+        $custom = PCS_API_PLUGIN_DIR . 'templates/' . ltrim( $template, '/' );
+        if ( file_exists( $custom ) ) {
+            return $custom;
+        }
+        return $core_file;
+    }
+
+    /**
+     * Never display product images or SKUs in WooCommerce order emails.
+     */
+    public function filter_email_order_items_args( array $args ): array {
+        $args['show_image'] = false;
+        $args['show_sku']   = false;
+        return $args;
+    }
+
+    /**
+     * Replace custom email placeholders ({store_phone}, {phone_number}, {phone number}, {email})
+     * and ensure the help contact message includes both phone number and email address.
+     */
+    public function filter_email_format_string( string $string, mixed $email = null ): string {
+        $phone = PCS_Mailer::instance()->get_store_phone();
+        $store_email = ( is_object( $email ) && method_exists( $email, 'get_from_address' ) )
+            ? (string) $email->get_from_address()
+            : PCS_Mailer::instance()->get_default_from_email();
+
+        $string = str_replace(
+            [ '{store_phone}', '{phone_number}', '{phone number}', '{email}' ],
+            [ $phone, $phone, $phone, $store_email ],
+            $string
+        );
+
+        // If any stored option still contains the old single-email sentence, upgrade it
+        $string = preg_replace(
+            '/Dacă ai nevoie de ajutor pentru comanda ta,\s*te rugăm să ne contactezi la\s+(?!num[ăa]rul de telefon)([^\s.<]+@[^\s.<]+)\.?\s*$/iu',
+            "Dacă ai nevoie de ajutor pentru comanda ta, te rugăm să ne contactezi la numărul de telefon {$phone} sau la adresa de email: $1",
+            $string
+        );
+
+        return $string;
+    }
+
+    /**
+     * Customize WooCommerce Romanian strings ("Produs" capital P and help contact sentence with phone + email).
+     */
+    public function filter_woocommerce_gettext( string $translation, string $text, string $domain ): string {
+        if ( 'woocommerce' !== $domain ) {
+            return $translation;
+        }
+        if ( 'Product' === $text && 'produs' === $translation ) {
+            return 'Produs';
+        }
+        if ( 'If you need any help with your order, please contact us at {store_email}.' === $text ) {
+            return 'Dacă ai nevoie de ajutor pentru comanda ta, te rugăm să ne contactezi la numărul de telefon {store_phone} sau la adresa de email: {store_email}';
+        }
+        if ( 'Thanks again! If you need any help with your order, please contact us at {store_email}.' === $text ) {
+            return 'Îți mulțumim din nou! Dacă ai nevoie de ajutor pentru comanda ta, te rugăm să ne contactezi la numărul de telefon {store_phone} sau la adresa de email: {store_email}';
+        }
+        if ( 'Thanks again! If you need any help with your order, please contact us at %s.' === $text ) {
+            return 'Îți mulțumim din nou! Dacă ai nevoie de ajutor pentru comanda ta, te rugăm să ne contactezi la numărul de telefon {store_phone} sau la adresa de email: %s';
+        }
+        return $translation;
     }
 }
 

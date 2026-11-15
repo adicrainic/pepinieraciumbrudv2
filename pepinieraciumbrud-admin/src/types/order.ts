@@ -22,7 +22,7 @@ export interface OrderLineItem {
 
 export interface Order {
   id: number
-  status: 'pending' | 'processing' | 'on-hold' | 'completed' | 'cancelled' | 'refunded' | 'failed'
+  status: 'pending' | 'processing' | 'prepared' | 'shipped' | 'on-hold' | 'completed' | 'cancelled' | 'refunded' | 'failed'
   currency: string
   total: string
   date_created: string

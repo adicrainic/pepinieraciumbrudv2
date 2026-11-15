@@ -84,7 +84,7 @@ const handleSearch = () => {
     <div class="bg-primary text-white border-b border-primary-dark/20 shadow-sm transition-all duration-200">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-2.5 flex items-center justify-between gap-3 sm:gap-6">
         <!-- Delivery info badge / text -->
-        <div class="flex items-center gap-2 min-w-0 text-[11px] sm:text-xs font-medium tracking-wider uppercase text-white/95">
+        <div class="flex items-center gap-2 min-w-0 text-xs sm:text-sm font-medium tracking-wider uppercase text-white/95">
           <span class="inline-block w-2 h-2 rounded-full bg-white flex-shrink-0 shadow-sm"></span>
           <span class="truncate">
             <span class="sm:hidden">Livrare în toată țara</span>
@@ -146,7 +146,7 @@ const handleSearch = () => {
           <!-- Livrare & Plată link (Desktop) -->
           <NuxtLink
             to="/livrare-si-plata"
-            class="hidden sm:inline text-white/85 hover:text-white text-[11px] sm:text-xs uppercase tracking-wider font-medium transition-colors"
+            class="hidden sm:inline text-white/85 hover:text-white text-xs sm:text-sm uppercase tracking-wider font-medium transition-colors"
           >
             Livrare &amp; plată
           </NuxtLink>
@@ -183,7 +183,7 @@ const handleSearch = () => {
           </div>
           <div class="flex flex-col justify-center border-l border-primary/20 pl-2.5 sm:pl-4">
             <span class="font-serif text-lg sm:text-2xl lg:text-3xl font-medium leading-none text-primary-dark tracking-wide">Pepiniera Ciumbrud</span>
-            <span class="mt-1 sm:mt-1.5 text-[9px] sm:text-[10px] lg:text-[11px] uppercase tracking-[0.2em] sm:tracking-[0.28em] text-accent font-medium">Din 2000 · Satul Rozelor</span>
+            <span class="mt-1 sm:mt-1.5 text-[11px] sm:text-xs uppercase tracking-[0.18em] sm:tracking-[0.24em] text-accent font-medium">Din 2000 · Satul Rozelor</span>
           </div>
         </NuxtLink>
 
@@ -191,28 +191,28 @@ const handleSearch = () => {
         <nav class="hidden md:flex items-center space-x-9 order-2 justify-self-center">
           <NuxtLink
             to="/"
-            class="link-underline text-[11px] uppercase tracking-[0.22em] font-medium text-text hover:text-accent transition-colors pb-1"
+            class="link-underline text-xs lg:text-sm uppercase tracking-[0.18em] font-medium text-text hover:text-accent transition-colors pb-1"
             active-class="!text-accent"
           >
             Acasă
           </NuxtLink>
           <NuxtLink
             to="/produse"
-            class="link-underline text-[11px] uppercase tracking-[0.22em] font-medium text-text hover:text-accent transition-colors pb-1"
+            class="link-underline text-xs lg:text-sm uppercase tracking-[0.18em] font-medium text-text hover:text-accent transition-colors pb-1"
             active-class="!text-accent"
           >
             Magazin & Produse
           </NuxtLink>
           <NuxtLink
             to="/despre-noi"
-            class="link-underline text-[11px] uppercase tracking-[0.22em] font-medium text-text hover:text-accent transition-colors pb-1"
+            class="link-underline text-xs lg:text-sm uppercase tracking-[0.18em] font-medium text-text hover:text-accent transition-colors pb-1"
             active-class="!text-accent"
           >
             Despre noi
           </NuxtLink>
           <NuxtLink
             to="/contact"
-            class="link-underline text-[11px] uppercase tracking-[0.22em] font-medium text-text hover:text-accent transition-colors pb-1"
+            class="link-underline text-xs lg:text-sm uppercase tracking-[0.18em] font-medium text-text hover:text-accent transition-colors pb-1"
             active-class="!text-accent"
           >
             Contact
@@ -244,12 +244,12 @@ const handleSearch = () => {
               </svg>
               <span
                 v-if="cartStore.itemCount > 0"
-                class="absolute top-0 right-0 -translate-y-1/3 translate-x-1/3 bg-accent text-white font-medium rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center text-[10px] leading-none shadow-sm whitespace-nowrap tracking-tight tabular-nums select-none"
+                class="absolute top-0 right-0 -translate-y-1/3 translate-x-1/3 bg-accent text-white font-medium rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center text-[11px] leading-none shadow-sm whitespace-nowrap tracking-tight tabular-nums select-none"
               >
                 {{ cartItemCountFormatted }}
               </span>
             </div>
-            <span class="hidden sm:inline text-xs font-semibold text-text">
+            <span class="hidden sm:inline text-sm font-semibold text-text">
               {{ cartStore.formattedTotal }}
             </span>
           </button>
@@ -312,10 +312,10 @@ const handleSearch = () => {
                   onerror="this.src='/placeholder-plant.svg'"
                 />
                 <div class="min-w-0">
-                  <div class="font-serif font-bold text-sm text-primary-dark hover:underline truncate">
+                  <div class="font-serif font-bold text-base text-primary-dark hover:underline truncate">
                     {{ item.name }}
                   </div>
-                  <div class="text-[11px] text-text-muted truncate">
+                  <div class="text-xs text-text-muted truncate">
                     {{ item.categories && item.categories[0] ? item.categories[0].name : 'Pepinieră' }}
                     <span v-if="item.sku" class="font-mono text-gray-400"> • {{ item.sku }}</span>
                   </div>
@@ -326,7 +326,7 @@ const handleSearch = () => {
                   {{ formatPrice(item.prices) }}
                 </div>
                 <span
-                  class="inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                  class="inline-block text-xs font-semibold px-2 py-0.5 rounded-full"
                   :class="item.is_in_stock ? 'bg-leaf-50 text-leaf-700' : 'bg-gray-100 text-gray-500'"
                 >
                   {{ item.is_in_stock ? 'În stoc' : 'Epuizat' }}

@@ -17,10 +17,12 @@ const currentStatus = ref<string>((route.query.status as string) || 'all')
 
 const statusFilters = [
   { id: 'all', label: 'Toate Comenzile' },
-  { id: 'pending', label: 'Comenzi Noi' },
+  { id: 'pending', label: 'În așteptare (Nouă)' },
   { id: 'processing', label: 'În procesare' },
-  { id: 'completed', label: 'Finalizate' },
-  { id: 'cancelled', label: 'Anulate' }
+  { id: 'prepared', label: 'Procesată (Pregătită)' },
+  { id: 'shipped', label: 'Predată Curier' },
+  { id: 'completed', label: 'Finalizată (Livrată)' },
+  { id: 'cancelled', label: 'Anulată' }
 ]
 
 const setStatus = (status: string) => {

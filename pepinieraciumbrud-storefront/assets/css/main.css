@@ -37,7 +37,7 @@
 @layer components {
   /* Eyebrow: tiny reversed-S + rose dot, then label */
   .section-eyebrow {
-    @apply inline-flex items-center gap-3 text-[11px] uppercase tracking-[0.32em] text-primary font-medium mb-3;
+    @apply inline-flex items-center gap-3 text-xs uppercase tracking-[0.28em] text-primary font-medium mb-3;
   }
   .section-eyebrow::before {
     content: '';

@@ -229,57 +229,49 @@ final class PCS_Contact_Routes extends PCS_Base_Routes {
         $body_text   = nl2br( esc_html( $message_content ) );
         $date_str    = date_i18n( 'j F Y, H:i', current_time( 'timestamp' ) );
 
-        $html = <<<HTML
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>{$subject}</title>
-</head>
-<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f7f9f6; color: #232c25; margin: 0; padding: 24px 12px; line-height: 1.6;">
-    <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; border: 1px solid #e3e8e1; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
-        <div style="background-color: #245a38; color: #ffffff; padding: 24px 28px;">
-            <h2 style="margin: 0; font-size: 20px; font-weight: 600;">🌿 {$site_title}</h2>
-            <p style="margin: 4px 0 0; font-size: 13px; opacity: 0.9;">Ai primit un mesaj nou prin formularul de contact</p>
-        </div>
-        <div style="padding: 28px;">
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 14px;">
-                <tr>
-                    <td style="padding: 8px 0; color: #627265; width: 120px; font-weight: 600;">Nume:</td>
-                    <td style="padding: 8px 0; color: #1c261e; font-weight: bold;">{$clean_name}</td>
-                </tr>
-                <tr>
-                    <td style="padding: 8px 0; color: #627265; font-weight: 600;">Email:</td>
-                    <td style="padding: 8px 0;"><a href="mailto:{$clean_email}" style="color: #245a38; text-decoration: underline; font-weight: 500;">{$clean_email}</a></td>
-                </tr>
-                <tr>
-                    <td style="padding: 8px 0; color: #627265; font-weight: 600;">Telefon:</td>
-                    <td style="padding: 8px 0; color: #1c261e;">{$clean_phone}</td>
-                </tr>
-                <tr>
-                    <td style="padding: 8px 0; color: #627265; font-weight: 600;">Data:</td>
-                    <td style="padding: 8px 0; color: #1c261e;">{$date_str}</td>
-                </tr>
-            </table>
+        $body_html = <<<HTML
+<p style="margin-top: 0; font-size: 15px; color: #2E2C2A;">
+    Ai primit un mesaj nou prin formularul de contact de pe site-ul <strong>{$site_title}</strong>:
+</p>
 
-            <div style="background-color: #f7f9f6; border-radius: 12px; padding: 18px 20px; border-left: 4px solid #245a38; margin-bottom: 24px;">
-                <div style="font-size: 12px; font-weight: bold; text-transform: uppercase; color: #627265; margin-bottom: 8px; letter-spacing: 0.5px;">Mesaj:</div>
-                <div style="font-size: 15px; color: #1c261e; white-space: pre-line;">{$body_text}</div>
-            </div>
+<table style="width: 100%; border-collapse: collapse; margin: 18px 0 22px; font-size: 14px; background-color: #FAF6EE; border: 1px solid #E2DACB; border-radius: 10px;">
+    <tr>
+        <td style="padding: 10px 16px; color: #7D0C0C; width: 120px; font-weight: 700; border-bottom: 1px solid #EDE6D9;">Nume client:</td>
+        <td style="padding: 10px 16px; color: #2E2C2A; font-weight: 700; border-bottom: 1px solid #EDE6D9;">{$clean_name}</td>
+    </tr>
+    <tr>
+        <td style="padding: 10px 16px; color: #7D0C0C; font-weight: 700; border-bottom: 1px solid #EDE6D9;">Email:</td>
+        <td style="padding: 10px 16px; border-bottom: 1px solid #EDE6D9;"><a href="mailto:{$clean_email}" style="color: #B21111; text-decoration: underline; font-weight: 600;">{$clean_email}</a></td>
+    </tr>
+    <tr>
+        <td style="padding: 10px 16px; color: #7D0C0C; font-weight: 700; border-bottom: 1px solid #EDE6D9;">Telefon:</td>
+        <td style="padding: 10px 16px; color: #2E2C2A; border-bottom: 1px solid #EDE6D9;">{$clean_phone}</td>
+    </tr>
+    <tr>
+        <td style="padding: 10px 16px; color: #7D0C0C; font-weight: 700;">Data:</td>
+        <td style="padding: 10px 16px; color: #2E2C2A;">{$date_str}</td>
+    </tr>
+</table>
 
-            <div style="text-align: center; margin-top: 28px;">
-                <a href="mailto:{$clean_email}?subject=Re:%20Mesaj%20Pepiniera%20Ciumbrud" style="display: inline-block; background-color: #245a38; color: #ffffff; text-decoration: none; padding: 12px 26px; border-radius: 10px; font-weight: 600; font-size: 14px;">
-                    Răspunde prin Email
-                </a>
-            </div>
-        </div>
-        <div style="background-color: #f0f4ee; padding: 14px 28px; text-align: center; font-size: 11px; color: #768779; border-top: 1px solid #e3e8e1;">
-            Mesajul #{$id} este stocat în panoul de administrare Pepiniera Ciumbrud.
-        </div>
-    </div>
-</body>
-</html>
+<div style="background-color: #FAF6EE; border-radius: 12px; padding: 18px 20px; border: 1px solid #E2DACB; border-left: 4px solid #B21111; margin-bottom: 24px;">
+    <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #7D0C0C; margin-bottom: 8px; letter-spacing: 0.8px;">Conținut Mesaj:</div>
+    <div style="font-size: 15px; color: #2E2C2A; line-height: 1.7;">{$body_text}</div>
+</div>
+
+<div style="text-align: center; margin-top: 26px;">
+    <a href="mailto:{$clean_email}?subject=Re:%20Mesaj%20Pepiniera%20Ciumbrud" style="display: inline-block; background-color: #B21111; color: #FFFFFF; text-decoration: none; padding: 12px 28px; border-radius: 10px; font-weight: 700; font-size: 14px; letter-spacing: 0.3px;">
+        Răspunde prin Email
+    </a>
+</div>
 HTML;
+
+        $html = PCS_Mailer::instance()->render_branded_email( [
+            'subject'     => $subject,
+            'eyebrow'     => 'FORMULAR DE CONTACT · MESAJ NOU',
+            'heading'     => 'Mesaj nou de la ' . $name,
+            'body_html'   => $body_html,
+            'footer_note' => "Mesajul #{$id} este salvat în panoul de administrare {$site_title}.",
+        ] );
 
         $headers = [
             'Content-Type: text/html; charset=UTF-8',
@@ -507,49 +499,56 @@ HTML;
             $contact_email = get_option( 'admin_email' );
         }
 
-        $body_html      = nl2br( esc_html( $reply_text ) );
-        $original_text  = nl2br( esc_html( $row['message'] ) );
-        $original_date  = date_i18n( 'j F Y, H:i', strtotime( $row['created_at'] ) );
-        $current_user   = wp_get_current_user();
-        $replied_by     = $current_user && $current_user->exists() ? ( $current_user->display_name ?: $current_user->user_login ) : 'Echipa Pepiniera Ciumbrud';
+        $body_html       = nl2br( esc_html( $reply_text ) );
+        $original_text   = nl2br( esc_html( $row['message'] ) );
+        $original_date   = date_i18n( 'j F Y, H:i', strtotime( $row['created_at'] ) );
+        $clean_recipient = esc_html( $recipient_name );
+        $current_user    = wp_get_current_user();
+        $raw_replied_by  = $current_user && $current_user->exists() ? trim( (string) ( $current_user->display_name ?: $current_user->user_login ) ) : '';
+        if ( empty( $raw_replied_by ) || in_array( strtolower( $raw_replied_by ), [ 'pepinieraciumbrud', 'admin', 'administrator', strtolower( $site_title ) ], true ) ) {
+            $replied_by = 'Echipa ' . $site_title;
+        } else {
+            $replied_by = $raw_replied_by;
+        }
 
-        $html = <<<HTML
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>{$subject}</title>
-</head>
-<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f7f9f6; color: #232c25; margin: 0; padding: 24px 12px; line-height: 1.6;">
-    <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; border: 1px solid #e3e8e1; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
-        <div style="background-color: #245a38; color: #ffffff; padding: 24px 28px;">
-            <h2 style="margin: 0; font-size: 20px; font-weight: 600;">🌿 {$site_title}</h2>
-            <p style="margin: 4px 0 0; font-size: 13px; opacity: 0.9;">Răspuns la solicitarea dumneavoastră</p>
-        </div>
-        <div style="padding: 28px;">
-            <p style="font-size: 15px; margin-top: 0;">Bună ziua <strong>{$recipient_name}</strong>,</p>
-            <div style="font-size: 15px; color: #1c261e; line-height: 1.7; margin: 18px 0 24px;">
-                {$body_html}
-            </div>
+        $clean_replied_by = esc_html( $replied_by );
+        $clean_site_title = esc_html( $site_title );
+        $slogan           = esc_html( PCS_Mailer::instance()->get_store_slogan() );
+        $store_phone      = esc_html( PCS_Mailer::instance()->get_store_phone() );
+        $clean_contact    = esc_html( $contact_email );
 
-            <p style="font-size: 13px; color: #556557; margin-bottom: 24px;">
-                Cu stimă,<br>
-                <strong>{$replied_by}</strong><br>
-                {$site_title}
-            </p>
+        $content_html = <<<HTML
+<p style="font-size: 16px; color: #2E2C2A; margin: 0 0 18px;">
+    Bună ziua <strong style="color: #7D0C0C;">{$clean_recipient}</strong>,
+</p>
 
-            <div style="background-color: #f7f9f6; border-radius: 12px; padding: 16px 20px; border-left: 4px solid #ccd8c9; margin-top: 24px;">
-                <div style="font-size: 11px; font-weight: bold; text-transform: uppercase; color: #768779; margin-bottom: 6px;">Mesajul dumneavoastră original ({$original_date}):</div>
-                <div style="font-size: 13px; color: #556557; font-style: italic;">{$original_text}</div>
-            </div>
-        </div>
-        <div style="background-color: #f0f4ee; padding: 14px 28px; text-align: center; font-size: 11px; color: #768779; border-top: 1px solid #e3e8e1;">
-            Dacă aveți întrebări suplimentare, puteți răspunde direct la acest email sau ne puteți contacta la {$contact_email}.
-        </div>
+<div style="font-size: 15px; color: #2E2C2A; line-height: 1.75; margin: 0 0 24px;">
+    {$body_html}
+</div>
+
+<div style="padding-top: 16px; border-top: 1px solid #EDE6D9; margin-bottom: 24px; font-size: 14px; color: #5F5A54; line-height: 1.55;">
+    Cu stimă,<br>
+    <strong style="color: #7D0C0C; font-size: 15px;">{$clean_replied_by}</strong><br>
+    <span style="color: #B21111; font-size: 11px; text-transform: uppercase; letter-spacing: 1.6px; font-weight: 700;">{$clean_site_title} &middot; {$slogan}</span>
+</div>
+
+<div style="background-color: #FAF6EE; border-radius: 12px; padding: 16px 20px; border: 1px solid #E2DACB; border-left: 4px solid #B21111; margin-top: 20px;">
+    <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #7D0C0C; margin-bottom: 6px; letter-spacing: 0.6px;">
+        Mesajul dumneavoastră original ({$original_date}):
     </div>
-</body>
-</html>
+    <div style="font-size: 13px; color: #5F5A54; font-style: italic; line-height: 1.6;">
+        {$original_text}
+    </div>
+</div>
 HTML;
+
+        $html = PCS_Mailer::instance()->render_branded_email( [
+            'subject'     => $subject,
+            'eyebrow'     => 'SERVICIUL CLIENȚI · RĂSPUNS',
+            'heading'     => 'Răspuns la solicitarea dumneavoastră',
+            'body_html'   => $content_html,
+            'footer_note' => "Dacă aveți întrebări suplimentare, puteți răspunde direct la acest email sau ne puteți contacta telefonic la <strong>{$store_phone}</strong> ori la adresa de email <a href=\"mailto:{$clean_contact}\" style=\"color: #B21111; font-weight: 600; text-decoration: underline;\">{$clean_contact}</a>.",
+        ] );
 
         $headers = [
             'Content-Type: text/html; charset=UTF-8',

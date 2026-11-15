@@ -1,13 +1,54 @@
-name: Deploy to Production
+name: CI Checks & Deploy to Production
 
 on:
   workflow_dispatch:
-  # Se va decomenta după pregătirea serverului VPS și configurarea GitHub Secrets (SSH_HOST, SSH_USER, SSH_KEY):
-  # push:
-  #   branches: [ main ]
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
+  test-and-build:
+    name: Automated Checks, Tests & Build Verification
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Storefront dependencies
+        working-directory: pepinieraciumbrud-storefront
+        run: npm ci
+
+      - name: Install Admin dependencies
+        working-directory: pepinieraciumbrud-admin
+        run: npm ci
+
+      - name: Run Automated Checks & Order Lifecycle Tests
+        run: ./deploy/run-tests.sh --ci
+
+      - name: Verify Storefront Production Build
+        working-directory: pepinieraciumbrud-storefront
+        run: npm run build
+
+      - name: Verify Admin Panel Production Build
+        working-directory: pepinieraciumbrud-admin
+        run: npm run build
+
   deploy:
+    name: Deploy to Production Server
+    needs: test-and-build
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: Check server configuration
@@ -33,5 +74,3 @@ jobs:
           script: |
             cd /var/www/pepinieraciumbrudV2
             ./deploy/deploy.sh main
-
-

@@ -227,7 +227,7 @@ const handlePlaceOrder = async () => {
           <h3 class="font-serif text-xl font-bold text-primary-dark">
             1. Date de Contact și Livrare
           </h3>
-          <span class="text-[11px] text-text-muted">* Câmpuri obligatorii</span>
+          <span class="text-xs text-text-muted">* Câmpuri obligatorii</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -418,7 +418,7 @@ const handlePlaceOrder = async () => {
             </div>
           </div>
 
-          <div class="bg-surface-warm/70 border border-border rounded-xl p-3 text-[11px] text-text-muted space-y-1.5 leading-relaxed">
+          <div class="bg-surface-warm/70 border border-border rounded-xl p-3 text-xs text-text-muted space-y-1.5 leading-relaxed">
             <div class="flex items-center gap-1.5 text-text font-medium">
               <span>📞</span>
               <span>Confirmare telefonică înainte de expediere</span>
@@ -439,7 +439,7 @@ const handlePlaceOrder = async () => {
           </AppButton>
         </div>
 
-        <div class="text-[11px] text-text-muted text-center leading-relaxed px-2">
+        <div class="text-xs text-text-muted text-center leading-relaxed px-2">
           Prin plasarea comenzii confirmați că sunteți de acord cu
           <NuxtLink to="/termeni-si-conditii" class="text-primary underline hover:text-primary-dark">Termenii și Condițiile</NuxtLink>
           și

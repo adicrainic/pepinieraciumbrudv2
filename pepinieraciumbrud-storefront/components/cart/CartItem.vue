@@ -191,7 +191,7 @@ const itemPath = computed(() => {
         >
           +
         </button>
-        <span class="text-[11px] text-text-muted pl-0.5">buc.</span>
+        <span class="text-xs text-text-muted pl-0.5">buc.</span>
       </div>
     </div>
 

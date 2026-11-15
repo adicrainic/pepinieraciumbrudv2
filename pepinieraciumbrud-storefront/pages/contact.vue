@@ -7,6 +7,16 @@ const { settings } = useSiteSettings()
 const config = useRuntimeConfig()
 const wpBase = config.public.wpBase || 'http://localhost/pepinieraciumbrudV2/pepinieraciumbrudshop/wp-json'
 
+const mapEmbedUrl = computed(() => {
+  const query = settings.value.contact_address || settings.value.site_title || 'Ciumbrud, Alba, România'
+  return `https://maps.google.com/maps?q=${encodeURIComponent(query)}&t=&z=14&ie=UTF8&iwloc=&output=embed`
+})
+
+const mapExternalUrl = computed(() => {
+  const query = settings.value.contact_address || settings.value.site_title || 'Ciumbrud, Alba, România'
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`
+})
+
 const { setPageSeo } = useSeo()
 setPageSeo({
   title: `Contact ${settings.value.site_title}`,
@@ -85,14 +95,6 @@ const resetForm = () => {
             Date de Contact
           </h3>
           <div class="space-y-4 text-sm text-text">
-            <div class="flex items-start space-x-3">
-              <span class="text-xl">📍</span>
-              <div>
-                <strong>{{ settings.site_title }}</strong><br />
-                {{ settings.contact_address }}
-              </div>
-            </div>
-
             <div class="flex items-center space-x-3">
               <span class="text-xl">📞</span>
               <div>
@@ -118,6 +120,40 @@ const resetForm = () => {
                 <div>{{ settings.schedule_weekdays }}</div>
                 <div v-if="settings.schedule_saturday">{{ settings.schedule_saturday }}</div>
                 <div v-if="settings.schedule_sunday" class="text-text-muted">{{ settings.schedule_sunday }}</div>
+              </div>
+            </div>
+
+            <div class="space-y-3 pt-1">
+              <div class="flex items-start space-x-3">
+                <span class="text-xl">📍</span>
+                <div>
+                  <strong>{{ settings.site_title }}</strong><br />
+                  <span>{{ settings.contact_address }}</span>
+                </div>
+              </div>
+
+              <!-- Google Maps Embed -->
+              <div v-if="settings.contact_address" class="overflow-hidden rounded-2xl border border-border shadow-sm bg-surface-warm">
+                <iframe
+                  :src="mapEmbedUrl"
+                  :title="`Hartă ${settings.site_title} - ${settings.contact_address}`"
+                  class="w-full h-56 border-0"
+                  loading="lazy"
+                  allowfullscreen
+                  referrerpolicy="no-referrer-when-downgrade"
+                ></iframe>
+                <div class="px-3.5 py-2 bg-surface-warm border-t border-border flex items-center justify-between text-xs text-text-muted">
+                  <span class="truncate">{{ settings.contact_address }}</span>
+                  <a
+                    :href="mapExternalUrl"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-primary hover:text-primary-dark font-semibold shrink-0 ml-2 inline-flex items-center gap-1"
+                  >
+                    <span>Deschide în Google Maps</span>
+                    <span>↗</span>
+                  </a>
+                </div>
               </div>
             </div>
           </div>

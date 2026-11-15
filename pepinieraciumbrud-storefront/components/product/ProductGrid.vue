@@ -11,9 +11,9 @@ defineProps<{
 <template>
   <div>
     <!-- Skeleton loader -->
-    <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
       <div
-        v-for="i in 4"
+        v-for="i in 6"
         :key="i"
         class="bg-white border border-border rounded-2xl p-5 animate-pulse"
       >
@@ -37,7 +37,7 @@ defineProps<{
     </div>
 
     <!-- Products Grid -->
-    <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div v-else class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
       <ProductCard
         v-for="product in products"
         :key="product.id"

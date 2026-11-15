@@ -29,14 +29,14 @@ echo ""
 cd "$ROOT_DIR"
 
 # 1. Update source code from Git
-echo -e "${BLUE}[1/6] 📥 Pulling latest code from GitHub...${NC}"
+echo -e "${BLUE}[1/7] 📥 Pulling latest code from GitHub...${NC}"
 git fetch origin "$BRANCH"
 git checkout "$BRANCH"
 git pull origin "$BRANCH"
 echo -e "${GREEN}✔ Code updated successfully.${NC}"
 
 # 2. Run Database Migrations (Phinx)
-echo -e "${BLUE}[2/6] 🗄️ Running Database Migrations (Phinx)...${NC}"
+echo -e "${BLUE}[2/7] 🗄️ Running Database Migrations (Phinx)...${NC}"
 cd "$ROOT_DIR/pepinieraciumbrudshop"
 if [ -f "composer.json" ]; then
     composer install --no-dev --prefer-dist --no-interaction
@@ -44,8 +44,17 @@ if [ -f "composer.json" ]; then
 fi
 echo -e "${GREEN}✔ Database migrations applied successfully.${NC}"
 
-# 3. Build Nuxt 3 Storefront
-echo -e "${BLUE}[3/6] 🛍️ Building Nuxt 3 Storefront...${NC}"
+# 3. Run Automated Checks & Order Lifecycle Integration Tests
+echo -e "${BLUE}[3/7] 🧪 Running Automated Checks & Order Lifecycle Integration Tests...${NC}"
+cd "$ROOT_DIR/pepinieraciumbrud-storefront"
+npm install --prefer-offline --no-audit
+cd "$ROOT_DIR/pepinieraciumbrud-admin"
+npm install --prefer-offline --no-audit
+"$ROOT_DIR/deploy/run-tests.sh"
+echo -e "${GREEN}✔ All pre-build checks and integration tests passed.${NC}"
+
+# 4. Build Nuxt 3 Storefront
+echo -e "${BLUE}[4/7] 🛍️ Building Nuxt 3 Storefront...${NC}"
 cd "$ROOT_DIR/pepinieraciumbrud-storefront"
 
 if [ ! -f ".env" ]; then
@@ -54,12 +63,11 @@ if [ ! -f ".env" ]; then
     echo -e "${YELLOW}Please check .env to make sure domain settings are correct!${NC}"
 fi
 
-npm install --prefer-offline --no-audit
 npm run build
 echo -e "${GREEN}✔ Storefront build completed.${NC}"
 
-# 4. Reload PM2 Process (Zero Downtime)
-echo -e "${BLUE}[4/6] 🔄 Reloading Storefront via PM2...${NC}"
+# 5. Reload PM2 Process (Zero Downtime)
+echo -e "${BLUE}[5/7] 🔄 Reloading Storefront via PM2...${NC}"
 if pm2 describe pepiniera-storefront > /dev/null 2>&1; then
     pm2 reload "$ROOT_DIR/deploy/ecosystem.config.cjs" --update-env
 else
@@ -68,8 +76,8 @@ else
 fi
 echo -e "${GREEN}✔ Storefront is live.${NC}"
 
-# 5. Build Vue 3 Admin Panel
-echo -e "${BLUE}[5/6] ⚙️ Building Vue 3 Admin Panel...${NC}"
+# 6. Build Vue 3 Admin Panel
+echo -e "${BLUE}[6/7] ⚙️ Building Vue 3 Admin Panel...${NC}"
 cd "$ROOT_DIR/pepinieraciumbrud-admin"
 
 if [ ! -f ".env" ]; then
@@ -78,12 +86,11 @@ if [ ! -f ".env" ]; then
     echo -e "${YELLOW}Please check .env to make sure domain settings are correct!${NC}"
 fi
 
-npm install --prefer-offline --no-audit
 npm run build
 echo -e "${GREEN}✔ Admin build completed (static assets in dist/).${NC}"
 
-# 6. Fix permissions for WordPress uploads & uploads folder
-echo -e "${BLUE}[6/6] 🔒 Setting correct permissions on WordPress uploads...${NC}"
+# 7. Fix permissions for WordPress uploads & uploads folder
+echo -e "${BLUE}[7/7] 🔒 Setting correct permissions on WordPress uploads...${NC}"
 cd "$ROOT_DIR"
 if [ -d "pepinieraciumbrudshop/wp-content/uploads" ]; then
     sudo chown -R www-data:www-data pepinieraciumbrudshop/wp-content/uploads

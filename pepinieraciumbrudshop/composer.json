@@ -11,7 +11,15 @@
   "scripts": {
     "migrate": "phinx migrate -c database/phinx.php",
     "rollback": "phinx rollback -c database/phinx.php",
-    "status": "phinx status -c database/phinx.php"
+    "status": "phinx status -c database/phinx.php",
+    "test:lint": "php tests/lint.php",
+    "test:unit": "php tests/unit/order-unit-test.php",
+    "test:integration": "php tests/integration/order-lifecycle-test.php",
+    "test": [
+      "@test:lint",
+      "@test:unit",
+      "@test:integration"
+    ]
   }
 }
 

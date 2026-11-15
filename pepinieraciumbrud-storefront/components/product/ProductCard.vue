@@ -69,7 +69,7 @@ const handleAddToCart = async () => {
       <!-- In Cart Indicator Badge -->
       <div
         v-if="inCartQty > 0"
-        class="absolute top-3 right-3 bg-primary text-white text-[11px] font-semibold px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1"
+        class="absolute top-3 right-3 bg-primary text-white text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1"
       >
         <span>✓ În coș ({{ inCartQty }})</span>
       </div>
@@ -78,7 +78,7 @@ const handleAddToCart = async () => {
     <!-- Content -->
     <div class="p-5 flex flex-col flex-1">
       <!-- Category Tag -->
-      <div v-if="product.categories && product.categories.length > 0" class="text-[10px] uppercase tracking-[0.22em] text-accent font-semibold mb-1.5">
+      <div v-if="product.categories && product.categories.length > 0" class="text-xs uppercase tracking-[0.18em] text-accent font-semibold mb-1.5">
         {{ product.categories[0].name }}
       </div>
 
@@ -94,7 +94,7 @@ const handleAddToCart = async () => {
         <span
           v-for="spec in keySpecs"
           :key="spec.name"
-          class="inline-flex items-center text-[11px] bg-surface-warm text-text-muted px-2 py-0.5 rounded-md border border-border/70"
+          class="inline-flex items-center text-xs bg-surface-warm text-text-muted px-2 py-0.5 rounded-md border border-border/70"
         >
           <strong class="text-text font-medium mr-1">{{ spec.name }}:</strong> {{ spec.value }}
         </span>
@@ -103,21 +103,21 @@ const handleAddToCart = async () => {
       <!-- Short Excerpt -->
       <div
         v-if="product.short_description"
-        class="text-xs text-text-muted line-clamp-2 mb-4 prose-sm prose-p:my-0 leading-relaxed"
+        class="text-sm text-text-muted line-clamp-2 mb-4 prose-sm prose-p:my-0 leading-relaxed"
         v-html="product.short_description"
       ></div>
 
       <!-- Price & Button (Pinned to Bottom) -->
-      <div class="mt-auto pt-4 border-t border-primary/15 flex items-center justify-between gap-3">
-        <div>
-          <span class="text-[11px] text-text-muted block leading-none mb-1">Preț / buc.</span>
-          <div class="flex items-baseline gap-2 flex-wrap">
-            <span class="text-lg font-bold text-primary-dark font-sans tracking-wide">
+      <div class="mt-auto pt-4 border-t border-primary/15 flex items-center justify-between gap-2">
+        <div class="min-w-0">
+          <span class="text-xs text-text-muted block leading-none mb-1 whitespace-nowrap">Preț / buc.</span>
+          <div class="flex items-baseline gap-1.5 flex-wrap">
+            <span class="text-lg font-bold text-primary-dark font-sans tracking-wide whitespace-nowrap">
               {{ formatPrice(product.prices) }}
             </span>
             <span
               v-if="regularPriceFormatted"
-              class="text-xs text-text-muted line-through font-sans"
+              class="text-xs text-text-muted line-through font-sans whitespace-nowrap"
             >
               {{ regularPriceFormatted }}
             </span>
@@ -127,6 +127,7 @@ const handleAddToCart = async () => {
         <AppButton
           variant="primary"
           size="sm"
+          class="shrink-0"
           :disabled="!product.is_in_stock || isAdding"
           :loading="isAdding"
           @click="handleAddToCart"
@@ -134,7 +135,7 @@ const handleAddToCart = async () => {
           <span v-if="!product.is_in_stock">Indisponibil</span>
           <template v-else>
             <span>Adaugă</span>
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 ml-1 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
             </svg>
           </template>

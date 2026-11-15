@@ -129,7 +129,7 @@ const steps = [
           <div class="w-20 h-28 sm:w-24 sm:h-36 relative flex items-center justify-center">
             <LogoMark class="w-full h-full text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.4)]" />
           </div>
-          <span class="inline-flex items-center gap-2 px-4 py-1.5 mt-2 rounded-full text-[11px] sm:text-xs font-medium tracking-[0.28em] uppercase bg-white/10 text-white backdrop-blur-md border border-white/25 shadow-sm">
+          <span class="inline-flex items-center gap-2 px-4 py-1.5 mt-2 rounded-full text-xs sm:text-sm font-medium tracking-[0.22em] uppercase bg-white/10 text-white backdrop-blur-md border border-white/25 shadow-sm">
             <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span> Ciumbrud, Alba · Satul Rozelor · Din 2000
           </span>
         </div>
@@ -149,7 +149,7 @@ const steps = [
           <AppButton variant="primary" size="lg" to="/produse" class="shadow-xl hover:shadow-2xl">Explorează Catalogul</AppButton>
           <NuxtLink
             to="/produse?category=trandafiri"
-            class="inline-flex items-center justify-center px-8 py-4 text-xs uppercase tracking-[0.22em] rounded-tr-[1.25rem] rounded-bl-[1.25rem] font-medium border border-white/60 bg-white/10 text-white backdrop-blur-md hover:bg-white hover:text-primary-dark transition-all duration-200 shadow-lg"
+            class="inline-flex items-center justify-center px-8 py-4 text-sm uppercase tracking-[0.2em] rounded-tr-[1.25rem] rounded-bl-[1.25rem] font-medium border border-white/60 bg-white/10 text-white backdrop-blur-md hover:bg-white hover:text-primary-dark transition-all duration-200 shadow-lg"
           >
             Colecția de Trandafiri
           </NuxtLink>
@@ -159,7 +159,7 @@ const steps = [
         <dl class="grid grid-cols-3 gap-6 sm:gap-12 max-w-2xl w-full border-t border-white/20 pt-8">
           <div v-for="(st, i) in stats" :key="st.label" :class="i > 0 ? 'border-l border-white/15' : ''">
             <dt class="font-serif text-3xl sm:text-4xl font-medium text-white leading-none [text-shadow:0_2px_10px_rgba(0,0,0,0.3)]">{{ st.value }}</dt>
-            <dd class="text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-white/75 mt-2 font-medium">{{ st.label }}</dd>
+            <dd class="text-xs sm:text-sm uppercase tracking-[0.16em] text-white/80 mt-2 font-medium">{{ st.label }}</dd>
           </div>
         </dl>
       </div>
@@ -171,8 +171,8 @@ const steps = [
         <div v-for="(b, i) in benefits" :key="b.title" class="py-7 px-5 flex items-start gap-4" :class="i > 0 ? 'lg:border-l border-primary/15' : ''">
           <span class="font-serif italic text-accent text-2xl leading-none">0{{ i + 1 }}</span>
           <div>
-            <h4 class="font-sans text-[11px] uppercase tracking-[0.2em] font-medium text-primary-dark">{{ b.title }}</h4>
-            <p class="text-xs text-text-muted mt-1.5 leading-snug">{{ b.text }}</p>
+            <h4 class="font-sans text-xs sm:text-sm uppercase tracking-[0.16em] font-medium text-primary-dark">{{ b.title }}</h4>
+            <p class="text-sm text-text-muted mt-1.5 leading-snug">{{ b.text }}</p>
           </div>
         </div>
       </div>
@@ -186,7 +186,7 @@ const steps = [
             <span class="section-eyebrow">Categorii</span>
             <h2 class="section-title max-w-xl">Ce doriți să plantați în grădina dumneavoastră?</h2>
           </div>
-          <NuxtLink to="/produse" class="link-underline text-[11px] uppercase tracking-[0.25em] font-medium text-primary inline-flex items-center gap-2 pb-1 self-start md:self-auto">
+          <NuxtLink to="/produse" class="link-underline text-xs sm:text-sm uppercase tracking-[0.2em] font-medium text-primary inline-flex items-center gap-2 pb-1 self-start md:self-auto">
             Vezi toate produsele <span>→</span>
           </NuxtLink>
         </div>
@@ -211,8 +211,8 @@ const steps = [
                 <span class="text-accent text-base inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
               </h3>
             </div>
-            <p class="text-xs text-text-muted mt-2 leading-relaxed flex-1 pl-6">{{ c.text }}</p>
-            <div class="mt-4 pt-3 pl-6 border-t border-border/60 flex items-center justify-between text-[11px] uppercase tracking-[0.2em] font-semibold text-primary group-hover:text-accent transition-colors">
+            <p class="text-sm text-text-muted mt-2 leading-relaxed flex-1 pl-6">{{ c.text }}</p>
+            <div class="mt-4 pt-3 pl-6 border-t border-border/60 flex items-center justify-between text-xs uppercase tracking-[0.18em] font-semibold text-primary group-hover:text-accent transition-colors">
               <span>Vezi soiurile</span>
               <span class="inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
             </div>
@@ -268,9 +268,9 @@ const steps = [
         <div class="relative bg-primary text-white p-10 sm:p-14 petal">
           <LogoMark class="absolute right-6 top-6 h-24 w-auto text-white/30" />
           <div class="space-y-8 relative">
-            <div class="border-b border-white/15 pb-6"><span class="text-4xl font-serif font-medium">100%</span><p class="text-[11px] uppercase tracking-[0.2em] text-white/70 mt-2">Aclimatizate în România</p></div>
-            <div class="border-b border-white/15 pb-6"><span class="text-4xl font-serif font-medium">+30 ani</span><p class="text-[11px] uppercase tracking-[0.2em] text-white/70 mt-2">Experiență în altoire și selecție</p></div>
-            <div><span class="text-4xl font-serif font-medium">Livrare sigură</span><p class="text-[11px] uppercase tracking-[0.2em] text-white/70 mt-2">Pachete termoizolate pentru protecția rădăcinilor</p></div>
+            <div class="border-b border-white/15 pb-6"><span class="text-4xl font-serif font-medium">100%</span><p class="text-xs sm:text-sm uppercase tracking-[0.18em] text-white/80 mt-2">Aclimatizate în România</p></div>
+            <div class="border-b border-white/15 pb-6"><span class="text-4xl font-serif font-medium">+30 ani</span><p class="text-xs sm:text-sm uppercase tracking-[0.18em] text-white/80 mt-2">Experiență în altoire și selecție</p></div>
+            <div><span class="text-4xl font-serif font-medium">Livrare sigură</span><p class="text-xs sm:text-sm uppercase tracking-[0.18em] text-white/80 mt-2">Pachete termoizolate pentru protecția rădăcinilor</p></div>
           </div>
         </div>
       </div>
