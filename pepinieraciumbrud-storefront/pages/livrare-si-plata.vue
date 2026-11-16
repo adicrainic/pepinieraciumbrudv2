@@ -14,7 +14,7 @@ setPageSeo({
       Livrare și Plată
     </h1>
 
-    <div class="bg-white rounded-3xl border border-border p-8 sm:p-12 shadow-sm space-y-8 text-sm text-text leading-relaxed">
+    <div class="bg-white/85 backdrop-blur-sm rounded-3xl border border-border p-8 sm:p-12 shadow-sm space-y-8 text-sm text-text leading-relaxed">
       <div>
         <h3 class="font-serif text-xl font-bold text-primary-dark mb-3 flex items-center gap-2">
           <span>🚚</span> 1. Cum și când livrăm?

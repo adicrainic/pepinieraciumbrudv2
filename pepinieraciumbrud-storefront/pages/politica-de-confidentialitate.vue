@@ -14,7 +14,7 @@ setPageSeo({
       Politica de Confidențialitate
     </h1>
 
-    <div class="bg-white rounded-3xl border border-border p-8 sm:p-12 shadow-sm space-y-6 text-sm text-text-muted leading-relaxed">
+    <div class="bg-white/85 backdrop-blur-sm rounded-3xl border border-border p-8 sm:p-12 shadow-sm space-y-6 text-sm text-text-muted leading-relaxed">
       <p>
         Pepiniera Ciumbrud respectă confidențialitatea fiecărui client și se conformează Regulamentului General privind Protecția Datelor (GDPR - Regulament UE 2016/679).
       </p>

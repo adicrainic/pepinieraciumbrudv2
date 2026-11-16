@@ -51,10 +51,10 @@ define( 'PCS_WC_API_URL',         'http://localhost/pepinieraciumbrudV2/pepinier
 define( 'PCS_JWT_SECRET',         'your_jwt_secret_key_here' );
 
 // Allowed Origins for CORS:
-// Local: 'http://localhost:3000' and 'http://localhost:5173'
+// Local: 'http://localhost:3000' and 'http://admin.pepinieraciumbrud.local' (or 'http://localhost:5173')
 // Production: 'https://pepinieraciumbrud.ro' and 'https://admin.pepinieraciumbrud.ro'
 define( 'PCS_STOREFRONT_ORIGIN',  'http://localhost:3000' );
-define( 'PCS_ADMIN_ORIGIN',       'http://localhost:5173' );
+define( 'PCS_ADMIN_ORIGIN',       'http://admin.pepinieraciumbrud.local' );
 
 /* That's all, stop editing! Happy publishing. */
 

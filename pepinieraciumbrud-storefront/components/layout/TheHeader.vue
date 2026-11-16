@@ -182,8 +182,8 @@ const handleSearch = () => {
             </svg>
           </div>
           <div class="flex flex-col justify-center border-l border-primary/20 pl-2.5 sm:pl-4">
-            <span class="font-serif text-lg sm:text-2xl lg:text-3xl font-medium leading-none text-primary-dark tracking-wide">Pepiniera Ciumbrud</span>
-            <span class="mt-1 sm:mt-1.5 text-[11px] sm:text-xs uppercase tracking-[0.18em] sm:tracking-[0.24em] text-accent font-medium">Din 2000 · Satul Rozelor</span>
+            <span class="font-serif text-lg sm:text-2xl lg:text-3xl font-medium leading-none text-primary-dark tracking-wide">{{ settings.site_title || 'Pepiniera Ciumbrud' }}</span>
+            <span class="mt-1 sm:mt-1.5 text-[11px] sm:text-xs uppercase tracking-[0.18em] sm:tracking-[0.24em] text-accent font-medium">{{ settings.site_tagline || 'Din 2000 · Satul Rozelor' }}</span>
           </div>
         </NuxtLink>
 
@@ -191,28 +191,28 @@ const handleSearch = () => {
         <nav class="hidden md:flex items-center space-x-9 order-2 justify-self-center">
           <NuxtLink
             to="/"
-            class="link-underline text-xs lg:text-sm uppercase tracking-[0.18em] font-medium text-text hover:text-accent transition-colors pb-1"
-            active-class="!text-accent"
+            class="link-underline inline-block text-xs lg:text-sm uppercase tracking-[0.18em] font-medium text-text hover:text-accent pb-1"
+            exact-active-class="!text-accent"
           >
             Acasă
           </NuxtLink>
           <NuxtLink
             to="/produse"
-            class="link-underline text-xs lg:text-sm uppercase tracking-[0.18em] font-medium text-text hover:text-accent transition-colors pb-1"
+            class="link-underline inline-block text-xs lg:text-sm uppercase tracking-[0.18em] font-medium text-text hover:text-accent pb-1"
             active-class="!text-accent"
           >
             Magazin & Produse
           </NuxtLink>
           <NuxtLink
             to="/despre-noi"
-            class="link-underline text-xs lg:text-sm uppercase tracking-[0.18em] font-medium text-text hover:text-accent transition-colors pb-1"
+            class="link-underline inline-block text-xs lg:text-sm uppercase tracking-[0.18em] font-medium text-text hover:text-accent pb-1"
             active-class="!text-accent"
           >
             Despre noi
           </NuxtLink>
           <NuxtLink
             to="/contact"
-            class="link-underline text-xs lg:text-sm uppercase tracking-[0.18em] font-medium text-text hover:text-accent transition-colors pb-1"
+            class="link-underline inline-block text-xs lg:text-sm uppercase tracking-[0.18em] font-medium text-text hover:text-accent pb-1"
             active-class="!text-accent"
           >
             Contact

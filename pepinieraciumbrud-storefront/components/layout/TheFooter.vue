@@ -22,9 +22,9 @@ const { settings } = useSiteSettings()
               />
               <span v-else class="text-xl">🌿</span>
             </div>
-            <span class="font-serif text-2xl font-medium tracking-wide">Pepiniera Ciumbrud</span>
+            <span class="font-serif text-2xl font-medium tracking-wide">{{ settings.site_title || 'Pepiniera Ciumbrud' }}</span>
           </div>
-          <p class="text-xs uppercase tracking-[0.22em] text-rose-200">Pepiniera de familie din 2000</p>
+          <p class="text-xs uppercase tracking-[0.22em] text-rose-200">{{ settings.site_tagline || 'Pepiniera de familie din 2000' }}</p>
           <p class="text-sm text-white/80 leading-relaxed">
             {{ settings.site_description }}
           </p>

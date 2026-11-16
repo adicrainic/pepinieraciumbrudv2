@@ -1,28 +1,32 @@
 <script setup lang="ts">
 import { useProducts } from '~/composables/useProducts'
 import { useSeo } from '~/composables/useSeo'
+import { useSiteSettings } from '~/composables/useSiteSettings'
 import ProductGrid from '~/components/product/ProductGrid.vue'
 import AppButton from '~/components/ui/AppButton.vue'
 import LogoMark from '~/components/ui/LogoMark.vue'
 
 const { fetchProducts, fetchCategories } = useProducts()
 const { setPageSeo } = useSeo()
+const { settings } = useSiteSettings()
 
 setPageSeo({
-  title: 'Pepinieră Pomul și Trandafirul – Ciumbrud',
-  description: 'Pepiniera Ciumbrud – Producător de pomi fructiferi certificați, trandafiri nobili, arbuști ornamentali și arbuști fructiferi aclimatizați.'
+  title: settings.value?.site_tagline ? `${settings.value.site_title} – ${settings.value.site_tagline}` : 'Pepinieră Pomul și Trandafirul – Ciumbrud',
+  description: settings.value?.site_description || 'Pepiniera Ciumbrud – Producător de pomi fructiferi certificați, trandafiri nobili, arbuști ornamentali și arbuști fructiferi aclimatizați.'
 })
 
 // SSR data fetching
-const { data: productsData, status: productsStatus } = await useAsyncData('home-products', () =>
-  fetchProducts({ per_page: 8 })
+const { data: productsData, status: productsStatus } = await useAsyncData(
+  'home-products',
+  () => fetchProducts({ per_page: 9, stock_status: 'instock' }),
+  { getCachedData: () => undefined }
 )
 
 const { data: categoriesData } = await useAsyncData('home-categories', () =>
   fetchCategories()
 )
 
-const products = computed(() => productsData.value || [])
+const products = computed(() => (productsData.value || []).filter((p: any) => p.is_in_stock))
 const categories = computed(() => categoriesData.value || [])
 const stats = [
   { value: '30+', label: 'ani de experiență' },
@@ -117,9 +121,9 @@ const steps = [
       <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/75"></div>
       <div class="absolute inset-0 bg-radial from-transparent via-transparent to-black/40 pointer-events-none"></div>
 
-      <!-- The Grand White S Shape in the Middle -->
-      <div class="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[90%] max-h-[38rem] w-auto flex items-center justify-center">
-        <LogoMark :rose="false" class="h-full w-auto text-white/15 drop-shadow-[0_2px_20px_rgba(0,0,0,0.5)]" />
+      <!-- The Grand White S Shape in the Middle (full page height & wider) -->
+      <div class="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-full w-auto flex items-center justify-center">
+        <LogoMark :rose="false" class="h-full w-auto scale-x-125 sm:scale-x-135 text-white/15 drop-shadow-[0_2px_20px_rgba(0,0,0,0.5)]" />
       </div>
 
       <!-- Hero Content Centered in the Middle -->
@@ -130,7 +134,7 @@ const steps = [
             <LogoMark class="w-full h-full text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.4)]" />
           </div>
           <span class="inline-flex items-center gap-2 px-4 py-1.5 mt-2 rounded-full text-xs sm:text-sm font-medium tracking-[0.22em] uppercase bg-white/10 text-white backdrop-blur-md border border-white/25 shadow-sm">
-            <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span> Ciumbrud, Alba · Satul Rozelor · Din 2000
+            <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span> {{ settings.site_tagline || 'Ciumbrud, Alba · Satul Rozelor · Din 2000' }}
           </span>
         </div>
 
@@ -223,7 +227,6 @@ const steps = [
 
     <!-- Featured products -->
     <section class="py-24 bg-surface-warm relative overflow-hidden">
-      <LogoMark :rose="false" class="pointer-events-none absolute -left-16 top-4 h-[90%] w-auto text-primary/[0.05] hidden md:block" />
       <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-14">
           <span class="section-eyebrow">Disponibile Acum</span>

@@ -23,7 +23,7 @@ Pe serverul proaspăt instalat (Ubuntu):
 sudo git clone git@github.com:adicrainic/pepinieraciumbrudv2.git /var/www/pepinieraciumbrudV2
 cd /var/www/pepinieraciumbrudV2
 
-# 2. Rulează scriptul de provizionare pachete (Nginx, PHP 8.2, Node 20, PM2, Certbot, WP-CLI)
+# 2. Rulează scriptul de provizionare pachete (Nginx, MySQL, PHP 8.2, Composer, Node 20, PM2, Certbot, WP-CLI)
 sudo bash deploy/setup-server.sh
 ```
 

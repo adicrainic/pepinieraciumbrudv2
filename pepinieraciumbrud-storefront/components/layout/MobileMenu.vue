@@ -41,41 +41,56 @@ const whatsappUrl = computed(() => {
       </div>
 
       <nav class="flex-1 py-6 space-y-4">
-        <NuxtLink
-          to="/"
-          class="block py-2 text-base font-medium text-text hover:text-primary"
-          @click="uiStore.closeMobileMenu()"
-        >
-          Acasă
-        </NuxtLink>
-        <NuxtLink
-          to="/produse"
-          class="block py-2 text-base font-medium text-text hover:text-primary"
-          @click="uiStore.closeMobileMenu()"
-        >
-          Toate Produsele
-        </NuxtLink>
-        <NuxtLink
-          to="/despre-noi"
-          class="block py-2 text-base font-medium text-text hover:text-primary"
-          @click="uiStore.closeMobileMenu()"
-        >
-          Despre Pepinieră
-        </NuxtLink>
-        <NuxtLink
-          to="/contact"
-          class="block py-2 text-base font-medium text-text hover:text-primary"
-          @click="uiStore.closeMobileMenu()"
-        >
-          Contact & Comenzi
-        </NuxtLink>
-        <NuxtLink
-          to="/livrare-si-plata"
-          class="block py-2 text-base font-medium text-text hover:text-primary"
-          @click="uiStore.closeMobileMenu()"
-        >
-          Livrare și Plată
-        </NuxtLink>
+        <div>
+          <NuxtLink
+            to="/"
+            class="link-underline inline-block py-2 text-base font-medium text-text hover:text-accent pb-1"
+            exact-active-class="!text-accent"
+            @click="uiStore.closeMobileMenu()"
+          >
+            Acasă
+          </NuxtLink>
+        </div>
+        <div>
+          <NuxtLink
+            to="/produse"
+            class="link-underline inline-block py-2 text-base font-medium text-text hover:text-accent pb-1"
+            active-class="!text-accent"
+            @click="uiStore.closeMobileMenu()"
+          >
+            Toate Produsele
+          </NuxtLink>
+        </div>
+        <div>
+          <NuxtLink
+            to="/despre-noi"
+            class="link-underline inline-block py-2 text-base font-medium text-text hover:text-accent pb-1"
+            active-class="!text-accent"
+            @click="uiStore.closeMobileMenu()"
+          >
+            Despre Pepinieră
+          </NuxtLink>
+        </div>
+        <div>
+          <NuxtLink
+            to="/contact"
+            class="link-underline inline-block py-2 text-base font-medium text-text hover:text-accent pb-1"
+            active-class="!text-accent"
+            @click="uiStore.closeMobileMenu()"
+          >
+            Contact & Comenzi
+          </NuxtLink>
+        </div>
+        <div>
+          <NuxtLink
+            to="/livrare-si-plata"
+            class="link-underline inline-block py-2 text-base font-medium text-text hover:text-accent pb-1"
+            active-class="!text-accent"
+            @click="uiStore.closeMobileMenu()"
+          >
+            Livrare și Plată
+          </NuxtLink>
+        </div>
       </nav>
 
       <div class="pt-6 border-t border-border text-xs text-text-muted space-y-3">

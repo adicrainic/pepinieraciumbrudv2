@@ -1,13 +1,27 @@
 <script setup lang="ts">
 import { useSiteSettings } from '~/composables/useSiteSettings'
+import LogoMark from '~/components/ui/LogoMark.vue'
 
 const { settings, fetchSettings } = useSiteSettings()
 await useAsyncData('site-settings-minimal', () => fetchSettings())
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col bg-background">
-    <header class="py-4 border-b border-border bg-white">
+  <div class="min-h-screen flex flex-col bg-background relative">
+    <!-- Centered Brand Watermark Motif across all pages (full page height & wider) -->
+    <div
+      class="pointer-events-none fixed inset-0 flex items-center justify-center overflow-hidden z-0 select-none"
+      aria-hidden="true"
+    >
+      <div class="h-screen w-auto flex items-center justify-center">
+        <LogoMark
+          :rose="false"
+          class="h-full w-auto scale-x-125 sm:scale-x-135 text-primary/[0.05] drop-shadow-[0_2px_20px_rgba(178,17,17,0.06)]"
+        />
+      </div>
+    </div>
+
+    <header class="py-4 border-b border-border bg-white/90 backdrop-blur-sm relative z-10">
       <div class="max-w-5xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-4">
         <NuxtLink
           to="/cos"
@@ -40,11 +54,11 @@ await useAsyncData('site-settings-minimal', () => fetchSettings())
       </div>
     </header>
 
-    <main class="flex-1 py-8 sm:py-12">
+    <main class="flex-1 py-8 sm:py-12 relative z-10">
       <slot />
     </main>
 
-    <footer class="py-6 border-t border-border bg-white text-center text-xs text-text-muted">
+    <footer class="py-6 border-t border-border bg-white/90 backdrop-blur-sm text-center text-xs text-text-muted relative z-10">
       <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
         <span>© {{ new Date().getFullYear() }} {{ settings.footer_copyright || `${settings.site_title}. Plăți securizate & Date protejate.` }}</span>
         <div class="flex items-center gap-4">

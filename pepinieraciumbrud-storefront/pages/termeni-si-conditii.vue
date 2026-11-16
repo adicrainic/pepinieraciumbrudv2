@@ -14,7 +14,7 @@ setPageSeo({
       Termeni și Condiții
     </h1>
 
-    <div class="bg-white rounded-3xl border border-border p-8 sm:p-12 shadow-sm space-y-6 text-sm text-text-muted leading-relaxed">
+    <div class="bg-white/85 backdrop-blur-sm rounded-3xl border border-border p-8 sm:p-12 shadow-sm space-y-6 text-sm text-text-muted leading-relaxed">
       <p>
         Bine ați venit pe site-ul oficial Pepiniera Ciumbrud. Prin utilizarea acestui site și plasarea unei comenzi, sunteți de acord cu termenii și condițiile detaliate mai jos.
       </p>

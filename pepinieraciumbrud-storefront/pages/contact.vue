@@ -89,7 +89,7 @@ const resetForm = () => {
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
       <!-- Contact Info -->
-      <div class="bg-white rounded-3xl border border-border p-8 space-y-8 shadow-sm">
+      <div class="bg-white/85 backdrop-blur-sm rounded-3xl border border-border p-8 space-y-8 shadow-sm">
         <div>
           <h3 class="font-serif text-xl font-bold text-primary-dark mb-4">
             Date de Contact
@@ -165,7 +165,7 @@ const resetForm = () => {
       </div>
 
       <!-- Contact Form -->
-      <div class="bg-white rounded-3xl border border-border p-8 shadow-sm">
+      <div class="bg-white/85 backdrop-blur-sm rounded-3xl border border-border p-8 shadow-sm">
         <h3 class="font-serif text-xl font-bold text-primary-dark mb-4">
           Trimiteți un Mesaj
         </h3>

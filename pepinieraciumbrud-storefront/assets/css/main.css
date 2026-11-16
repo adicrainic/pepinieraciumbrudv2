@@ -64,10 +64,15 @@
   }
 
   .link-underline {
-    background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
-    transition: background-size .35s ease;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-position: 0 100%;
+    background-size: 0 2px;
+    background-repeat: no-repeat;
+    transition: background-size 0.35s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s ease;
   }
-  .link-underline:hover, .link-underline.router-link-active { background-size: 100% 1px; }
+  .link-underline:hover {
+    background-size: 100% 2px;
+  }
 
   .petal-pattern {
     background-image:

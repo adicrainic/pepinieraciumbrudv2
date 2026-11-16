@@ -214,7 +214,7 @@ watch(
   }
 )
 
-const PER_PAGE = 20
+const PER_PAGE = 21
 const currentPage = ref(1)
 const extraProducts = ref<any[]>([])
 const loadingMore = ref(false)
@@ -239,7 +239,8 @@ const { data: productsData, status, refresh } = await useAsyncData(
   'catalog-products',
   () => fetchProductsPaged(buildParams(1)),
   {
-    watch: [activeCategorySlug, searchQuery, sortBy, onlyInStock]
+    watch: [activeCategorySlug, searchQuery, sortBy, onlyInStock],
+    getCachedData: () => undefined
   }
 )
 
@@ -341,7 +342,7 @@ const resetFilters = () => {
     <div class="flex flex-col lg:flex-row gap-8 items-start">
       <!-- Left Sidebar: Principal Categories Menu -->
       <aside class="w-full lg:w-64 xl:w-72 shrink-0 lg:sticky lg:top-28">
-        <div class="bg-white border border-border rounded-2xl overflow-hidden shadow-sm">
+        <div class="bg-white/85 backdrop-blur-sm border border-border rounded-2xl overflow-hidden shadow-sm">
           <div class="bg-surface-warm/80 px-5 py-3.5 border-b border-border flex items-center justify-between">
             <h2 class="font-serif text-lg font-bold text-primary-dark tracking-wide">
               Categorii Principale
@@ -460,7 +461,7 @@ const resetFilters = () => {
         </div>
 
         <!-- Filter Bar -->
-        <div class="bg-white border border-border rounded-2xl p-4 sm:p-5 mb-6 shadow-sm flex flex-col xl:flex-row gap-4 items-stretch xl:items-center justify-between">
+        <div class="bg-white/85 backdrop-blur-sm border border-border rounded-2xl p-4 sm:p-5 mb-6 shadow-sm flex flex-col xl:flex-row gap-4 items-stretch xl:items-center justify-between">
           <!-- Search Input Form -->
           <form @submit.prevent="executeSearch" class="w-full xl:w-5/12 relative flex items-center">
             <div class="relative w-full">

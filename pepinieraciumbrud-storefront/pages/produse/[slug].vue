@@ -117,7 +117,7 @@ const handleAddToCart = async () => {
     <div v-else class="pb-20 sm:pb-0">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-start">
         <!-- Image Gallery -->
-        <div class="bg-white border border-border rounded-3xl p-4 sm:p-6 overflow-hidden lg:sticky lg:top-24">
+        <div class="bg-white/85 backdrop-blur-sm border border-border rounded-3xl p-4 sm:p-6 overflow-hidden lg:sticky lg:top-24">
           <div class="aspect-square rounded-2xl overflow-hidden bg-surface-warm relative">
             <img
               :src="activeImageSrc"
@@ -125,8 +125,8 @@ const handleAddToCart = async () => {
               class="w-full h-full object-cover object-center transition-all duration-300"
               onerror="this.src='/placeholder-plant.svg'"
             />
-            <div v-if="product.on_sale && discountPercent > 0" class="absolute top-3 left-3">
-              <AppBadge variant="danger">-{{ discountPercent }}% Promoție</AppBadge>
+            <div v-if="discountPercent > 0 || product.on_sale" class="absolute top-3 left-3">
+              <AppBadge variant="danger">{{ discountPercent > 0 ? `-${discountPercent}% Promoție` : 'Promoție' }}</AppBadge>
             </div>
           </div>
 
@@ -163,7 +163,7 @@ const handleAddToCart = async () => {
             </NuxtLink>
             <AppBadge v-if="product.is_in_stock" variant="success">În Stoc</AppBadge>
             <AppBadge v-else variant="danger">Stoc Epuizat</AppBadge>
-            <AppBadge v-if="product.on_sale" variant="danger">
+            <AppBadge v-if="discountPercent > 0 || product.on_sale" variant="danger">
               {{ discountPercent > 0 ? `Reducere -${discountPercent}%` : 'Promoție' }}
             </AppBadge>
             <span v-if="product.sku" class="text-xs text-text-muted font-mono">

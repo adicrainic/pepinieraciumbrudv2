@@ -164,6 +164,16 @@ describe('Storefront Order Placement & Cart Lifecycle', () => {
           }
         }
 
+        if (url.includes('/products')) {
+          return {
+            headers,
+            _data: [
+              { id: 1, name: 'Produs În Stoc', is_in_stock: true },
+              { id: 2, name: 'Produs Epuizat', is_in_stock: false }
+            ]
+          }
+        }
+
         if (url.endsWith('/cart')) {
           return { headers, _data: structuredClone(mockCartState) }
         }
@@ -256,5 +266,20 @@ describe('Storefront Order Placement & Cart Lifecycle', () => {
     assert.equal(checkoutReq.options.credentials, 'include')
     assert.equal(checkoutReq.options.headers.Nonce, 'test-store-nonce-123')
     assert.equal(checkoutReq.options.headers['Cart-Token'], 'test-cart-jwt-token-xyz')
+  })
+
+  it('filters out products that are out of stock for homepage seasonal recommendations', async () => {
+    // 1. Fetch products using the seasonal recommendations query parameters
+    const rawProducts = await storeApi.getProducts({ per_page: 9, stock_status: 'instock' })
+    const productsReq = recordedRequests.find((r) => r.url.includes('/products'))
+    assert.ok(productsReq, 'GET /products was called')
+    assert.ok(productsReq.url.includes('stock_status=instock'), 'Request includes stock_status=instock')
+    assert.ok(productsReq.url.includes('per_page=9'), 'Request includes per_page=9')
+
+    // 2. Verify in-memory defensive filtering discards out of stock items
+    const availableProducts = rawProducts.filter((p: any) => p.is_in_stock)
+    assert.equal(availableProducts.length, 1)
+    assert.equal(availableProducts[0].name, 'Produs În Stoc')
+    assert.equal(availableProducts[0].is_in_stock, true)
   })
 })

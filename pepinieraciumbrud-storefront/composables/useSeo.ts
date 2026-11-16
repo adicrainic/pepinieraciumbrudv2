@@ -1,4 +1,5 @@
 import type { Product } from '~/types/product'
+import { useSiteSettings } from '~/composables/useSiteSettings'
 
 const stripHtml = (html?: string): string => {
   if (!html) return ''
@@ -6,6 +7,8 @@ const stripHtml = (html?: string): string => {
 }
 
 export const useSeo = () => {
+  const { settings } = useSiteSettings()
+
   const setPageSeo = (options: {
     title: string
     description?: string
@@ -13,11 +16,11 @@ export const useSeo = () => {
     url?: string
     type?: string
   }) => {
-    const siteTitle = 'Pepiniera Ciumbrud'
+    const siteTitle = settings.value?.site_title || 'Pepiniera Ciumbrud'
     const cleanTitle = stripHtml(options.title)
     const fullTitle = `${cleanTitle} | ${siteTitle}`
     const rawDesc = stripHtml(options.description)
-    const desc = rawDesc || 'Pepiniera Ciumbrud – pomi fructiferi certificați, trandafiri și plante ornamentale aclimatizate.'
+    const desc = rawDesc || settings.value?.site_description || 'Pepiniera Ciumbrud – pomi fructiferi certificați, trandafiri și plante ornamentale aclimatizate.'
 
     useSeoMeta({
       title: fullTitle,
@@ -53,7 +56,7 @@ export const useSeo = () => {
           : 'https://schema.org/OutOfStock',
         seller: {
           '@type': 'Organization',
-          name: 'Pepiniera Ciumbrud'
+          name: settings.value?.site_title || 'Pepiniera Ciumbrud'
         }
       }
     }

@@ -74,7 +74,7 @@ if ( $sent_to_admin ) {
 			<td align="left" valign="middle" style="padding: 0;">
 				<div style="font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif; font-size: 20px; font-weight: 700; color: #7D0C0C; line-height: 1.2;">
 					<?php if ( $sent_to_admin && $admin_order_url ) : ?>
-						<a href="<?php echo esc_url( $admin_order_url ); ?>" style="color: #7D0C0C; text-decoration: underline;">Comanda #<?php echo esc_html( $order_number ); ?></a>
+						<a href="<?php echo esc_url( $admin_order_url ); ?>" target="_blank" rel="noopener noreferrer" style="color: #7D0C0C; text-decoration: underline;">Comanda #<?php echo esc_html( $order_number ); ?></a>
 					<?php else : ?>
 						Rezumat Comandă #<?php echo esc_html( $order_number ); ?>
 					<?php endif; ?>
@@ -89,6 +89,15 @@ if ( $sent_to_admin ) {
 				</span>
 			</td>
 		</tr>
+		<?php if ( $sent_to_admin && $admin_order_url ) : ?>
+		<tr>
+			<td colspan="2" align="left" style="padding-top: 10px;">
+				<a href="<?php echo esc_url( $admin_order_url ); ?>" target="_blank" rel="noopener noreferrer" style="display: inline-block; background-color: #7D0C0C; color: #FFFFFF; text-decoration: none; font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 6px;">
+					Deschide în Panoul de Administrare &rarr;
+				</a>
+			</td>
+		</tr>
+		<?php endif; ?>
 	</table>
 </div>
 

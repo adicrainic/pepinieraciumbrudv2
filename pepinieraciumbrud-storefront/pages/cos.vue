@@ -31,7 +31,7 @@ onMounted(() => {
       <button @click="cartStore.error = null" class="font-bold text-rose-600 hover:text-rose-800 ml-2">&times;</button>
     </div>
 
-    <div v-if="!cartStore.items || cartStore.items.length === 0" class="bg-white rounded-3xl border border-border p-12 text-center max-w-xl mx-auto my-12">
+    <div v-if="!cartStore.items || cartStore.items.length === 0" class="bg-white/85 backdrop-blur-sm rounded-3xl border border-border p-12 text-center max-w-xl mx-auto my-12">
       <div class="text-4xl mb-4">🛒</div>
       <h2 class="font-serif text-2xl font-bold text-text mb-2">Coșul tău este gol</h2>
       <p class="text-sm text-text-muted mb-6">
@@ -44,7 +44,7 @@ onMounted(() => {
 
     <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
       <!-- Items Table -->
-      <div class="lg:col-span-2 bg-white rounded-3xl border border-border p-6 sm:p-8 shadow-sm">
+      <div class="lg:col-span-2 bg-white/85 backdrop-blur-sm rounded-3xl border border-border p-6 sm:p-8 shadow-sm">
         <div class="border-b border-border pb-4 mb-4 font-serif font-bold text-lg text-primary-dark">
           Produse Adăugate ({{ cartStore.itemCount }})
         </div>
@@ -59,7 +59,7 @@ onMounted(() => {
       </div>
 
       <!-- Order Summary Card -->
-      <div class="bg-white rounded-3xl border border-border p-6 sm:p-8 shadow-sm space-y-6 lg:sticky lg:top-24">
+      <div class="bg-white/85 backdrop-blur-sm rounded-3xl border border-border p-6 sm:p-8 shadow-sm space-y-6 lg:sticky lg:top-24">
         <h3 class="font-serif text-xl font-bold text-primary-dark border-b border-border pb-4">
           Sumar Comandă
         </h3>

@@ -20,7 +20,7 @@ setPageSeo({
       </h1>
     </div>
 
-    <div class="bg-white rounded-3xl border border-border p-8 sm:p-12 shadow-sm space-y-6 text-text leading-relaxed text-base">
+    <div class="bg-white/85 backdrop-blur-sm rounded-3xl border border-border p-8 sm:p-12 shadow-sm space-y-6 text-text leading-relaxed text-base">
       <p>
         Localitatea <strong>Ciumbrud</strong>, situată pe malul stâng al râului Mureș în județul Alba, este recunoscută drept capitala trandafirilor și a pomiculturii transilvănene. Cu un sol deosebit de fertil și un microclimat ideal, tradiția altoirii s-a transmis aici din tată în fiu de peste un secol.
       </p>

@@ -37,6 +37,8 @@ export class StoreApiService {
   private async fetchWithHeaders<T>(url: string, options: any = {}, requireSession: boolean = false): Promise<T> {
     const headers: Record<string, string> = {
       'Accept': 'application/json',
+      'Cache-Control': 'no-cache, no-store',
+      'Pragma': 'no-cache',
       ...(options.headers || {})
     }
 
@@ -55,6 +57,7 @@ export class StoreApiService {
       const response = await $fetch.raw<T>(url, {
         ...options,
         headers,
+        cache: 'no-cache',
         credentials: 'include'
       })
 
@@ -96,7 +99,12 @@ export class StoreApiService {
       }
     })
     const response = await $fetch.raw<Product[]>(`${base}/products${query.toString() ? `?${query.toString()}` : ''}`, {
-      headers: { Accept: 'application/json' },
+      headers: {
+        'Accept': 'application/json',
+        'Cache-Control': 'no-cache, no-store',
+        'Pragma': 'no-cache'
+      },
+      cache: 'no-cache',
       credentials: 'include'
     })
     const items = (response._data as Product[]) || []

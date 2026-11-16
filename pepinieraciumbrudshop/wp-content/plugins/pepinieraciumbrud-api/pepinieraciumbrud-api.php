@@ -75,6 +75,7 @@ final class PCS_API {
         add_filter( 'rest_allowed_cors_headers', [ $this, 'filter_allowed_cors_headers' ], 99 );
         add_filter( 'rest_exposed_cors_headers', [ $this, 'filter_exposed_cors_headers' ], 99 );
         add_filter( 'rest_pre_serve_request', [ $this, 'cors_pre_serve' ], 99 );
+        add_filter( 'rest_post_dispatch', [ $this, 'filter_rest_post_dispatch_headers' ], 99, 3 );
 
         // Allow bulk / wholesale purchasing (quantities > 500)
         add_filter( 'woocommerce_store_api_product_quantity_maximum', fn() => 99999 );
@@ -285,6 +286,8 @@ final class PCS_API {
             'X-Requested-With',
             'Content-Disposition',
             'Content-MD5',
+            'Cache-Control',
+            'Pragma',
         ] ) ) );
     }
 
@@ -307,7 +310,7 @@ final class PCS_API {
     }
 
     /**
-     * Ensure CORS headers are also present on pre-served REST responses.
+     * Ensure CORS and cache prevention headers are also present on pre-served REST responses.
      */
     public function cors_pre_serve( bool $served ): bool {
         $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
@@ -317,7 +320,28 @@ final class PCS_API {
             header( 'Access-Control-Expose-Headers: ' . $this->get_cors_expose_headers() );
             header( 'Vary: Origin' );
         }
+        $uri = $_SERVER['REQUEST_URI'] ?? '';
+        if ( str_contains( $uri, '/wc/store' ) || str_contains( $uri, '/pcs/' ) ) {
+            header( 'Cache-Control: no-cache, no-store, must-revalidate, max-age=0' );
+            header( 'Pragma: no-cache' );
+            header( 'Expires: 0' );
+        }
         return $served;
+    }
+
+    /**
+     * Prevent browser heuristic caching on WooCommerce Store API and PCS API responses.
+     */
+    public function filter_rest_post_dispatch_headers( $response, $server, $request ) {
+        if ( $response instanceof WP_HTTP_Response || $response instanceof WP_REST_Response ) {
+            $route = $request->get_route();
+            if ( str_starts_with( $route, '/wc/store' ) || str_starts_with( $route, '/pcs/' ) ) {
+                $response->header( 'Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0' );
+                $response->header( 'Pragma', 'no-cache' );
+                $response->header( 'Expires', '0' );
+            }
+        }
+        return $response;
     }
 
     /**

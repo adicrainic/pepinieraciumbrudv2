@@ -265,20 +265,26 @@ final class PCS_Mailer {
      * Get the public storefront URL.
      */
     public function get_storefront_url(): string {
+        $url = home_url();
         if ( defined( 'PCS_STOREFRONT_ORIGIN' ) && ! empty( PCS_STOREFRONT_ORIGIN ) ) {
-            return rtrim( (string) PCS_STOREFRONT_ORIGIN, '/' );
+            $url = (string) PCS_STOREFRONT_ORIGIN;
+        } elseif ( getenv( 'PCS_STOREFRONT_ORIGIN' ) ) {
+            $url = (string) getenv( 'PCS_STOREFRONT_ORIGIN' );
         }
-        return rtrim( home_url(), '/' );
+        return apply_filters( 'pcs_mailer_storefront_url', rtrim( $url, '/' ) );
     }
 
     /**
      * Get the admin dashboard URL.
      */
     public function get_admin_url(): string {
+        $url = admin_url();
         if ( defined( 'PCS_ADMIN_ORIGIN' ) && ! empty( PCS_ADMIN_ORIGIN ) ) {
-            return rtrim( (string) PCS_ADMIN_ORIGIN, '/' );
+            $url = (string) PCS_ADMIN_ORIGIN;
+        } elseif ( getenv( 'PCS_ADMIN_ORIGIN' ) ) {
+            $url = (string) getenv( 'PCS_ADMIN_ORIGIN' );
         }
-        return rtrim( admin_url(), '/' );
+        return apply_filters( 'pcs_mailer_admin_url', rtrim( $url, '/' ) );
     }
 
     /**
