@@ -12,6 +12,7 @@ import type { Product, InventoryItem } from '@/types/product'
 const stats = ref<any>({})
 const recentOrders = ref<Order[]>([])
 const products = ref<Product[]>([])
+const activeProductsCount = ref(0)
 const criticalStockCount = ref(0)
 const unreadMessagesCount = ref(0)
 const pendingOrdersCount = ref(0)
@@ -30,6 +31,15 @@ onMounted(async () => {
     let pendingCount: number | null = null
     if (dashData.status === 'fulfilled' && dashData.value) {
       stats.value = dashData.value
+      if (typeof dashData.value.products_count === 'number') {
+        activeProductsCount.value = dashData.value.products_count
+      } else if (Array.isArray(dashData.value.products_total)) {
+        activeProductsCount.value = dashData.value.products_total.reduce(
+          (sum: number, item: any) => sum + (Number(item.total) || 0),
+          0
+        )
+      }
+
       const pendingObj = Array.isArray(dashData.value.orders_total)
         ? dashData.value.orders_total.find((s: any) => s.slug === 'pending')
         : null
@@ -91,19 +101,27 @@ onMounted(async () => {
 
       <!-- Stat Widgets -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="bg-white p-6 rounded-2xl border border-border shadow-sm flex items-center justify-between">
+        <RouterLink
+          to="/produse"
+          class="bg-white p-6 rounded-2xl border border-border shadow-sm flex items-center justify-between hover:border-emerald-400 hover:shadow-md transition-all group block"
+        >
           <div>
             <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1">
               Produse Active
             </span>
-            <span class="text-2xl font-bold text-gray-900">
-              {{ products.length }}
+            <div class="flex items-baseline gap-2">
+              <span class="text-2xl font-bold text-gray-900 group-hover:text-emerald-700 transition-colors">
+                {{ activeProductsCount }}
+              </span>
+            </div>
+            <span class="text-[11px] text-gray-500 font-medium block mt-1">
+              {{ activeProductsCount === 1 ? '1 produs în catalog' : `${activeProductsCount} produse în catalog` }}
             </span>
           </div>
-          <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center text-2xl">
+          <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 group-hover:bg-emerald-100 flex items-center justify-center text-2xl transition-colors">
             🍏
           </div>
-        </div>
+        </RouterLink>
 
         <RouterLink
           to="/comenzi?status=pending"

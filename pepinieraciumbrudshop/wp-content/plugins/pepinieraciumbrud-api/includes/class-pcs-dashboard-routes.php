@@ -51,6 +51,7 @@ final class PCS_Dashboard_Routes extends PCS_Base_Routes {
             'products_total'  => is_wp_error( $products_total )  ? [] : $products_total,
             'orders_total'    => is_wp_error( $orders_total )    ? [] : $orders_total,
             'customers_total' => is_wp_error( $customers_total ) ? [] : $customers_total,
+            'products_count'  => (int) ( wp_count_posts( 'product' )->publish ?? 0 ),
         ];
 
         return $this->success( $stats );

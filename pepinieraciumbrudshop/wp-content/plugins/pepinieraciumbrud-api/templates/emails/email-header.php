@@ -69,8 +69,8 @@ $eyebrow_text = $eyebrow_map[ $email_id ] ?? 'NOTIFICARE COMANDĂ · PEPINIERA C
 		<table width="100%" id="outer_wrapper" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background-color: #FAF6EE;">
 			<tr>
 				<td><!-- Deliberately empty to support consistent sizing and layout across multiple email clients. --></td>
-				<td width="620" align="center" valign="top">
-					<div id="wrapper" dir="<?php echo is_rtl() ? 'rtl' : 'ltr'; ?>" style="margin: 0 auto; padding: 28px 12px; width: 100%; max-width: 620px; box-sizing: border-box;">
+				<td width="780" align="center" valign="top">
+					<div id="wrapper" dir="<?php echo is_rtl() ? 'rtl' : 'ltr'; ?>" style="margin: 0 auto; padding: 28px 12px; width: 100%; max-width: 780px; box-sizing: border-box;">
 						<table border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" id="inner_wrapper" role="presentation" style="background-color: #FFFFFF; border-radius: 16px; border: 1px solid #E2DACB; overflow: hidden; box-shadow: 0 12px 32px -12px rgba(178, 17, 17, 0.14);">
 							<!-- Top Red Announcement Strip -->
 							<tr>

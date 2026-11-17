@@ -14,6 +14,7 @@ const navItems = [
   { name: 'Comenzi', path: '/comenzi', icon: '📦' },
   { name: 'Mesaje', path: '/mesaje', icon: '💬' },
   { name: 'Inventar', path: '/inventar', icon: '📋' },
+  { name: 'Trafic', path: '/trafic', icon: '📈' },
   { name: 'Setări', path: '/setari', icon: '⚙️' },
 ]
 

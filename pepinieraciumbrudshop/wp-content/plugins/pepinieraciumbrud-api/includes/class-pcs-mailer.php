@@ -367,7 +367,7 @@ final class PCS_Mailer {
 
         $footer_note_html = '';
         if ( '' !== $footer_note ) {
-            $footer_note_html = "<div style=\"background-color: #FCF2F2; border-top: 1px solid #F2BDBD; padding: 16px 28px; text-align: center; font-size: 12px; color: #7D0C0C; line-height: 1.5;\">{$footer_note}</div>";
+            $footer_note_html = "<div style=\"padding: 0 28px 20px; font-size: 13px; color: #5F5A54; line-height: 1.5;\">{$footer_note}</div>";
         }
 
         return <<<HTML
@@ -382,7 +382,7 @@ final class PCS_Mailer {
     <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background-color: #FAF6EE;">
         <tr>
             <td align="center" valign="top">
-                <div style="max-width: 620px; margin: 0 auto; background-color: #FFFFFF; border-radius: 16px; border: 1px solid #E2DACB; overflow: hidden; box-shadow: 0 12px 32px -12px rgba(178, 17, 17, 0.14); text-align: left;">
+                <div style="max-width: 780px; width: 100%; margin: 0 auto; background-color: #FFFFFF; border-radius: 16px; border: 1px solid #E2DACB; overflow: hidden; box-shadow: 0 12px 32px -12px rgba(178, 17, 17, 0.14); text-align: left;">
                     <!-- Top Announcement Strip -->
                     <div style="background-color: #7D0C0C; color: #FAF6EE; padding: 8px 24px; font-size: 11px; border-bottom: 1px solid rgba(255, 255, 255, 0.12);">
                         <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">

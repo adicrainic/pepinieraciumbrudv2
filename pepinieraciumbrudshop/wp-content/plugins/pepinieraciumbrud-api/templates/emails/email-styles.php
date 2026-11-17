@@ -53,7 +53,7 @@ body {
 	padding: 28px 12px;
 	-webkit-text-size-adjust: none !important;
 	width: 100%;
-	max-width: 620px;
+	max-width: 780px;
 	box-sizing: border-box;
 }
 

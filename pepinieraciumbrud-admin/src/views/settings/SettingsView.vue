@@ -7,6 +7,7 @@ import { useUiStore } from '@/stores/ui'
 import type { SiteSettings, EmailConfigStatus, EmailTestResult } from '@/types/settings'
 
 const uiStore = useUiStore()
+const storefrontUrl = import.meta.env.VITE_STOREFRONT_URL || 'http://pepinieraciumbrud.local/'
 
 const loading = ref(true)
 const saving = ref(false)
@@ -177,7 +178,7 @@ const removeLogo = () => {
 
         <div class="flex items-center gap-3">
           <a
-            href="http://pepinieraciumbrud.local"
+            :href="storefrontUrl"
             target="_blank"
             class="px-3.5 py-2 rounded-xl text-xs font-medium text-primary hover:bg-primary-50 transition-colors flex items-center gap-1.5 border border-primary/30"
           >

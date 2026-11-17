@@ -1,6 +1,6 @@
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
-  const siteUrl = config.public.siteUrl || 'http://localhost:3000'
+  const siteUrl = config.public.siteUrl || 'http://pepinieraciumbrud.local'
   const apiBase = config.public.apiBase || 'http://localhost/pepinieraciumbrudV2/pepinieraciumbrudshop/wp-json/wc/store/v1'
 
   // Static public routes

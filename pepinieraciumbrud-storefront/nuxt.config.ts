@@ -12,7 +12,7 @@ export default defineNuxtConfig({
     public: {
       apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost/pepinieraciumbrudV2/pepinieraciumbrudshop/wp-json/wc/store/v1',
       wpBase: process.env.NUXT_PUBLIC_WP_BASE || 'http://localhost/pepinieraciumbrudV2/pepinieraciumbrudshop/wp-json',
-      siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+      siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'http://pepinieraciumbrud.local',
     },
   },
 

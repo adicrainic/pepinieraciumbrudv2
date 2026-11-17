@@ -21,6 +21,13 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
+      path: '/trafic',
+      alias: ['/traffic'],
+      name: 'traffic',
+      component: () => import('@/views/traffic/TrafficView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
       path: '/produse',
       name: 'products',
       component: () => import('@/views/products/ProductsListView.vue'),

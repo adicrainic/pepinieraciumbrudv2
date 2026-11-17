@@ -4,6 +4,7 @@ import { useAuthStore } from '@/stores/auth'
 
 const uiStore = useUiStore()
 const authStore = useAuthStore()
+const storefrontUrl = import.meta.env.VITE_STOREFRONT_URL || 'http://pepinieraciumbrud.local/'
 </script>
 
 <template>
@@ -26,7 +27,7 @@ const authStore = useAuthStore()
 
     <div class="flex items-center gap-4">
       <a
-        href="http://localhost:3000"
+        :href="storefrontUrl"
         target="_blank"
         class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs font-semibold text-gray-700 hover:bg-gray-50"
       >
