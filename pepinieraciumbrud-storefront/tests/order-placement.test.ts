@@ -282,4 +282,57 @@ describe('Storefront Order Placement & Cart Lifecycle', () => {
     assert.equal(availableProducts[0].name, 'Produs În Stoc')
     assert.equal(availableProducts[0].is_in_stock, true)
   })
+
+  it('rejects adding more items than available in stock and surfaces decoded Romanian error message', async () => {
+    const cartStore = useCartStore()
+
+    // Override $fetch.raw to simulate a 1-stock product limit rejection from WooCommerce Store API
+    const originalFetch = (globalThis as any).$fetch.raw
+    ;(globalThis as any).$fetch.raw = async (url: string, options: Record<string, any> = {}) => {
+      if (url.endsWith('/cart/add-item') && options.body?.quantity > 1) {
+        const err: any = new Error('HTTP 400 Bad Request')
+        err.data = {
+          code: 'woocommerce_rest_product_not_enough_stock',
+          message:
+            'Nu poți să adaugi cantitatea &bdquo;Măr Florina — Pom Fructifer&rdquo; în coș deoarece stocul este insuficient (1 rămase).'
+        }
+        throw err
+      }
+      if (url.endsWith('/cart/update-item') && options.body?.quantity > 1) {
+        const err: any = new Error('HTTP 400 Bad Request')
+        err.data = {
+          code: 'woocommerce_rest_invalid_quantity',
+          message:
+            'Cantitatea maximă de &quot;Măr Florina — Pom Fructifer&quot; permisă în coș este 1'
+        }
+        throw err
+      }
+      return originalFetch(url, options)
+    }
+
+    // 1. Try adding 2 items when only 1 is in stock
+    await cartStore.addItem(77, 2)
+    assert.equal(cartStore.itemCount, 0, 'Cart remains empty when add-to-cart exceeds stock')
+    assert.equal(
+      cartStore.error,
+      'Nu poți să adaugi cantitatea „Măr Florina — Pom Fructifer” în coș deoarece stocul este insuficient (1 rămase).',
+      'HTML entities in WooCommerce stock error message are decoded cleanly'
+    )
+    assert.equal(cartStore.isOpen, true, 'Cart drawer opens to show stock error message')
+
+    // 2. Adding 1 item (within stock limit) succeeds and clears the error
+    await cartStore.addItem(77, 1)
+    assert.equal(cartStore.itemCount, 1)
+    assert.equal(cartStore.error, null)
+
+    // 3. Trying to increase cart item quantity to 2 fails and sets decoded error
+    await assert.rejects(async () => {
+      await cartStore.updateItem('item_77', 2)
+    })
+    assert.equal(cartStore.itemCount, 1, 'Item quantity stays at 1 after failed update')
+    assert.equal(
+      cartStore.error,
+      'Cantitatea maximă de "Măr Florina — Pom Fructifer" permisă în coș este 1'
+    )
+  })
 })

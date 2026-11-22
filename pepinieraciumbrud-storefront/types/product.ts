@@ -56,5 +56,14 @@ export interface Product {
   low_stock_remaining: number | null
   sold_individually: boolean
   quantity_limit: number
+  add_to_cart?: {
+    text: string
+    description: string
+    url: string
+    minimum: number
+    maximum: number
+    multiple_of: number
+    single_text?: string
+  }
 }
 

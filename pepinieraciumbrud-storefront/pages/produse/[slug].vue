@@ -43,6 +43,15 @@ const { formatRegularPrice, getDiscountPercent, fetchProducts } = useProducts()
 const regularPriceFormatted = computed(() => product.value ? formatRegularPrice(product.value.prices) : null)
 const discountPercent = computed(() => product.value ? getDiscountPercent(product.value.prices) : 0)
 const inCartQty = computed(() => product.value ? cartStore.getItemQuantity(product.value.id) : 0)
+const maxSelectableQty = computed(() => {
+  const limit = product.value?.quantity_limit || (product.value as any)?.add_to_cart?.maximum
+  if (!limit || limit >= 9999) return 99999
+  return Math.max(1, limit - inCartQty.value)
+})
+const hasReachedStockLimit = computed(() => {
+  const limit = product.value?.quantity_limit || (product.value as any)?.add_to_cart?.maximum
+  return Boolean(limit && limit < 9999 && inCartQty.value >= limit)
+})
 
 // Fetch related products from the same primary category
 const primaryCategorySlug = computed(() => product.value?.categories?.[0]?.slug || '')
@@ -68,7 +77,7 @@ const validateQuantity = () => {
   if (!quantity.value || quantity.value < 1) {
     quantity.value = 1
   } else {
-    quantity.value = Math.floor(quantity.value)
+    quantity.value = Math.min(maxSelectableQty.value, Math.floor(quantity.value))
   }
 }
 
@@ -80,8 +89,8 @@ const handleAddToCart = async () => {
   if (!product.value) return
   isAdding.value = true
   try {
-    const qty = Math.max(1, Math.floor(quantity.value || 1))
-    quantity.value = qty
+    const qty = Math.min(maxSelectableQty.value, Math.max(1, Math.floor(quantity.value || 1)))
+    quantity.value = 1
     await cartStore.addItem(product.value.id, qty)
   } finally {
     isAdding.value = false
@@ -214,6 +223,7 @@ const handleAddToCart = async () => {
                 <input
                   type="number"
                   min="1"
+                  :max="maxSelectableQty"
                   step="1"
                   v-model.number="quantity"
                   @blur="validateQuantity"
@@ -224,8 +234,9 @@ const handleAddToCart = async () => {
                 />
                 <button
                   type="button"
-                  @click="quantity = (quantity || 0) + 1"
-                  class="w-10 h-10 flex items-center justify-center text-lg hover:bg-border rounded-lg select-none transition-colors"
+                  @click="quantity = Math.min(maxSelectableQty, (quantity || 0) + 1)"
+                  :disabled="quantity >= maxSelectableQty || hasReachedStockLimit"
+                  class="w-10 h-10 flex items-center justify-center text-lg hover:bg-border rounded-lg disabled:opacity-40 disabled:cursor-not-allowed select-none transition-colors"
                   title="Crește cantitatea"
                   aria-label="Crește cantitatea"
                 >
@@ -237,11 +248,11 @@ const handleAddToCart = async () => {
                 variant="warm"
                 size="lg"
                 class="flex-1"
-                :disabled="!product.is_in_stock || isAdding"
+                :disabled="!product.is_in_stock || isAdding || hasReachedStockLimit"
                 :loading="isAdding"
                 @click="handleAddToCart"
               >
-                {{ product.is_in_stock ? 'Adaugă în Coș' : 'Stoc Epuizat' }}
+                {{ !product.is_in_stock ? 'Stoc Epuizat' : (hasReachedStockLimit ? 'Stoc Maxim în Coș' : 'Adaugă în Coș') }}
               </AppButton>
             </div>
 
@@ -358,11 +369,11 @@ const handleAddToCart = async () => {
           variant="warm"
           size="md"
           class="flex-shrink-0"
-          :disabled="!product.is_in_stock || isAdding"
+          :disabled="!product.is_in_stock || isAdding || hasReachedStockLimit"
           :loading="isAdding"
           @click="handleAddToCart"
         >
-          {{ product.is_in_stock ? 'Adaugă în Coș' : 'Indisponibil' }}
+          {{ !product.is_in_stock ? 'Indisponibil' : (hasReachedStockLimit ? 'Stoc Maxim în Coș' : 'Adaugă în Coș') }}
         </AppButton>
       </div>
     </div>

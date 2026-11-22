@@ -36,6 +36,10 @@ const displayLineTotal = computed(() => {
   return formatItemPrice(props.item.totals.line_total, props.item.totals.currency_minor_unit)
 })
 
+const maxQuantity = computed(() => {
+  return props.item.quantity_limits?.maximum || 99999
+})
+
 const commitQuantity = async (valToCommit?: number) => {
   if (debounceTimer) {
     clearTimeout(debounceTimer)
@@ -45,6 +49,10 @@ const commitQuantity = async (valToCommit?: number) => {
   if (isNaN(val) || val < 1) {
     localQuantity.value = props.item.quantity
     return
+  }
+  if (val > maxQuantity.value) {
+    val = maxQuantity.value
+    localQuantity.value = val
   }
   if (val !== props.item.quantity) {
     isUpdating.value = true
@@ -170,6 +178,7 @@ const itemPath = computed(() => {
         <input
           type="number"
           min="1"
+          :max="maxQuantity"
           step="1"
           v-model.number="localQuantity"
           @input="handleInput"
@@ -184,7 +193,7 @@ const itemPath = computed(() => {
         <button
           type="button"
           @click="changeQuantity(1)"
-          :disabled="isUpdating || cartStore.loading"
+          :disabled="isUpdating || cartStore.loading || Number(localQuantity) >= maxQuantity"
           class="w-7 h-7 rounded-lg bg-surface-warm border border-border flex items-center justify-center text-xs font-bold hover:bg-border text-text disabled:opacity-40 disabled:cursor-not-allowed transition-colors select-none"
           title="Crește cantitatea"
           aria-label="Crește cantitatea"

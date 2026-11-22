@@ -177,12 +177,18 @@ const handlePlaceOrder = async () => {
     await cartStore.fetchCart()
     navigateTo(`/confirmare?order=${orderId}`)
   } catch (err: any) {
-    const apiError =
+    const rawError =
       err?.data?.message ||
       err?.response?._data?.message ||
       err?.message ||
       'A apărut o eroare la procesarea comenzii. Vă rugăm să încercați din nou.'
-    errorMessage.value = apiError
+    errorMessage.value = String(rawError)
+      .replace(/&bdquo;/g, '„')
+      .replace(/&rdquo;/g, '”')
+      .replace(/&ldquo;/g, '“')
+      .replace(/&quot;/g, '"')
+      .replace(/&#039;/g, "'")
+      .replace(/&amp;/g, '&')
   } finally {
     isSubmitting.value = false
   }

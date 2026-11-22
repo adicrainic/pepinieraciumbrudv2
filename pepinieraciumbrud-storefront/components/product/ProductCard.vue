@@ -15,6 +15,10 @@ const { formatPrice, formatRegularPrice, getDiscountPercent, getProductImage } =
 const isAdding = ref(false)
 
 const inCartQty = computed(() => cartStore.getItemQuantity(props.product.id))
+const hasReachedStockLimit = computed(() => {
+  const limit = props.product.quantity_limit || (props.product as any)?.add_to_cart?.maximum
+  return Boolean(limit && limit < 9999 && inCartQty.value >= limit)
+})
 const regularPriceFormatted = computed(() => formatRegularPrice(props.product.prices))
 const discountPercent = computed(() => getDiscountPercent(props.product.prices))
 
@@ -128,11 +132,12 @@ const handleAddToCart = async () => {
           variant="primary"
           size="sm"
           class="shrink-0 !px-3 !py-1.5 sm:!px-4 sm:!py-2 !text-[11px] sm:!text-xs"
-          :disabled="!product.is_in_stock || isAdding"
+          :disabled="!product.is_in_stock || isAdding || hasReachedStockLimit"
           :loading="isAdding"
           @click="handleAddToCart"
         >
           <span v-if="!product.is_in_stock">Indisponibil</span>
+          <span v-else-if="hasReachedStockLimit">Stoc maxim</span>
           <template v-else>
             <span>Adaugă</span>
             <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 ml-1 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

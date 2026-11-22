@@ -78,8 +78,10 @@ echo "=================================================================\n";
 echo " 🧪 Integration Test: Order Placement & Lifecycle (pending → completed)\n";
 echo "=================================================================\n\n";
 
-$test_product_id = 0;
-$test_order_id   = 0;
+$test_product_id        = 0;
+$test_order_id          = 0;
+$single_stock_prod_id   = 0;
+$single_stock_order_id  = 0;
 
 try {
     $server = rest_get_server();
@@ -440,23 +442,145 @@ try {
         $final_product->get_stock_quantity()
     );
 
+    // -------------------------------------------------------------------------
+    // 8. Single-Stock Concurrency & Overselling Protection Test
+    // -------------------------------------------------------------------------
+    echo "\n[Step 8] Testing single-stock (1 item) quantity limits & concurrent checkout protection...\n";
+
+    $single_product = new WC_Product_Simple();
+    $single_product->set_name( '[TEST-AUTO] Păr Williams — Ultima Bucată (Stoc 1)' );
+    $single_product->set_status( 'publish' );
+    $single_product->set_catalog_visibility( 'visible' );
+    $single_product->set_regular_price( '40.00' );
+    $single_product->set_price( '40.00' );
+    $single_product->set_manage_stock( true );
+    $single_product->set_stock_quantity( 1 );
+    $single_product->set_stock_status( 'instock' );
+    $single_product->set_backorders( 'no' );
+    $single_stock_prod_id = $single_product->save();
+
+    assert_step(
+        $single_stock_prod_id > 0 && ! $single_product->backorders_allowed(),
+        "Created 1-stock test product #{$single_stock_prod_id} with backorders disallowed"
+    );
+
+    wp_set_current_user( 0 );
+    WC()->cart->empty_cart();
+
+    // 8a. Single customer tries to add 2 units when only 1 unit is in stock -> must fail (400)
+    $over_add_req = new WP_REST_Request( 'POST', '/wc/store/v1/cart/add-item' );
+    $over_add_req->set_header( 'Content-Type', 'application/json' );
+    $over_add_req->set_body( wp_json_encode( [
+        'id'       => $single_stock_prod_id,
+        'quantity' => 2,
+    ] ) );
+    $over_add_res  = $server->dispatch( $over_add_req );
+    $over_add_data = $server->response_to_data( $over_add_res, false );
+
+    assert_step(
+        $over_add_res->get_status() === 400,
+        'POST /wc/store/v1/cart/add-item rejects adding 2 units when only 1 is in stock (HTTP 400)',
+        $over_add_data
+    );
+
+    // 8b. Customer adds 1 unit (valid)
+    $valid_add_req = new WP_REST_Request( 'POST', '/wc/store/v1/cart/add-item' );
+    $valid_add_req->set_header( 'Content-Type', 'application/json' );
+    $valid_add_req->set_body( wp_json_encode( [
+        'id'       => $single_stock_prod_id,
+        'quantity' => 1,
+    ] ) );
+    $valid_add_res  = $server->dispatch( $valid_add_req );
+    $valid_add_data = json_decode( wp_json_encode( $server->response_to_data( $valid_add_res, false ) ), true );
+
+    assert_step(
+        ( $valid_add_res->get_status() === 201 || $valid_add_res->get_status() === 200 )
+        && (int) ( $valid_add_data['items'][0]['quantity_limits']['maximum'] ?? 0 ) === 1,
+        'Adding 1 unit succeeds and cart item quantity_limits.maximum is capped at 1',
+        $valid_add_data['items'][0]['quantity_limits'] ?? null
+    );
+
+    // 8c. Customer tries to add 1 more unit on top of the 1 already in cart -> must fail (400)
+    $topup_add_req = new WP_REST_Request( 'POST', '/wc/store/v1/cart/add-item' );
+    $topup_add_req->set_header( 'Content-Type', 'application/json' );
+    $topup_add_req->set_body( wp_json_encode( [
+        'id'       => $single_stock_prod_id,
+        'quantity' => 1,
+    ] ) );
+    $topup_add_res = $server->dispatch( $topup_add_req );
+
+    assert_step(
+        $topup_add_res->get_status() === 400,
+        'POST /wc/store/v1/cart/add-item rejects topping up cart beyond available stock (HTTP 400)'
+    );
+
+    // 8d. Faster buyer (Person B) completes checkout for the last item -> stock drops to 0 (outofstock)
+    $fast_checkout_req = new WP_REST_Request( 'POST', '/wc/store/v1/checkout' );
+    $fast_checkout_req->set_header( 'Content-Type', 'application/json' );
+    $fast_checkout_req->set_body( wp_json_encode( $checkout_payload ) );
+    $fast_checkout_res  = $server->dispatch( $fast_checkout_req );
+    $fast_checkout_data = $server->response_to_data( $fast_checkout_res, false );
+    $single_stock_order_id = (int) ( $fast_checkout_data['order_id'] ?? $fast_checkout_data['id'] ?? 0 );
+
+    wc_delete_product_transients( $single_stock_prod_id );
+    $depleted_product = wc_get_product( $single_stock_prod_id );
+
+    assert_step(
+        $fast_checkout_res->get_status() === 200
+        && $single_stock_order_id > 0
+        && (int) $depleted_product->get_stock_quantity() === 0
+        && ! $depleted_product->is_in_stock(),
+        "Faster buyer completes checkout (Order #{$single_stock_order_id}) and stock drops to 0 (outofstock)"
+    );
+
+    // 8e. Slower buyer (Person A) who already had the item in their cart prior to depletion attempts checkout -> must be blocked
+    WC()->cart->empty_cart();
+    // Simulate Person A's pre-existing cart session row containing the item before stock became 0
+    $reflection_cart = WC()->cart;
+    $cart_item_key   = WC()->cart->generate_cart_id( $single_stock_prod_id );
+    $reflection_cart->cart_contents[ $cart_item_key ] = [
+        'key'          => $cart_item_key,
+        'product_id'   => $single_stock_prod_id,
+        'variation_id' => 0,
+        'variation'    => [],
+        'quantity'     => 1,
+        'data'         => $depleted_product,
+        'data_hash'    => wc_get_cart_item_data_hash( $depleted_product ),
+    ];
+
+    $slow_checkout_req = new WP_REST_Request( 'POST', '/wc/store/v1/checkout' );
+    $slow_checkout_req->set_header( 'Content-Type', 'application/json' );
+    $slow_checkout_req->set_body( wp_json_encode( $checkout_payload ) );
+    $slow_checkout_res  = $server->dispatch( $slow_checkout_req );
+    $slow_checkout_data = $server->response_to_data( $slow_checkout_res, false );
+
+    assert_step(
+        $slow_checkout_res->get_status() >= 400,
+        "Slower buyer's checkout for depleted item is blocked (HTTP {$slow_checkout_res->get_status()})",
+        $slow_checkout_data
+    );
+
 } finally {
     // -------------------------------------------------------------------------
-    // 8. Teardown / Cleanup
+    // 9. Teardown / Cleanup
     // -------------------------------------------------------------------------
-    echo "\n[Cleanup] Removing temporary test order & product...\n";
-    if ( $test_order_id > 0 ) {
-        $order_to_delete = wc_get_order( $test_order_id );
-        if ( $order_to_delete instanceof WC_Order ) {
-            $order_to_delete->delete( true );
-            echo "  ✔ Deleted temporary test order #{$test_order_id}\n";
+    echo "\n[Cleanup] Removing temporary test orders & products...\n";
+    foreach ( [ $test_order_id, $single_stock_order_id ] as $oid ) {
+        if ( $oid > 0 ) {
+            $order_to_delete = wc_get_order( $oid );
+            if ( $order_to_delete instanceof WC_Order ) {
+                $order_to_delete->delete( true );
+                echo "  ✔ Deleted temporary test order #{$oid}\n";
+            }
         }
     }
-    if ( $test_product_id > 0 ) {
-        $product_to_delete = wc_get_product( $test_product_id );
-        if ( $product_to_delete instanceof WC_Product ) {
-            $product_to_delete->delete( true );
-            echo "  ✔ Deleted temporary test product #{$test_product_id}\n";
+    foreach ( [ $test_product_id, $single_stock_prod_id ] as $pid ) {
+        if ( $pid > 0 ) {
+            $product_to_delete = wc_get_product( $pid );
+            if ( $product_to_delete instanceof WC_Product ) {
+                $product_to_delete->delete( true );
+                echo "  ✔ Deleted temporary test product #{$pid}\n";
+            }
         }
     }
     if ( function_exists( 'WC' ) && WC()->cart ) {

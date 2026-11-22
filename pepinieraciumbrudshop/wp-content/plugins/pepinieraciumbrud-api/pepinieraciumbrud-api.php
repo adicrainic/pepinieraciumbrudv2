@@ -78,10 +78,11 @@ final class PCS_API {
         add_filter( 'rest_pre_serve_request', [ $this, 'cors_pre_serve' ], 99 );
         add_filter( 'rest_post_dispatch', [ $this, 'filter_rest_post_dispatch_headers' ], 99, 3 );
 
-        // Allow bulk / wholesale purchasing (quantities > 500)
-        add_filter( 'woocommerce_store_api_product_quantity_maximum', fn() => 99999 );
-        add_filter( 'woocommerce_store_api_product_quantity_limit', fn() => 99999 );
-        add_filter( 'woocommerce_product_backorders_allowed', '__return_true' );
+        // Allow bulk / wholesale purchasing (quantities > 500) only when stock is not strictly limited,
+        // while strictly enforcing available stock_quantity for stock-managed products without backorders.
+        add_filter( 'woocommerce_store_api_product_quantity_maximum', [ $this, 'filter_store_api_product_quantity_limit' ], 10, 2 );
+        add_filter( 'woocommerce_store_api_product_quantity_limit', [ $this, 'filter_store_api_product_quantity_limit' ], 10, 2 );
+        add_filter( 'woocommerce_product_backorders_allowed', '__return_false', 20 );
 
         // New orders status & lifecycle:
         // Register custom order statuses: 'wc-prepared' (Procesată (Pregătită)) and 'wc-shipped' (Predată Curier)
@@ -452,6 +453,20 @@ final class PCS_API {
      */
     public function filter_default_order_status( string $status ): string {
         return 'pending';
+    }
+
+    /**
+     * Enforce strict stock quantity limits in WooCommerce Store API when a product manages stock,
+     * while allowing bulk orders (up to 99999) when stock management is disabled.
+     */
+    public function filter_store_api_product_quantity_limit( mixed $value, mixed $product = null ): int {
+        if ( $product instanceof WC_Product && $product->managing_stock() && ! $product->backorders_allowed() ) {
+            $stock_qty = $product->get_stock_quantity();
+            if ( null !== $stock_qty ) {
+                return max( 1, (int) $stock_qty );
+            }
+        }
+        return 99999;
     }
 
     /**

@@ -2,6 +2,17 @@ import { defineStore } from 'pinia'
 import type { Cart, CartItem } from '~/types/cart'
 import { storeApi } from '~/services/storeApi'
 
+const decodeHtmlEntities = (str: string): string => {
+  if (!str) return str
+  return str
+    .replace(/&bdquo;/g, '„')
+    .replace(/&rdquo;/g, '”')
+    .replace(/&ldquo;/g, '“')
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'")
+    .replace(/&amp;/g, '&')
+}
+
 export const useCartStore = defineStore('cart', {
   state: () => ({
     cart: null as Cart | null,
@@ -104,7 +115,13 @@ export const useCartStore = defineStore('cart', {
         this.cart = await storeApi.addToCart(productId, quantity)
         this.isOpen = true
       } catch (err: any) {
-        this.error = err.message || 'Nu s-a putut adăuga produsul în coș.'
+        const rawMsg =
+          err?.data?.message ||
+          err?.response?._data?.message ||
+          err?.message ||
+          'Nu s-a putut adăuga produsul în coș.'
+        this.error = decodeHtmlEntities(rawMsg)
+        this.isOpen = true
       } finally {
         this.loading = false
       }
@@ -120,7 +137,13 @@ export const useCartStore = defineStore('cart', {
           this.cart = await storeApi.updateCartItem(key, quantity)
         }
       } catch (err: any) {
-        this.error = err.data?.message || err.message || 'Eroare la actualizarea cantității.'
+        const rawMsg =
+          err?.data?.message ||
+          err?.response?._data?.message ||
+          err?.message ||
+          'Eroare la actualizarea cantității.'
+        this.error = decodeHtmlEntities(rawMsg)
+        throw err
       } finally {
         this.loading = false
       }

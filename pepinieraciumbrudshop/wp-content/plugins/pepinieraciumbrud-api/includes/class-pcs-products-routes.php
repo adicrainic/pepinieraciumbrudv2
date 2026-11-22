@@ -123,6 +123,11 @@ final class PCS_Products_Routes extends PCS_Base_Routes {
             $body['description'] = wp_kses_post( $body['description'] );
         }
 
+        // Default backorders to 'no' when managing stock so stock limits are strictly respected
+        if ( ! empty( $body['manage_stock'] ) && ! isset( $body['backorders'] ) ) {
+            $body['backorders'] = 'no';
+        }
+
         return $body;
     }
 }

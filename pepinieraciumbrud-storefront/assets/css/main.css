@@ -80,4 +80,34 @@
       radial-gradient(circle at 85% 75%, rgba(47, 107, 58, 0.10) 0, transparent 45%);
   }
   .s-curve-bg, .s-curve-bg-dark { position: relative; }
+
+  /* Hero Text Entrance Animation */
+  @keyframes heroRevealUp {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 28px, 0);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  .animate-hero-item {
+    opacity: 0;
+    animation: heroRevealUp 0.95s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  .hero-delay-1 { animation-delay: 120ms; }
+  .hero-delay-2 { animation-delay: 260ms; }
+  .hero-delay-3 { animation-delay: 400ms; }
+  .hero-delay-4 { animation-delay: 540ms; }
+  .hero-delay-5 { animation-delay: 680ms; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-hero-item {
+      opacity: 1 !important;
+      transform: none !important;
+      animation: none !important;
+    }
+  }
 }

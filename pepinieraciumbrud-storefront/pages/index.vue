@@ -129,7 +129,7 @@ const steps = [
       <!-- Hero Content Centered in the Middle -->
       <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center flex flex-col items-center">
         <!-- Center Emblem: White Reversed S + Rose -->
-        <div class="mb-6 flex flex-col items-center">
+        <div class="animate-hero-item hero-delay-1 mb-6 flex flex-col items-center">
           <div class="w-20 h-28 sm:w-24 sm:h-36 relative flex items-center justify-center">
             <LogoMark class="w-full h-full text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.4)]" />
           </div>
@@ -139,17 +139,17 @@ const steps = [
         </div>
 
         <!-- Main Title -->
-        <h1 class="font-serif text-4xl sm:text-6xl lg:text-7xl font-medium leading-[1.05] text-white mb-6 [text-shadow:0_2px_16px_rgba(0,0,0,0.45)] max-w-3xl text-balance">
+        <h1 class="animate-hero-item hero-delay-2 font-serif text-4xl sm:text-6xl lg:text-7xl font-medium leading-[1.05] text-white mb-6 [text-shadow:0_2px_16px_rgba(0,0,0,0.45)] max-w-3xl text-balance">
           Puieți care prind <em class="text-rose-200 font-medium not-italic">rădăcini</em>,<br class="hidden sm:inline" /> și rodesc ani la rând
         </h1>
 
         <!-- Subtitle -->
-        <p class="text-base sm:text-lg text-white/90 max-w-2xl mb-10 leading-relaxed font-light [text-shadow:0_1px_8px_rgba(0,0,0,0.35)]">
+        <p class="animate-hero-item hero-delay-3 text-base sm:text-lg text-white/90 max-w-2xl mb-10 leading-relaxed font-light [text-shadow:0_1px_8px_rgba(0,0,0,0.35)]">
           Pomi fructiferi, arbuști ornamentali, arbuști fructiferi și trandafiri nobili — cultivați cu meșteșug în satul renumit în toată România pentru trandafiri.
         </p>
 
         <!-- CTA Buttons -->
-        <div class="flex flex-col sm:flex-row gap-4 mb-14 justify-center">
+        <div class="animate-hero-item hero-delay-4 flex flex-col sm:flex-row gap-4 mb-14 justify-center">
           <AppButton variant="primary" size="lg" to="/produse" class="shadow-xl hover:shadow-2xl">Explorează Catalogul</AppButton>
           <NuxtLink
             to="/produse?category=trandafiri"
@@ -160,7 +160,7 @@ const steps = [
         </div>
 
         <!-- Stats Bar Centered at Bottom of Hero -->
-        <dl class="grid grid-cols-3 gap-6 sm:gap-12 max-w-2xl w-full border-t border-white/20 pt-8">
+        <dl class="animate-hero-item hero-delay-5 grid grid-cols-3 gap-6 sm:gap-12 max-w-2xl w-full border-t border-white/20 pt-8">
           <div v-for="(st, i) in stats" :key="st.label" :class="i > 0 ? 'border-l border-white/15' : ''">
             <dt class="font-serif text-3xl sm:text-4xl font-medium text-white leading-none [text-shadow:0_2px_10px_rgba(0,0,0,0.3)]">{{ st.value }}</dt>
             <dd class="text-xs sm:text-sm uppercase tracking-[0.16em] text-white/80 mt-2 font-medium">{{ st.label }}</dd>
