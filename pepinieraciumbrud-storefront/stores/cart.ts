@@ -59,12 +59,15 @@ export const useCartStore = defineStore('cart', {
 
     hasShippingCost: (state): boolean => {
       if (!state.cart || !state.cart.totals) return false
-      return parseFloat(state.cart.totals.total_shipping || '0') > 0
+      return state.cart.totals.total_shipping !== null && state.cart.totals.total_shipping !== undefined
     },
 
     formattedShipping: (state): string => {
-      if (!state.cart || !state.cart.totals) return '0,00 lei'
+      if (!state.cart || !state.cart.totals || state.cart.totals.total_shipping === null || state.cart.totals.total_shipping === undefined) {
+        return '30,00 lei'
+      }
       const price = parseFloat(state.cart.totals.total_shipping || '0')
+      if (price === 0) return 'Gratuit'
       const minorUnit = state.cart.totals.currency_minor_unit ?? 2
       const val = (price / Math.pow(10, minorUnit)).toFixed(2).replace('.', ',')
       return `${val} lei`

@@ -62,6 +62,7 @@ await useAsyncData('site-settings-minimal', () => fetchSettings())
       <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
         <span>© {{ new Date().getFullYear() }} {{ settings.footer_copyright || `${settings.site_title}. Plăți securizate & Date protejate.` }}</span>
         <div class="flex items-center gap-4">
+          <NuxtLink to="/garantie" class="hover:text-primary underline">Garanția Plantelor</NuxtLink>
           <NuxtLink to="/livrare-si-plata" class="hover:text-primary underline">Livrare și Plată</NuxtLink>
           <NuxtLink to="/termeni-si-conditii" class="hover:text-primary underline">Termeni și Condiții</NuxtLink>
         </div>

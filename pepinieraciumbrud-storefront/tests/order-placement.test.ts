@@ -112,9 +112,11 @@ describe('Storefront Order Placement & Cart Lifecycle', () => {
           }
           const totalCount = mockCartState.items.reduce((acc, item) => acc + item.quantity, 0)
           const totalMinor = mockCartState.items.reduce((acc, item) => acc + Number(item.totals.line_total), 0)
+          const shippingMinor = totalCount > 0 ? 3000 : 0
           mockCartState.items_count = totalCount
           mockCartState.totals.total_items = String(totalMinor)
-          mockCartState.totals.total_price = String(totalMinor)
+          mockCartState.totals.total_shipping = String(shippingMinor)
+          mockCartState.totals.total_price = String(totalMinor + shippingMinor)
           return { headers, _data: structuredClone(mockCartState) }
         }
 
@@ -128,9 +130,11 @@ describe('Storefront Order Placement & Cart Lifecycle', () => {
           }
           const totalCount = mockCartState.items.reduce((acc, item) => acc + item.quantity, 0)
           const totalMinor = mockCartState.items.reduce((acc, item) => acc + Number(item.totals.line_total), 0)
+          const shippingMinor = totalCount > 0 ? 3000 : 0
           mockCartState.items_count = totalCount
           mockCartState.totals.total_items = String(totalMinor)
-          mockCartState.totals.total_price = String(totalMinor)
+          mockCartState.totals.total_shipping = String(shippingMinor)
+          mockCartState.totals.total_price = String(totalMinor + shippingMinor)
           return { headers, _data: structuredClone(mockCartState) }
         }
 
@@ -139,9 +143,11 @@ describe('Storefront Order Placement & Cart Lifecycle', () => {
           mockCartState.items = mockCartState.items.filter((i) => i.key !== key)
           const totalCount = mockCartState.items.reduce((acc, item) => acc + item.quantity, 0)
           const totalMinor = mockCartState.items.reduce((acc, item) => acc + Number(item.totals.line_total), 0)
+          const shippingMinor = totalCount > 0 ? 3000 : 0
           mockCartState.items_count = totalCount
           mockCartState.totals.total_items = String(totalMinor)
-          mockCartState.totals.total_price = String(totalMinor)
+          mockCartState.totals.total_shipping = String(shippingMinor)
+          mockCartState.totals.total_price = String(totalMinor + shippingMinor)
           return { headers, _data: structuredClone(mockCartState) }
         }
 
@@ -190,20 +196,23 @@ describe('Storefront Order Placement & Cart Lifecycle', () => {
     assert.equal(cartStore.itemCount, 0)
     assert.equal(cartStore.formattedTotal, '0,00 lei')
 
-    // Add 3 units of product #77 (3 x 35.00 RON = 105.00 RON)
+    // Add 3 units of product #77 (3 x 35.00 RON = 105.00 RON + 30.00 RON shipping = 135.00 RON)
     await cartStore.addItem(77, 3)
     assert.equal(cartStore.itemCount, 3)
     assert.equal(cartStore.getItemQuantity(77), 3)
     assert.equal(cartStore.subtotal, '105.00')
-    assert.equal(cartStore.total, '105.00')
+    assert.equal(cartStore.formattedShipping, '30,00 lei')
+    assert.equal(cartStore.total, '135.00')
     assert.equal(cartStore.formattedSubtotal, '105,00 lei')
-    assert.equal(cartStore.formattedTotal, '105,00 lei')
+    assert.equal(cartStore.formattedTotal, '135,00 lei')
     assert.equal(cartStore.isOpen, true)
 
-    // Update quantity to 5 units (5 x 35.00 RON = 175.00 RON)
+    // Update quantity to 5 units (5 x 35.00 RON = 175.00 RON + 30.00 RON shipping = 205.00 RON)
     await cartStore.updateItem('item_77', 5)
     assert.equal(cartStore.itemCount, 5)
-    assert.equal(cartStore.formattedTotal, '175,00 lei')
+    assert.equal(cartStore.formattedSubtotal, '175,00 lei')
+    assert.equal(cartStore.formattedShipping, '30,00 lei')
+    assert.equal(cartStore.formattedTotal, '205,00 lei')
 
     // Setting quantity to 0 removes the item
     await cartStore.updateItem('item_77', 0)
@@ -214,10 +223,12 @@ describe('Storefront Order Placement & Cart Lifecycle', () => {
   it('completes the full checkout order placement flow and resets the cart', async () => {
     const cartStore = useCartStore()
 
-    // 1. Customer adds 3 trees to the cart
+    // 1. Customer adds 3 trees to the cart (105.00 RON + 30.00 RON shipping = 135.00 RON)
     await cartStore.addItem(77, 3)
     assert.equal(cartStore.itemCount, 3)
-    assert.equal(cartStore.formattedTotal, '105,00 lei')
+    assert.equal(cartStore.formattedSubtotal, '105,00 lei')
+    assert.equal(cartStore.formattedShipping, '30,00 lei')
+    assert.equal(cartStore.formattedTotal, '135,00 lei')
 
     // 2. Customer fills checkout form and submits order via storeApi.checkout
     const checkoutPayload = {

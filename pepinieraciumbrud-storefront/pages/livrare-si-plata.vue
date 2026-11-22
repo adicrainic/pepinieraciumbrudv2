@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { useSeo } from '~/composables/useSeo'
+import { useSiteSettings } from '~/composables/useSiteSettings'
 
 const { setPageSeo } = useSeo()
+const { settings } = useSiteSettings()
 setPageSeo({
   title: 'Informații Livrare și Plată',
   description: 'Aflați detalii despre metodele de livrare prin curier rapid și opțiunile de plată pentru pomi fructiferi și trandafiri.'
@@ -26,7 +28,7 @@ setPageSeo({
           <li><strong>Sezonul de toamnă:</strong> Livrările încep de regulă după primele brume (sfârșitul lunii octombrie – noiembrie), când pomii au intrat în repaus vegetativ.</li>
           <li><strong>Sezonul de primăvară:</strong> Livrările se reiau imediat ce solul permite plantarea (februarie – aprilie).</li>
           <li><strong>Timp de tranzit:</strong> 24-48 ore de la predarea coletului către curier.</li>
-          <li><strong>Cost estimativ transport:</strong> Între <strong>25 și 35 lei</strong> pentru coletele standard în orice localitate din România (fără kilometri suplimentari). Pentru comenzi voluminoase, costul exact vă este comunicat telefonic la confirmarea comenzii.</li>
+          <li><strong>Cost transport:</strong> Tarif fix de <strong>{{ settings.shipping_cost || '30' }} lei</strong> pentru livrare prin curier rapid în orice localitate din România (fără taxe de kilometri suplimentari). Costul este calculat și afișat automat în coșul de cumpărături și la finalizarea comenzii.</li>
         </ul>
       </div>
 

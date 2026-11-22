@@ -83,6 +83,16 @@ const whatsappUrl = computed(() => {
         </div>
         <div>
           <NuxtLink
+            to="/garantie"
+            class="link-underline inline-block py-2 text-base font-medium text-text hover:text-accent pb-1"
+            active-class="!text-accent"
+            @click="uiStore.closeMobileMenu()"
+          >
+            Garanția Plantelor
+          </NuxtLink>
+        </div>
+        <div>
+          <NuxtLink
             to="/livrare-si-plata"
             class="link-underline inline-block py-2 text-base font-medium text-text hover:text-accent pb-1"
             active-class="!text-accent"

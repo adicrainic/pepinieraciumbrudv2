@@ -411,26 +411,32 @@ const handlePlaceOrder = async () => {
             </div>
             <div class="flex justify-between items-start gap-2">
               <span class="text-text-muted">Livrare curier rapid</span>
-              <span v-if="cartStore.hasShippingCost" class="font-semibold text-text">
+              <span class="font-semibold text-text">
                 {{ cartStore.formattedShipping }}
-              </span>
-              <span v-else class="font-medium text-leaf-700 text-right">
-                Confirmată telefonic (~25–35 lei)
               </span>
             </div>
             <div class="border-t border-border pt-3 flex justify-between text-base font-bold text-primary-dark">
-              <span>Total produse</span>
+              <span>Total de plată</span>
               <span>{{ cartStore.formattedTotal }}</span>
             </div>
           </div>
 
-          <div class="bg-surface-warm/70 border border-border rounded-xl p-3 text-xs text-text-muted space-y-1.5 leading-relaxed">
-            <div class="flex items-center gap-1.5 text-text font-medium">
+          <div class="bg-surface-warm/70 border border-border rounded-xl p-3 text-xs text-text-muted space-y-2 leading-relaxed">
+            <div class="flex items-center justify-between gap-2 text-text font-medium">
+              <div class="flex items-center gap-1.5">
+                <span>🛡️</span>
+                <span>Garanție de prindere &amp; soi autentic</span>
+              </div>
+              <NuxtLink to="/garantie" class="text-primary underline hover:text-primary-dark font-semibold shrink-0">
+                Termeni garanție
+              </NuxtLink>
+            </div>
+            <div class="flex items-center gap-1.5 text-text font-medium pt-1 border-t border-border/60">
               <span>📞</span>
               <span>Confirmare telefonică înainte de expediere</span>
             </div>
             <p>
-              Vă vom contacta telefonic pentru confirmarea comenzii, stabilirea datei optime de livrare și comunicarea costului exact de transport în funcție de greutatea coletului.
+              Vă vom contacta telefonic pentru confirmarea comenzii și stabilirea datei optime de livrare pentru plantare.
             </p>
           </div>
 
@@ -447,7 +453,8 @@ const handlePlaceOrder = async () => {
 
         <div class="text-xs text-text-muted text-center leading-relaxed px-2">
           Prin plasarea comenzii confirmați că sunteți de acord cu
-          <NuxtLink to="/termeni-si-conditii" class="text-primary underline hover:text-primary-dark">Termenii și Condițiile</NuxtLink>
+          <NuxtLink to="/termeni-si-conditii" class="text-primary underline hover:text-primary-dark">Termenii și Condițiile</NuxtLink>,
+          <NuxtLink to="/garantie" class="text-primary underline hover:text-primary-dark">Condițiile de Garanție</NuxtLink>
           și
           <NuxtLink to="/politica-de-confidentialitate" class="text-primary underline hover:text-primary-dark">Politica de Confidențialitate</NuxtLink>
           ale Pepinierei Ciumbrud.

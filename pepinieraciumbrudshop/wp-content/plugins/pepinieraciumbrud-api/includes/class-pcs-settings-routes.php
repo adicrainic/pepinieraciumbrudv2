@@ -72,6 +72,7 @@ final class PCS_Settings_Routes extends PCS_Base_Routes {
             'schedule_sunday'    => 'Duminică: Închis',
             'schedule_notes'     => 'Comenzile se pot plasa direct prin magazinul online la orice oră. Expedierea se face în ordinea primirii comenzilor.',
             'footer_copyright'   => 'Pepiniera Ciumbrud. Toate drepturile rezervate.',
+            'shipping_cost'      => '30',
         ];
     }
 
@@ -176,7 +177,12 @@ final class PCS_Settings_Routes extends PCS_Base_Routes {
             }
 
             // Sanitize value depending on key
-            if ( is_string( $value ) ) {
+            if ( $clean_key === 'shipping_cost' ) {
+                $numeric_cost = max( 0, (float) str_replace( ',', '.', (string) $value ) );
+                $clean_value  = ( floor( $numeric_cost ) == $numeric_cost )
+                    ? (string) (int) $numeric_cost
+                    : number_format( $numeric_cost, 2, '.', '' );
+            } elseif ( is_string( $value ) ) {
                 if ( $clean_key === 'contact_email' ) {
                     $clean_value = sanitize_email( $value );
                 } elseif ( $clean_key === 'logo_url' ) {
@@ -197,12 +203,55 @@ final class PCS_Settings_Routes extends PCS_Base_Routes {
                     $clean_value
                 )
             );
+
+            if ( $clean_key === 'shipping_cost' ) {
+                $this->sync_woocommerce_shipping_cost( $clean_value );
+            }
         }
 
         return $this->success( [
             'message'  => 'Setările au fost salvate cu succes.',
             'settings' => $this->fetch_all_settings(),
         ] );
+    }
+
+    /**
+     * Synchronize the configured flat-rate shipping cost with WooCommerce shipping zone methods.
+     */
+    private function sync_woocommerce_shipping_cost( string $cost ): void {
+        global $wpdb;
+
+        $methods_table = $wpdb->prefix . 'woocommerce_shipping_zone_methods';
+        $instance_ids  = $wpdb->get_col(
+            "SELECT instance_id FROM `{$methods_table}` WHERE method_id = 'flat_rate'"
+        );
+
+        if ( empty( $instance_ids ) ) {
+            $wpdb->query(
+                "INSERT INTO `{$methods_table}` (`zone_id`, `method_id`, `method_order`, `is_enabled`)
+                 VALUES (1, 'flat_rate', 1, 1)"
+            );
+            $new_id = (int) $wpdb->insert_id;
+            if ( $new_id > 0 ) {
+                $instance_ids = [ $new_id ];
+            }
+        }
+
+        foreach ( $instance_ids as $instance_id ) {
+            $option_name = 'woocommerce_flat_rate_' . (int) $instance_id . '_settings';
+            $current     = get_option( $option_name, [] );
+            if ( ! is_array( $current ) ) {
+                $current = [];
+            }
+            $current['title']      = $current['title'] ?? 'Livrare curier rapid';
+            $current['tax_status'] = $current['tax_status'] ?? 'none';
+            $current['cost']       = $cost;
+            update_option( $option_name, $current, true );
+        }
+
+        if ( class_exists( 'WC_Cache_Helper' ) ) {
+            WC_Cache_Helper::get_transient_version( 'shipping', true );
+        }
     }
 
     /**

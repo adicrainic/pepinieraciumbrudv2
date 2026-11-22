@@ -143,7 +143,13 @@ const handleSearch = () => {
             <span class="whitespace-nowrap">{{ settings.contact_phone }}</span>
           </a>
 
-          <!-- Livrare & Plată link (Desktop) -->
+          <!-- Garanție & Livrare links (Desktop) -->
+          <NuxtLink
+            to="/garantie"
+            class="hidden lg:inline text-white/85 hover:text-white text-xs sm:text-sm uppercase tracking-wider font-medium transition-colors"
+          >
+            Garanție plante
+          </NuxtLink>
           <NuxtLink
             to="/livrare-si-plata"
             class="hidden sm:inline text-white/85 hover:text-white text-xs sm:text-sm uppercase tracking-wider font-medium transition-colors"

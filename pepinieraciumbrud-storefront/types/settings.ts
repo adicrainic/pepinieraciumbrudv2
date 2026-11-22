@@ -11,5 +11,6 @@ export interface SiteSettings {
   schedule_sunday: string
   schedule_notes: string
   footer_copyright: string
+  shipping_cost?: string
 }
 

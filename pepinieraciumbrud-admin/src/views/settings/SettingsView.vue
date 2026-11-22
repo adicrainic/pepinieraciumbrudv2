@@ -33,7 +33,8 @@ const defaultSettings: SiteSettings = {
   schedule_saturday: 'Sâmbătă: 08:00 – 13:00',
   schedule_sunday: 'Duminică: Închis',
   schedule_notes: 'Comenzile se pot plasa direct prin magazinul online la orice oră. Expedierea se face în ordinea primirii comenzilor.',
-  footer_copyright: 'Pepiniera Ciumbrud. Toate drepturile rezervate.'
+  footer_copyright: 'Pepiniera Ciumbrud. Toate drepturile rezervate.',
+  shipping_cost: '30'
 }
 
 const form = ref<SiteSettings>({ ...defaultSettings })
@@ -470,7 +471,42 @@ const removeLogo = () => {
             </div>
           </div>
 
-          <!-- Section 4: Subsol & Drepturi de Autor -->
+          <!-- Section 4: Livrare & Cost Transport -->
+          <div class="bg-white rounded-2xl border border-border p-6 shadow-sm space-y-6">
+            <div class="border-b border-border pb-3">
+              <h2 class="text-base font-bold text-gray-900 flex items-center gap-2">
+                <span>🚚</span> Livrare & Cost Transport
+              </h2>
+              <p class="text-xs text-gray-500 mt-0.5">
+                Tariful fix de livrare prin curier rapid (sincronizat automat cu coșul și finalizarea comenzii din WooCommerce).
+              </p>
+            </div>
+
+            <div class="max-w-xs">
+              <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+                Cost Livrare Curier Rapid (lei) *
+              </label>
+              <div class="relative">
+                <input
+                  v-model="form.shipping_cost"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  required
+                  placeholder="30"
+                  class="w-full text-sm pl-3.5 pr-12 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                />
+                <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-xs font-semibold text-gray-500">
+                  lei
+                </span>
+              </div>
+              <p class="text-[11px] text-gray-500 mt-1.5">
+                Acest cost este adăugat automat la „Total de plată” în coș și la checkout.
+              </p>
+            </div>
+          </div>
+
+          <!-- Section 5: Subsol & Drepturi de Autor -->
           <div class="bg-white rounded-2xl border border-border p-6 shadow-sm space-y-6">
             <div class="border-b border-border pb-3">
               <h2 class="text-base font-bold text-gray-900 flex items-center gap-2">

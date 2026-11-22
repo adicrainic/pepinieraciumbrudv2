@@ -12,7 +12,8 @@ export const defaultSiteSettings: SiteSettings = {
   schedule_saturday: 'Sâmbătă: 08:00 – 13:00',
   schedule_sunday: 'Duminică: Închis',
   schedule_notes: 'Comenzile se pot plasa direct prin magazinul online la orice oră. Expedierea se face în ordinea primirii comenzilor.',
-  footer_copyright: 'Pepiniera Ciumbrud. Toate drepturile rezervate.'
+  footer_copyright: 'Pepiniera Ciumbrud. Toate drepturile rezervate.',
+  shipping_cost: '30'
 }
 
 export const useSiteSettings = () => {

@@ -71,23 +71,25 @@ onMounted(() => {
           </div>
           <div class="flex justify-between items-start gap-2 text-text-muted">
             <span>Livrare curier rapid</span>
-            <span v-if="cartStore.hasShippingCost" class="font-semibold text-text">
+            <span class="font-semibold text-text">
               {{ cartStore.formattedShipping }}
-            </span>
-            <span v-else class="text-xs text-leaf-700 font-medium text-right">
-              ~25–35 lei (confirmată telefonic)
             </span>
           </div>
           <div class="border-t border-border pt-3 flex justify-between text-base font-bold text-primary-dark">
-            <span>Total produse</span>
+            <span>Total de plată</span>
             <span>{{ cartStore.formattedTotal }}</span>
           </div>
         </div>
 
         <div class="bg-surface-warm/60 border border-border rounded-xl p-3.5 text-xs text-text-muted space-y-2">
-          <div class="flex items-center gap-2 text-text font-medium">
-            <span>🛡️</span>
-            <span>Garanție de prindere & soi autentic</span>
+          <div class="flex items-center justify-between gap-2 text-text font-medium">
+            <div class="flex items-center gap-2">
+              <span>🛡️</span>
+              <span>Garanție de prindere &amp; soi autentic</span>
+            </div>
+            <NuxtLink to="/garantie" class="text-primary underline hover:text-primary-dark font-semibold shrink-0">
+              Detalii →
+            </NuxtLink>
           </div>
           <div class="flex items-center gap-2 text-text font-medium">
             <span>📦</span>

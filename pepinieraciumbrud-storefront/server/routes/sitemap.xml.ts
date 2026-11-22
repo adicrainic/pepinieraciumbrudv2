@@ -9,6 +9,7 @@ export default defineEventHandler(async (event) => {
     { loc: '/produse', changefreq: 'daily', priority: 0.9 },
     { loc: '/despre-noi', changefreq: 'monthly', priority: 0.6 },
     { loc: '/contact', changefreq: 'monthly', priority: 0.6 },
+    { loc: '/garantie', changefreq: 'monthly', priority: 0.6 },
     { loc: '/livrare-si-plata', changefreq: 'monthly', priority: 0.5 },
     { loc: '/termeni-si-conditii', changefreq: 'yearly', priority: 0.3 },
     { loc: '/politica-de-confidentialitate', changefreq: 'yearly', priority: 0.3 }

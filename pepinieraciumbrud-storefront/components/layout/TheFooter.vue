@@ -51,6 +51,7 @@ const { settings } = useSiteSettings()
           <h4 class="text-xs font-medium uppercase tracking-[0.26em] text-white mb-5 pb-3 border-b border-white/15 inline-block pr-8">Informații Utile</h4>
           <ul class="space-y-2.5 text-sm text-white/80">
             <li><NuxtLink to="/despre-noi" class="hover:text-white transition-colors">Despre Pepinieră</NuxtLink></li>
+            <li><NuxtLink to="/garantie" class="hover:text-white transition-colors">Garanția Plantelor</NuxtLink></li>
             <li><NuxtLink to="/livrare-si-plata" class="hover:text-white transition-colors">Livrare &amp; Plată</NuxtLink></li>
             <li><NuxtLink to="/termeni-si-conditii" class="hover:text-white transition-colors">Termeni și Condiții</NuxtLink></li>
             <li><NuxtLink to="/politica-de-confidentialitate" class="hover:text-white transition-colors">Politica de Confidențialitate</NuxtLink></li>

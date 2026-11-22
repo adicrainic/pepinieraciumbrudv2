@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useProducts } from '~/composables/useProducts'
 import { useSeo } from '~/composables/useSeo'
+import { useSiteSettings } from '~/composables/useSiteSettings'
 import { useCartStore } from '~/stores/cart'
 import AppButton from '~/components/ui/AppButton.vue'
 import AppBadge from '~/components/ui/AppBadge.vue'
@@ -11,6 +12,7 @@ const slug = route.params.slug as string
 
 const { fetchProductBySlug, formatPrice, getProductImage } = useProducts()
 const { setPageSeo, setProductJsonLd } = useSeo()
+const { settings } = useSiteSettings()
 const cartStore = useCartStore()
 
 const { data: product, status } = await useAsyncData(`product-${slug}`, () =>
@@ -277,8 +279,11 @@ const handleAddToCart = async () => {
             <div class="flex items-start space-x-2.5 text-text">
               <span class="text-base leading-none">🛡️</span>
               <div>
-                <strong class="font-semibold block">Garanție autenticitate soi & prindere</strong>
-                <span class="text-text-muted">Material săditor certificat, aclimatizat în Pepiniera Ciumbrud.</span>
+                <strong class="font-semibold block">Garanție autenticitate soi &amp; prindere</strong>
+                <span class="text-text-muted">
+                  Material săditor certificat, aclimatizat în Ciumbrud (48h transport · prindere până la 30 iunie).
+                  <NuxtLink to="/garantie" class="text-primary underline hover:text-primary-dark ml-1">Condiții garanție</NuxtLink>
+                </span>
               </div>
             </div>
             <div class="flex items-start space-x-2.5 text-text">
@@ -293,7 +298,7 @@ const handleAddToCart = async () => {
               <div>
                 <strong class="font-semibold block">Livrare prin curier rapid în 24-48h de la expediere</strong>
                 <span class="text-text-muted">
-                  Cost estimativ transport: 25–35 lei.
+                  Cost transport: {{ settings.shipping_cost || '30' }} lei (tarif fix în toată România).
                   <NuxtLink to="/livrare-si-plata" class="text-primary underline hover:text-primary-dark ml-1">Detalii livrare și plată</NuxtLink>
                 </span>
               </div>
