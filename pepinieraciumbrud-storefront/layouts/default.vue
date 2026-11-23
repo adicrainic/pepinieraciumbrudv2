@@ -3,6 +3,7 @@ import TheHeader from '~/components/layout/TheHeader.vue'
 import TheFooter from '~/components/layout/TheFooter.vue'
 import MobileMenu from '~/components/layout/MobileMenu.vue'
 import CartDrawer from '~/components/cart/CartDrawer.vue'
+import CookieConsentBanner from '~/components/layout/CookieConsentBanner.vue'
 import LogoMark from '~/components/ui/LogoMark.vue'
 import { useSiteSettings } from '~/composables/useSiteSettings'
 
@@ -37,6 +38,7 @@ const isHomePage = computed(() => route.path === '/')
     </main>
 
     <TheFooter />
+    <CookieConsentBanner />
   </div>
 </template>
 

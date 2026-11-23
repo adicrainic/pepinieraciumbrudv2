@@ -13,7 +13,11 @@ export const defaultSiteSettings: SiteSettings = {
   schedule_sunday: 'Duminică: Închis',
   schedule_notes: 'Comenzile se pot plasa direct prin magazinul online la orice oră. Expedierea se face în ordinea primirii comenzilor.',
   footer_copyright: 'Pepiniera Ciumbrud. Toate drepturile rezervate.',
-  shipping_cost: '30'
+  shipping_cost: '30',
+  company_legal_name: 'S.C. Pepiniera Ciumbrud S.R.L.',
+  company_cui: 'RO12345678',
+  company_reg_com: 'J01/123/2000',
+  company_authorization: 'AB 1234 / 0000'
 }
 
 export const useSiteSettings = () => {

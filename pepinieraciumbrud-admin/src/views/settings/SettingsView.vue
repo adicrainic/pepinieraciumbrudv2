@@ -23,10 +23,10 @@ const testEmailResult = ref<EmailTestResult | null>(null)
 
 const defaultSettings: SiteSettings = {
   site_title: 'Pepiniera Ciumbrud',
-  site_tagline: 'Tradiție & Calitate din 1990',
+  site_tagline: 'Pepiniera de familie din 2000',
   site_description: 'Producător autorizat de material săditor pomicol, trandafiri și plante ornamentale de cea mai bună calitate, aclimatizate pentru România.',
   logo_url: '',
-  contact_phone: '+40 700 000 000',
+  contact_phone: '+40 765 152 832',
   contact_email: 'contact@pepinieraciumbrud.ro',
   contact_address: 'Sat Ciumbrud, Jud. Alba, România',
   schedule_weekdays: 'Luni – Vineri: 08:00 – 17:00',
@@ -34,7 +34,11 @@ const defaultSettings: SiteSettings = {
   schedule_sunday: 'Duminică: Închis',
   schedule_notes: 'Comenzile se pot plasa direct prin magazinul online la orice oră. Expedierea se face în ordinea primirii comenzilor.',
   footer_copyright: 'Pepiniera Ciumbrud. Toate drepturile rezervate.',
-  shipping_cost: '30'
+  shipping_cost: '30',
+  company_legal_name: 'S.C. Pepiniera Ciumbrud S.R.L.',
+  company_cui: 'RO12345678',
+  company_reg_com: 'J01/123/2000',
+  company_authorization: 'AB 1234 / 0000'
 }
 
 const form = ref<SiteSettings>({ ...defaultSettings })
@@ -347,7 +351,74 @@ const removeLogo = () => {
             </div>
           </div>
 
-          <!-- Section 2: Date de Contact -->
+          <!-- Section 2: Date Fiscale, Juridice & Autorizații -->
+          <div class="bg-white rounded-2xl border border-border p-6 shadow-sm space-y-6">
+            <div class="border-b border-border pb-3">
+              <h2 class="text-base font-bold text-gray-900 flex items-center gap-2">
+                <span>🏛️</span> Date Fiscale, Juridice &amp; Autorizații
+              </h2>
+              <p class="text-xs text-gray-500 mt-0.5">
+                Datele legale ale societății afișate în subsolul magazinului, Termeni și Condiții și Politica de Confidențialitate (conform OUG 34/2014 și cerințelor ANPC).
+              </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+                  Denumire Juridică (S.R.L. / P.F.A. / I.I.) *
+                </label>
+                <input
+                  v-model="form.company_legal_name"
+                  type="text"
+                  required
+                  placeholder="ex: S.C. Pepiniera Ciumbrud S.R.L."
+                  class="w-full text-sm px-3.5 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                />
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+                  Cod Unic de Înregistrare (CUI / CIF) *
+                </label>
+                <input
+                  v-model="form.company_cui"
+                  type="text"
+                  required
+                  placeholder="ex: RO12345678"
+                  class="w-full text-sm px-3.5 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+                  Nr. Registrul Comerțului (Reg. Com.) *
+                </label>
+                <input
+                  v-model="form.company_reg_com"
+                  type="text"
+                  required
+                  placeholder="ex: J01/123/2000"
+                  class="w-full text-sm px-3.5 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                />
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+                  Autorizație Producător / Fitosanitară
+                </label>
+                <input
+                  v-model="form.company_authorization"
+                  type="text"
+                  placeholder="ex: AB 1234 / 0000"
+                  class="w-full text-sm px-3.5 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 3: Date de Contact -->
           <div class="bg-white rounded-2xl border border-border p-6 shadow-sm space-y-6">
             <div class="border-b border-border pb-3">
               <h2 class="text-base font-bold text-gray-900 flex items-center gap-2">
@@ -598,6 +669,19 @@ const removeLogo = () => {
                       <div v-if="form.schedule_weekdays" class="text-white/60 text-[10px]">{{ form.schedule_weekdays }}</div>
                       <div v-if="form.schedule_saturday" class="text-white/60 text-[10px]">{{ form.schedule_saturday }}</div>
                       <div v-if="form.schedule_sunday" class="text-white/60 text-[10px]">{{ form.schedule_sunday }}</div>
+                    </div>
+                  </div>
+                  <div
+                    v-if="form.company_legal_name || form.company_cui || form.company_reg_com || form.company_authorization"
+                    class="pt-2 border-t border-white/10 space-y-0.5 text-[11px] text-white/75"
+                  >
+                    <div v-if="form.company_legal_name" class="font-semibold text-white">{{ form.company_legal_name }}</div>
+                    <div class="flex flex-wrap gap-x-2">
+                      <span v-if="form.company_cui">CUI: {{ form.company_cui }}</span>
+                      <span v-if="form.company_reg_com">Reg. Com.: {{ form.company_reg_com }}</span>
+                    </div>
+                    <div v-if="form.company_authorization" class="text-[10px] text-white/60">
+                      Autorizație: {{ form.company_authorization }}
                     </div>
                   </div>
                 </div>

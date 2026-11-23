@@ -1,19 +1,21 @@
 <script setup lang="ts">
 import LogoMark from '~/components/ui/LogoMark.vue'
 import { useSiteSettings } from '~/composables/useSiteSettings'
+import { useCookieConsent } from '~/composables/useCookieConsent'
 
 const { settings } = useSiteSettings()
+const { openPreferences } = useCookieConsent()
 </script>
 
 <template>
-   <footer class="relative overflow-hidden bg-primary text-white mt-0">
+  <footer class="relative overflow-hidden bg-primary text-white mt-0">
     <LogoMark :rose="false" class="pointer-events-none absolute -right-10 -bottom-10 h-[130%] w-auto text-white/[0.06]" />
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
-        <!-- Brand Info -->
+        <!-- Brand & Legal Identity Info -->
         <div class="space-y-4 md:col-span-1">
           <div class="flex items-center space-x-3">
-            <div class="w-16 h-16 rounded-2xl bg-white text-primary flex items-center justify-center font-bold overflow-hidden shadow-lg ring-1 ring-white/20">
+            <div class="w-16 h-16 rounded-2xl bg-white text-primary flex items-center justify-center font-bold overflow-hidden shadow-lg ring-1 ring-white/20 shrink-0">
               <img
                 v-if="settings.logo_url"
                 :src="settings.logo_url"
@@ -28,8 +30,22 @@ const { settings } = useSiteSettings()
           <p class="text-sm text-white/80 leading-relaxed">
             {{ settings.site_description }}
           </p>
-          <div class="pt-2 text-xs text-white/70">
-            {{ settings.contact_address }}
+
+          <!-- Company Legal Data Card -->
+          <div class="pt-3 border-t border-white/15 space-y-1 text-xs text-white/80">
+            <div class="font-semibold text-white">
+              {{ settings.company_legal_name || 'S.C. Pepiniera Ciumbrud S.R.L.' }}
+            </div>
+            <div class="flex flex-wrap gap-x-3 gap-y-0.5 text-white/75">
+              <span v-if="settings.company_cui">CUI: <strong class="font-medium text-white">{{ settings.company_cui }}</strong></span>
+              <span v-if="settings.company_reg_com">Reg. Com.: <strong class="font-medium text-white">{{ settings.company_reg_com }}</strong></span>
+            </div>
+            <div v-if="settings.company_authorization" class="text-white/75">
+              Autorizație fitosanitară: <strong class="font-medium text-white">{{ settings.company_authorization }}</strong>
+            </div>
+            <div class="text-white/70 pt-0.5">
+              Sediu: {{ settings.contact_address }}
+            </div>
           </div>
         </div>
 
@@ -48,14 +64,23 @@ const { settings } = useSiteSettings()
 
         <!-- Links 2 -->
         <div>
-          <h4 class="text-xs font-medium uppercase tracking-[0.26em] text-white mb-5 pb-3 border-b border-white/15 inline-block pr-8">Informații Utile</h4>
+          <h4 class="text-xs font-medium uppercase tracking-[0.26em] text-white mb-5 pb-3 border-b border-white/15 inline-block pr-8">Informații &amp; Legal</h4>
           <ul class="space-y-2.5 text-sm text-white/80">
             <li><NuxtLink to="/despre-noi" class="hover:text-white transition-colors">Despre Pepinieră</NuxtLink></li>
             <li><NuxtLink to="/garantie" class="hover:text-white transition-colors">Garanția Plantelor</NuxtLink></li>
             <li><NuxtLink to="/livrare-si-plata" class="hover:text-white transition-colors">Livrare &amp; Plată</NuxtLink></li>
-            <li><NuxtLink to="/termeni-si-conditii" class="hover:text-white transition-colors">Termeni și Condiții</NuxtLink></li>
-            <li><NuxtLink to="/politica-de-confidentialitate" class="hover:text-white transition-colors">Politica de Confidențialitate</NuxtLink></li>
+            <li><NuxtLink to="/termeni-si-conditii" class="hover:text-white transition-colors">Termeni și Condiții (Retur)</NuxtLink></li>
+            <li><NuxtLink to="/politica-de-confidentialitate" class="hover:text-white transition-colors">Politica de Confidențialitate (GDPR)</NuxtLink></li>
             <li><NuxtLink to="/contact" class="hover:text-white transition-colors">Contact &amp; Locație</NuxtLink></li>
+            <li>
+              <button
+                type="button"
+                @click="openPreferences"
+                class="hover:text-white transition-colors text-left underline decoration-white/40 underline-offset-4"
+              >
+                Preferințe Cookie &amp; Trafic
+              </button>
+            </li>
           </ul>
         </div>
 
@@ -91,11 +116,57 @@ const { settings } = useSiteSettings()
         </div>
       </div>
 
-      <div class="mt-12 pt-8 border-t border-white/15 flex flex-col sm:flex-row items-center justify-between text-xs text-white/60 gap-4">
+      <!-- Consumer Protection Links (ANPC / SAL / SOL) -->
+      <div class="mt-10 pt-6 border-t border-white/15 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+        <div class="text-xs text-white/75 space-y-0.5">
+          <div class="font-semibold text-white uppercase tracking-wider text-[11px]">Protecția Consumatorilor</div>
+          <p class="text-white/65">
+            Conform legislației în vigoare (OUG 34/2014 și OG 38/2015), consumatorii pot apela la mecanismele oficiale de soluționare a litigiilor:
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2.5">
+          <a
+            href="https://anpc.ro/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-semibold text-white transition-colors"
+          >
+            <span>🛡️</span>
+            <span>ANPC — Autoritatea Națională pentru Protecția Consumatorilor</span>
+            <span class="text-white/60">↗</span>
+          </a>
+
+          <a
+            href="https://anpc.ro/ce-este-sal/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-semibold text-white transition-colors"
+          >
+            <span>⚖️</span>
+            <span>ANPC — Soluționarea Alternativă a Litigiilor (SAL)</span>
+            <span class="text-white/60">↗</span>
+          </a>
+
+          <a
+            href="https://ec.europa.eu/consumers/odr"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-semibold text-white transition-colors"
+          >
+            <span>🇪🇺</span>
+            <span>Soluționarea Online a Litigiilor (SOL / ODR)</span>
+            <span class="text-white/60">↗</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Bottom Copyright Bar -->
+      <div class="mt-6 pt-6 border-t border-white/15 flex flex-col sm:flex-row items-center justify-between text-xs text-white/60 gap-4">
         <div>
           © {{ new Date().getFullYear() }} {{ settings.footer_copyright || `${settings.site_title}. Toate drepturile rezervate.` }}
         </div>
-        <div class="flex items-center space-x-6">
+        <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
           <span>Prețuri exprimate în RON cu TVA inclus.</span>
           <span>Produs în România</span>
         </div>
@@ -103,4 +174,3 @@ const { settings } = useSiteSettings()
     </div>
   </footer>
 </template>
-
