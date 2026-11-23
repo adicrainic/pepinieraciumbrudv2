@@ -29,9 +29,24 @@ const { data: categoriesData } = await useAsyncData('home-categories', () =>
 const products = computed(() => (productsData.value || []).filter((p: any) => p.is_in_stock))
 const categories = computed(() => categoriesData.value || [])
 const stats = [
-  { value: '30+', label: 'ani de experiență' },
-  { value: '150+', label: 'soiuri disponibile' },
+  { value: 'Din 2000', label: 'pepinieră de familie' },
+  { value: '100+', label: 'soiuri cultivate în câmp' },
   { value: '100%', label: 'aclimatizate în România' },
+]
+
+const villageHighlights = [
+  {
+    title: 'Altoire manuală în oculaj',
+    text: 'Fiecare trandafir și pom fructifer este altoit manual în câmpurile noastre din lunca Mureșului.',
+  },
+  {
+    title: 'Călite 2 sezoane în câmp deschis',
+    text: 'Plantele trec prin iernile din Transilvania înainte de livrare, dezvoltând rădăcini fibroase și viguroase.',
+  },
+  {
+    title: 'Scoatere la comandă & hidrogel',
+    text: 'Recoltăm proaspăt în ferestrele de plantare și protejăm rădăcinile în hidrogel și rumeguș umed.',
+  },
 ]
 
 const benefits = [
@@ -258,22 +273,121 @@ const steps = [
       </div>
     </section>
 
-    <!-- About -->
-    <section class="py-24 bg-surface-warm relative overflow-hidden">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 grid lg:grid-cols-2 gap-16 items-center">
-        <div class="space-y-6">
-          <span class="section-eyebrow">Despre Ciumbrud</span>
-          <h2 class="section-title">Satul rozelor și tradiția pomiculturii</h2>
-          <p class="text-text-muted leading-relaxed font-light">Localitatea Ciumbrud din județul Alba este renumită în toată țara pentru meșteșugul altoirii și cultivării plantelor. Pământul roditor și microclimatul special de pe valea Mureșului ne permit să obținem puieți viguroși, cu rădăcini bine dezvoltate.</p>
-          <p class="text-text-muted leading-relaxed font-light">Fiecare pom fructifer și fiecare butaș de trandafir este îngrijit individual, respectând toate normele fitosanitare europene.</p>
-          <AppButton variant="primary" to="/despre-noi">Citește mai mult</AppButton>
-        </div>
-        <div class="relative bg-primary text-white p-10 sm:p-14 petal">
-          <LogoMark class="absolute right-6 top-6 h-24 w-auto text-white/30" />
-          <div class="space-y-8 relative">
-            <div class="border-b border-white/15 pb-6"><span class="text-4xl font-serif font-medium">100%</span><p class="text-xs sm:text-sm uppercase tracking-[0.18em] text-white/80 mt-2">Aclimatizate în România</p></div>
-            <div class="border-b border-white/15 pb-6"><span class="text-4xl font-serif font-medium">+30 ani</span><p class="text-xs sm:text-sm uppercase tracking-[0.18em] text-white/80 mt-2">Experiență în altoire și selecție</p></div>
-            <div><span class="text-4xl font-serif font-medium">Livrare sigură</span><p class="text-xs sm:text-sm uppercase tracking-[0.18em] text-white/80 mt-2">Pachete termoizolate pentru protecția rădăcinilor</p></div>
+    <!-- Satul Trandafirilor (Visual Heritage Section) -->
+    <section class="py-24 bg-surface-warm relative overflow-hidden border-t border-border/60">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="grid lg:grid-cols-12 gap-12 lg:gap-14 items-center">
+          <!-- Left Column: Story, Heritage & Proof -->
+          <div class="lg:col-span-6 space-y-6">
+            <span class="section-eyebrow">Satul Trandafirilor · Ciumbrud, Alba</span>
+            <h2 class="section-title">
+              Rădăcini în satul trandafirilor și tradiția pomiculturii din Valea Mureșului
+            </h2>
+            <p class="text-text-muted leading-relaxed font-light text-base">
+              Pe malul stâng al Mureșului, în localitatea <strong>Ciumbrud</strong>, meșteșugul altoirii trandafirilor și al pomilor fructiferi se transmite din generație în generație de peste un secol. Solul aluvionar fertil și microclimatul blând al văii oferă condiții ideale pentru puieți cu rădăcini bogate și lemn bine copt.
+            </p>
+            <p class="text-text-muted leading-relaxed font-light text-base">
+              Înființată în anul <strong>2000</strong> ca pepinieră de familie, <strong>Pepiniera Ciumbrud</strong> cultivă în câmp propriu soiuri nobile de trandafiri și pomi certificați fitosanitar
+              <span v-if="settings.company_authorization" class="text-primary-dark font-medium">(Aut. {{ settings.company_authorization }})</span>, îngrijiți manual de la altoire până la ambalarea în hidrogel pentru grădina ta.
+            </p>
+
+            <!-- Craftsmanship highlights -->
+            <div class="grid sm:grid-cols-3 gap-4 pt-2">
+              <div
+                v-for="(item, idx) in villageHighlights"
+                :key="item.title"
+                class="bg-white/90 rounded-2xl p-4 border border-border/80 shadow-sm"
+              >
+                <span class="font-serif italic text-accent text-lg block mb-1">0{{ idx + 1 }}</span>
+                <h3 class="font-serif text-lg font-semibold text-primary-dark leading-snug mb-1.5">
+                  {{ item.title }}
+                </h3>
+                <p class="text-xs text-text-muted leading-relaxed">
+                  {{ item.text }}
+                </p>
+              </div>
+            </div>
+
+            <!-- Action links -->
+            <div class="pt-3 flex flex-wrap items-center gap-4">
+              <AppButton variant="primary" to="/despre-noi">
+                Descoperă povestea și oamenii
+              </AppButton>
+              <NuxtLink
+                to="/garantie"
+                class="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-primary/25 bg-white/80 hover:bg-white text-xs uppercase tracking-[0.16em] font-semibold text-primary-dark hover:text-primary transition-colors"
+              >
+                <span>🛡️ Garanția de prindere 100%</span>
+                <span>→</span>
+              </NuxtLink>
+            </div>
+          </div>
+
+          <!-- Right Column: Real Photos Collage of Ciumbrud Fields, People & Grafting -->
+          <div class="lg:col-span-6 space-y-4 sm:space-y-5">
+            <!-- Primary Feature Photo: Family / Team in the Ciumbrud Rose Fields -->
+            <figure class="group relative rounded-3xl overflow-hidden border border-border shadow-soft bg-neutral-900 aspect-[4/3]">
+              <img
+                src="/images/ciumbrud_family_team.jpg"
+                alt="Familia și echipa Pepinierei Ciumbrud în câmpul de trandafiri"
+                class="w-full h-full object-cover object-[center_88%] group-hover:scale-105 transition-transform duration-700"
+                loading="lazy"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent"></div>
+              <figcaption class="absolute bottom-0 inset-x-0 p-5 sm:p-6 flex flex-col sm:flex-row sm:items-end justify-between gap-3 text-white">
+                <div>
+                  <span class="inline-block text-[11px] uppercase tracking-[0.2em] text-rose-200 font-semibold mb-1">
+                    Oamenii din spatele pepinierei
+                  </span>
+                  <p class="font-serif text-xl sm:text-2xl font-medium leading-tight">
+                    Două generații de horticultori în câmpurile din Ciumbrud
+                  </p>
+                </div>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/25 text-xs font-medium shrink-0 self-start sm:self-auto">
+                  <span class="w-1.5 h-1.5 rounded-full bg-rose-300"></span>
+                  Din 2000
+                </span>
+              </figcaption>
+            </figure>
+
+            <!-- Secondary 2-Photo Row: Hand Grafting & Root Packaging -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+              <figure class="group relative rounded-2xl overflow-hidden border border-border shadow-sm bg-neutral-900 aspect-[4/3]">
+                <img
+                  src="/images/ciumbrud_grafting.jpg"
+                  alt="Altoire manuală în oculaj în pepiniera din Ciumbrud"
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  loading="lazy"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent"></div>
+                <figcaption class="absolute bottom-0 inset-x-0 p-4 text-white">
+                  <span class="text-[10px] uppercase tracking-[0.18em] text-rose-200 font-semibold block">
+                    Meșteșug local
+                  </span>
+                  <p class="font-serif text-base sm:text-lg font-medium leading-snug">
+                    Altoire manuală și selecție în câmp
+                  </p>
+                </figcaption>
+              </figure>
+
+              <figure class="group relative rounded-2xl overflow-hidden border border-border shadow-sm bg-neutral-900 aspect-[4/3]">
+                <img
+                  src="/images/ciumbrud_packaging_roots.jpg"
+                  alt="Pregătirea rădăcinilor în hidrogel și rumeguș umed cu etichetă fitosanitară"
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  loading="lazy"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent"></div>
+                <figcaption class="absolute bottom-0 inset-x-0 p-4 text-white">
+                  <span class="text-[10px] uppercase tracking-[0.18em] text-rose-200 font-semibold block">
+                    De la noi, acasă la tine
+                  </span>
+                  <p class="font-serif text-base sm:text-lg font-medium leading-snug">
+                    Rădăcini în hidrogel &amp; soi etichetat
+                  </p>
+                </figcaption>
+              </figure>
+            </div>
           </div>
         </div>
       </div>
