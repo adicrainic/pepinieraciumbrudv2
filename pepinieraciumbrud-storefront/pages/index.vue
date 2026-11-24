@@ -18,14 +18,12 @@ setPageSeo({
 // SSR data fetching — Best-selling & featured roses first
 const { data: roseProductsData, status: roseProductsStatus } = await useAsyncData(
   'home-rose-products',
-  () => fetchProducts({ category: 'trandafiri', per_page: 6, stock_status: 'instock' }),
-  { getCachedData: () => undefined }
+  () => fetchProducts({ category: 'trandafiri', per_page: 6, stock_status: 'instock' })
 )
 
 const { data: productsData, status: productsStatus } = await useAsyncData(
   'home-products',
-  () => fetchProducts({ per_page: 6, stock_status: 'instock' }),
-  { getCachedData: () => undefined }
+  () => fetchProducts({ per_page: 6, stock_status: 'instock' })
 )
 
 const { data: categoriesData } = await useAsyncData('home-categories', () =>
@@ -92,11 +90,19 @@ const roseCollections = [
   },
 ]
 
-const stats = [
-  { value: 'Din 2000', label: 'pepinieră de familie' },
-  { value: '100+', label: 'soiuri cultivate în câmp' },
-  { value: '100%', label: 'aclimatizate în România' },
-]
+const stats = computed(() => {
+  const totalCount = (categories.value || [])
+    .filter((c: any) => (!c.parent || c.parent === 0) && c.slug !== 'uncategorized')
+    .reduce((sum: number, c: any) => sum + (Number(c.count) || 0), 0)
+  const roseCat = (categories.value || []).find((c: any) => c.slug === 'trandafiri')
+  const roseCount = Number(roseCat?.count) || 24
+  return [
+    { value: 'Din 2000', label: 'pepinieră de familie în Ciumbrud' },
+    { value: `${roseCount} soiuri`, label: 'trandafiri nobili altoiți manual' },
+    { value: `${totalCount || 98} soiuri`, label: 'în catalogul pepinierei' },
+    { value: '100%', label: 'aclimatizate & garanție prindere' },
+  ]
+})
 
 const villageHighlights = [
   {
@@ -252,7 +258,7 @@ const handleNewsletterSubmit = () => {
 <template>
   <div>
     <!-- Hero (Fullwidth panoramic photo) -->
-    <section class="group relative overflow-hidden bg-neutral-900 min-h-[42rem] lg:min-h-[48rem] flex items-center justify-center">
+    <section class="group relative overflow-hidden bg-neutral-900 min-h-[38rem] lg:min-h-[44rem] flex items-center justify-center">
       <!-- Full-width panoramic background photo - NOT cropped -->
       <img
         src="/images/hero_garden.jpg"
@@ -261,9 +267,9 @@ const handleNewsletterSubmit = () => {
         fetchpriority="high"
       />
 
-      <!-- Subtle cinematic gradient overlay to let sunrise and roses shine while keeping text crisp -->
-      <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/75"></div>
-      <div class="absolute inset-0 bg-radial from-transparent via-transparent to-black/40 pointer-events-none"></div>
+      <!-- Dark gradient overlay to keep text and subtext crisp over the busy garden photo -->
+      <div class="absolute inset-0 bg-gradient-to-b from-black/75 via-black/60 to-black/85"></div>
+      <div class="absolute inset-0 bg-radial from-black/45 via-black/30 to-black/75 pointer-events-none"></div>
 
       <!-- Hero Content Centered in the Middle -->
       <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center flex flex-col items-center">
@@ -272,39 +278,54 @@ const handleNewsletterSubmit = () => {
           <div class="w-16 h-24 sm:w-20 sm:h-28 relative flex items-center justify-center">
             <LogoMark class="w-full h-full text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.4)]" />
           </div>
-          <span class="inline-flex items-center gap-2 px-4 py-1.5 mt-2 rounded-full text-xs sm:text-sm font-medium tracking-wide uppercase bg-white/10 text-white backdrop-blur-md border border-white/25 shadow-sm">
+          <span class="inline-flex items-center gap-2 px-4 py-1.5 mt-2 rounded-full text-xs sm:text-sm font-medium tracking-wide uppercase bg-black/45 text-white backdrop-blur-md border border-white/25 shadow-sm">
             <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span> {{ settings.site_tagline || 'Ciumbrud, Alba · Satul Rozelor · Din 2000' }}
           </span>
         </div>
 
-        <!-- Main Title -->
-        <h1 class="animate-hero-item hero-delay-2 font-serif text-4xl sm:text-6xl lg:text-7xl font-medium leading-[1.05] text-white mb-6 [text-shadow:0_2px_16px_rgba(0,0,0,0.45)] max-w-3xl text-balance">
-          Puieți care prind <em class="text-rose-200 font-medium not-italic">rădăcini</em>,<br class="hidden sm:inline" /> și rodesc ani la rând
+        <!-- Main Title: Rose-specific headline -->
+        <h1 class="animate-hero-item hero-delay-2 font-serif text-4xl sm:text-6xl lg:text-7xl font-medium leading-[1.06] text-white mb-6 [text-shadow:0_2px_20px_rgba(0,0,0,0.65)] max-w-3xl text-balance">
+          Trandafiri nobili din <em class="text-rose-200 font-medium not-italic">Ciumbrud</em>,<br class="hidden sm:inline" /> altoiți manual să înflorească ani la rând
         </h1>
 
-        <!-- Subtitle -->
-        <p class="animate-hero-item hero-delay-3 text-base sm:text-lg text-white/90 max-w-2xl mb-10 leading-relaxed font-light [text-shadow:0_1px_8px_rgba(0,0,0,0.35)]">
-          Pomi fructiferi, arbuști ornamentali, arbuști fructiferi și trandafiri nobili — cultivați cu meșteșug în satul renumit în toată România pentru trandafiri.
-        </p>
+        <!-- Subtitle with dark gradient backdrop for high contrast on busy photo -->
+        <div class="animate-hero-item hero-delay-3 max-w-2xl mb-10 px-6 py-4 rounded-2xl bg-gradient-to-b from-black/60 via-black/70 to-black/60 backdrop-blur-sm border border-white/15 shadow-lg">
+          <p class="text-base sm:text-lg text-white leading-relaxed font-normal [text-shadow:0_1px_10px_rgba(0,0,0,0.6)]">
+            Trandafiri teahibrizi, urcători și parfumați, alături de pomi și arbuști fructiferi certificați — cultivați în câmp deschis în Satul Rozelor și livrați cu rădăcina protejată în hidrogel.
+          </p>
+        </div>
 
         <!-- CTA Buttons -->
-        <div class="animate-hero-item hero-delay-4 flex flex-col sm:flex-row gap-4 mb-14 justify-center">
+        <div class="animate-hero-item hero-delay-4 flex flex-col sm:flex-row gap-4 justify-center">
           <AppButton variant="primary" size="lg" to="/produse?category=trandafiri" class="shadow-xl hover:shadow-2xl">
             Colecția de Trandafiri
           </AppButton>
           <NuxtLink
             to="/produse"
-            class="inline-flex items-center justify-center px-8 py-4 text-sm sm:text-base uppercase tracking-wider rounded-2xl font-medium border border-white/60 bg-white/10 text-white backdrop-blur-md hover:bg-white hover:text-primary-dark transition-all duration-200 shadow-lg min-h-[48px]"
+            class="inline-flex items-center justify-center px-8 py-4 text-sm sm:text-base uppercase tracking-wider rounded-2xl font-medium border border-white/60 bg-black/40 text-white backdrop-blur-md hover:bg-white hover:text-primary-dark transition-all duration-200 shadow-lg min-h-[48px]"
           >
             Explorează Tot Catalogul
           </NuxtLink>
         </div>
+      </div>
+    </section>
 
-        <!-- Stats Bar Centered at Bottom of Hero -->
-        <dl class="animate-hero-item hero-delay-5 grid grid-cols-3 gap-6 sm:gap-12 max-w-2xl w-full border-t border-white/20 pt-8">
-          <div v-for="(st, i) in stats" :key="st.label" :class="i > 0 ? 'border-l border-white/15' : ''">
-            <dt class="font-serif text-3xl sm:text-4xl font-medium text-white leading-none [text-shadow:0_2px_10px_rgba(0,0,0,0.3)]">{{ st.value }}</dt>
-            <dd class="text-xs sm:text-sm uppercase tracking-wide text-white/80 mt-2 font-medium">{{ st.label }}</dd>
+    <!-- Credibility & Catalog Stats Bar (Moved out of Hero) -->
+    <section id="statistici-pepiniera" aria-label="Cifrele Pepinierei Ciumbrud" class="bg-surface-warm border-b border-border/80 relative z-10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <dl class="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+          <div
+            v-for="(st, i) in stats"
+            :key="st.label"
+            class="flex flex-col items-center lg:items-start text-center lg:text-left"
+            :class="i > 0 ? 'lg:border-l lg:border-border/80 lg:pl-8' : ''"
+          >
+            <dt class="font-serif text-2xl sm:text-3xl font-semibold text-primary-dark leading-none">
+              {{ st.value }}
+            </dt>
+            <dd class="text-xs sm:text-sm text-text-muted mt-1.5 font-medium">
+              {{ st.label }}
+            </dd>
           </div>
         </dl>
       </div>

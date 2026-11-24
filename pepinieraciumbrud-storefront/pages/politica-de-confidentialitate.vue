@@ -251,9 +251,14 @@ setPageSeo({
               Starea actuală a consimțământului dumneavoastră:
             </div>
             <div class="text-sm font-semibold text-text">
-              <span v-if="consent === 'all'" class="text-leaf-800">✅ Toate active (Coș strict necesar + Analiză internă anonimizată a traficului)</span>
-              <span v-else-if="consent === 'necessary'" class="text-text">🔒 Doar strict necesare (Analiza traficului este dezactivată)</span>
-              <span v-else class="text-text-muted">⏳ Nu ați selectat încă o opțiune</span>
+              <ClientOnly>
+                <span v-if="consent === 'all'" class="text-leaf-800">✅ Toate active (Coș strict necesar + Analiză internă anonimizată a traficului)</span>
+                <span v-else-if="consent === 'necessary'" class="text-text">🔒 Doar strict necesare (Analiza traficului este dezactivată)</span>
+                <span v-else class="text-text-muted">⏳ Nu ați selectat încă o opțiune</span>
+                <template #fallback>
+                  <span class="text-text-muted">⏳ Se încarcă preferințele...</span>
+                </template>
+              </ClientOnly>
             </div>
           </div>
 

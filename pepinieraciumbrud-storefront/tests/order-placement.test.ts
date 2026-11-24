@@ -519,4 +519,55 @@ describe('Storefront Order Placement & Cart Lifecycle', () => {
     assert.ok(!aboutSource.includes('lg:sticky'), 'About page timeline uses balanced grid instead of lopsided sticky column')
     assert.ok(aboutSource.includes('grid md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch'), 'About page timeline renders a balanced 3x2 equal-height grid')
   })
+
+  it('compacts the mobile header with single-line logo + name and hides the tagline on small screens', () => {
+    const headerSource = readFileSync(resolve(process.cwd(), 'components/layout/TheHeader.vue'), 'utf8')
+
+    // 1. Brand title is kept on a single line (whitespace-nowrap) alongside the logo
+    assert.ok(
+      headerSource.includes('whitespace-nowrap truncate">{{ settings.site_title || \'Pepiniera Ciumbrud\' }}</span>'),
+      'Header brand title prevents multi-line wrapping on mobile'
+    )
+
+    // 2. Tagline is hidden on small screens (`hidden sm:block`)
+    assert.ok(
+      headerSource.includes('hidden sm:block mt-1 text-[11px] uppercase tracking-wider text-accent font-medium whitespace-nowrap leading-none">{{ settings.site_tagline'),
+      'Header tagline is hidden on small screens'
+    )
+
+    // 3. Main nav container uses flex justify-between on mobile without empty middle grid column squeezing the brand block
+    assert.ok(
+      headerSource.includes('flex items-center justify-between md:grid md:grid-cols-[auto_1fr_auto]'),
+      'Header uses compact flex layout on mobile and 3-column grid on desktop'
+    )
+  })
+
+  it('features a rose-specific hero headline, high-contrast dark gradient behind subtext, and catalog-consistent stats moved outside the hero', () => {
+    const homeSource = readFileSync(resolve(process.cwd(), 'pages/index.vue'), 'utf8')
+
+    // 1. Rose-specific headline in hero
+    assert.ok(
+      homeSource.includes('Trandafiri nobili din <em class="text-rose-200 font-medium not-italic">Ciumbrud</em>'),
+      'Hero features a rose-specific headline'
+    )
+
+    // 2. Dark gradient behind subtext for contrast over busy background photo
+    assert.ok(
+      homeSource.includes('bg-gradient-to-b from-black/60 via-black/70 to-black/60 backdrop-blur-sm'),
+      'Hero subtext has a dark gradient backdrop for readability'
+    )
+
+    // 3. Stats moved out of the hero into a dedicated section after the hero
+    const heroCloseIdx = homeSource.indexOf('</section>')
+    const statsSectionIdx = homeSource.indexOf('id="statistici-pepiniera"')
+    assert.ok(statsSectionIdx > heroCloseIdx, 'Stats section is moved outside and below the hero section')
+
+    // 4. Stats are consistent with catalog (98 total products, 24 roses, no inflated 150+ or 100+ claim)
+    assert.ok(!homeSource.includes('150+'), 'Does not contain inflated 150+ varieties claim')
+    assert.ok(!homeSource.includes("'100+'"), 'Does not contain hardcoded 100+ varieties claim')
+    assert.ok(
+      homeSource.includes('`${totalCount || 98} soiuri`'),
+      'Stats dynamically reflect catalog count with 98 soiuri fallback'
+    )
+  })
 })

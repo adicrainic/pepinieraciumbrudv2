@@ -72,7 +72,13 @@ if pgrep -f "pepinieraciumbrud-storefront/\.output/server/index\.mjs" > /dev/nul
     pkill -f "pepinieraciumbrud-storefront/\.output/server/index\.mjs" || true
     sleep 1
     if ! pgrep -f "pepinieraciumbrud-storefront/\.output/server/index\.mjs" > /dev/null 2>&1; then
-        NODE_ENV=production PORT=3000 HOST=0.0.0.0 NITRO_PORT=3000 NITRO_HOST=0.0.0.0 nohup node "$ROOT_DIR/pepinieraciumbrud-storefront/.output/server/index.mjs" > /tmp/pepiniera-storefront.log 2>&1 &
+        (
+            cd "$ROOT_DIR/pepinieraciumbrud-storefront"
+            set -a
+            [ -f .env ] && source .env
+            set +a
+            NODE_ENV=production PORT=3000 HOST=0.0.0.0 NITRO_PORT=3000 NITRO_HOST=0.0.0.0 nohup node "$ROOT_DIR/pepinieraciumbrud-storefront/.output/server/index.mjs" > /tmp/pepiniera-storefront.log 2>&1 &
+        )
         sleep 1
     fi
     echo -e "${GREEN}✔ Local Storefront server restarted on port 3000.${NC}"

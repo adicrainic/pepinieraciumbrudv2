@@ -52,7 +52,7 @@ const timeline = [
   {
     year: 'Astăzi',
     subtitle: 'Două generații în slujba grădinii tale',
-    title: 'Peste 100 de soiuri aclimatizate & Garanție scrisă de prindere',
+    title: '98 de soiuri aclimatizate & Garanție scrisă de prindere',
     description:
       'Continuăm să cultivăm, să altoim și să expediem direct din câmpurile noastre din Ciumbrud, oferind fiecărui gospodar consultanță telefonică directă și garanție de prindere până la 30 iunie.',
   },
@@ -130,7 +130,7 @@ const craftSteps = [
                 Localitatea <strong>Ciumbrud</strong>, așezată pe malul stâng al râului Mureș în județul Alba, este cunoscută în toată România drept <em>„Satul Trandafirilor”</em>. Aici, pe lunca mănoasă a Mureșului, altoirea trandafirilor și a pomilor fructiferi nu este o simplă afacere, ci o moștenire transmisă din tată în fiu de peste o sută de ani.
               </p>
               <p class="text-sm sm:text-base text-text-muted leading-relaxed">
-                Din anul <strong>2000</strong>, familia noastră duce mai departe această tradiție în propria pepinieră. Cultivăm peste 100 de soiuri de trandafiri nobili, pomi fructiferi, arbuști fructiferi și plante ornamentale — toate crescute în câmp deschis, aclimatizate în România și livrate direct din pepinieră, fără intermediari.
+                Din anul <strong>2000</strong>, familia noastră duce mai departe această tradiție în propria pepinieră. Cultivăm 98 de soiuri de trandafiri nobili, pomi fructiferi, arbuști fructiferi și plante ornamentale — toate crescute în câmp deschis, aclimatizate în România și livrate direct din pepinieră, fără intermediari.
               </p>
             </div>
 

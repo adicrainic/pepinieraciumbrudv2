@@ -12,7 +12,7 @@ export const useCookieConsent = () => {
 
   const isPreferencesOpen = useState<boolean>('pcs_cookie_preferences_open', () => false)
 
-  // Synchronize with localStorage on client if cookie was cleared or vice versa
+  // Synchronize with localStorage only after client mount (or on client) without mutating SSR hydration state
   if (import.meta.client) {
     try {
       const stored = window.localStorage.getItem(COOKIE_CONSENT_KEY) as CookieConsentChoice

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useCookieConsent } from '~/composables/useCookieConsent'
 
 const {
@@ -12,6 +12,11 @@ const {
 } = useCookieConsent()
 
 const showDetails = ref(false)
+const isMounted = ref(false)
+
+onMounted(() => {
+  isMounted.value = true
+})
 </script>
 
 <template>
@@ -24,7 +29,7 @@ const showDetails = ref(false)
     leave-to-class="opacity-0 translate-y-4"
   >
     <aside
-      v-if="shouldShowBanner"
+      v-if="isMounted && shouldShowBanner"
       role="region"
       aria-label="Informații privind modulele cookie și analiza traficului"
       class="fixed bottom-0 inset-x-0 z-50 p-3 sm:p-5 pointer-events-none"

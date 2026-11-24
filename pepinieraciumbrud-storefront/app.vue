@@ -71,31 +71,33 @@ onMounted(() => {
 </script>
 
 <template>
-  <NuxtLoadingIndicator color="#B21111" :height="3" :throttle="80" />
+  <div>
+    <NuxtLoadingIndicator color="#B21111" :height="3" :throttle="80" />
 
-  <!-- Global Floating Loading Spinner Pill for any in-flight request or page navigation -->
-  <Transition
-    enter-active-class="transition duration-150 ease-out"
-    enter-from-class="opacity-0 -translate-y-2 scale-95"
-    enter-to-class="opacity-100 translate-y-0 scale-100"
-    leave-active-class="transition duration-150 ease-in"
-    leave-from-class="opacity-100 translate-y-0 scale-100"
-    leave-to-class="opacity-0 -translate-y-2 scale-95"
-  >
-    <div
-      v-if="showGlobalSpinner"
-      class="fixed top-20 sm:top-24 right-3.5 sm:right-6 z-50 pointer-events-none flex items-center gap-2.5 bg-white/95 backdrop-blur-md border border-primary/25 text-primary-dark px-3.5 py-2 rounded-full shadow-lg"
-      role="status"
-      aria-live="polite"
+    <!-- Global Floating Loading Spinner Pill for any in-flight request or page navigation -->
+    <Transition
+      enter-active-class="transition duration-150 ease-out"
+      enter-from-class="opacity-0 -translate-y-2 scale-95"
+      enter-to-class="opacity-100 translate-y-0 scale-100"
+      leave-active-class="transition duration-150 ease-in"
+      leave-from-class="opacity-100 translate-y-0 scale-100"
+      leave-to-class="opacity-0 -translate-y-2 scale-95"
     >
-      <span
-        class="animate-spin inline-block w-4 h-4 border-2 border-primary border-t-transparent rounded-full shrink-0"
-      ></span>
-      <span class="text-xs font-semibold tracking-wide whitespace-nowrap">Se încarcă...</span>
-    </div>
-  </Transition>
+      <div
+        v-if="showGlobalSpinner"
+        class="fixed top-20 sm:top-24 right-3.5 sm:right-6 z-50 pointer-events-none flex items-center gap-2.5 bg-white/95 backdrop-blur-md border border-primary/25 text-primary-dark px-3.5 py-2 rounded-full shadow-lg"
+        role="status"
+        aria-live="polite"
+      >
+        <span
+          class="animate-spin inline-block w-4 h-4 border-2 border-primary border-t-transparent rounded-full shrink-0"
+        ></span>
+        <span class="text-xs font-semibold tracking-wide whitespace-nowrap">Se încarcă...</span>
+      </div>
+    </Transition>
 
-  <NuxtLayout>
-    <NuxtPage />
-  </NuxtLayout>
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
+  </div>
 </template>
