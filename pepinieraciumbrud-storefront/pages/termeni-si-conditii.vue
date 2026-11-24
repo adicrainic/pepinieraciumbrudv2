@@ -27,7 +27,7 @@ setPageSeo({
       Condiții contractuale aplicabile comenzilor plasate pe magazinul online {{ settings.site_title || 'Pepiniera Ciumbrud' }}, în conformitate cu OUG nr. 34/2014, Legea nr. 365/2002 privind comerțul electronic și OG nr. 21/1992 privind protecția consumatorilor.
     </p>
 
-    <div class="bg-white/85 backdrop-blur-sm rounded-3xl border border-border p-6 sm:p-12 shadow-sm space-y-8 text-sm text-text-muted leading-relaxed">
+    <div class="bg-white rounded-3xl border border-border p-6 sm:p-12 shadow-sm space-y-8 text-sm text-text-muted leading-relaxed">
       <!-- 1. Identificarea Vânzătorului -->
       <section class="space-y-3">
         <h2 class="font-serif text-xl font-bold text-primary-dark">

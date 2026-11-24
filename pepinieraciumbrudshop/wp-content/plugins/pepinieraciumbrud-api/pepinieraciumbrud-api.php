@@ -60,6 +60,11 @@ final class PCS_API {
      */
     private bool $allowing_customer_cancelled_email = false;
 
+    /**
+     * Active REST request reference for Store API custom query filtering.
+     */
+    private ?WP_REST_Request $current_rest_request = null;
+
     public static function instance(): self {
         if ( null === self::$instance ) {
             self::$instance = new self();
@@ -83,6 +88,12 @@ final class PCS_API {
         add_filter( 'woocommerce_store_api_product_quantity_maximum', [ $this, 'filter_store_api_product_quantity_limit' ], 10, 2 );
         add_filter( 'woocommerce_store_api_product_quantity_limit', [ $this, 'filter_store_api_product_quantity_limit' ], 10, 2 );
         add_filter( 'woocommerce_product_backorders_allowed', '__return_false', 20 );
+
+        // Support filtering Store API products (/wc/store/v1/products) by rose/plant custom attributes (color/culoare, fragrance/parfum)
+        // and ordering in-stock products before out-of-stock products across all catalog views.
+        add_filter( 'rest_pre_dispatch', [ $this, 'capture_current_rest_request' ], 10, 3 );
+        add_filter( 'posts_clauses', [ $this, 'filter_store_api_attribute_clauses' ], 20, 2 );
+        add_filter( 'posts_clauses', [ $this, 'filter_store_api_outofstock_last_clauses' ], 25, 2 );
 
         // New orders status & lifecycle:
         // Register custom order statuses: 'wc-prepared' (Procesată (Pregătită)) and 'wc-shipped' (Predată Curier)
@@ -467,6 +478,160 @@ final class PCS_API {
             }
         }
         return 99999;
+    }
+
+    /**
+     * Normalize a Romanian string (lowercase + strip diacritics) for flexible attribute matching.
+     */
+    private function normalize_attr_value( string $val ): string {
+        $val = mb_strtolower( trim( $val ), 'UTF-8' );
+        return strtr( $val, [
+            'ă' => 'a',
+            'â' => 'a',
+            'î' => 'i',
+            'ș' => 's',
+            'ş' => 's',
+            'ț' => 't',
+            'ţ' => 't',
+        ] );
+    }
+
+    /**
+     * Capture active REST request so custom Store API query params work in both HTTP and internal REST calls.
+     */
+    public function capture_current_rest_request( mixed $result, WP_REST_Server $server, WP_REST_Request $request ): mixed {
+        $this->current_rest_request = $request;
+        return $result;
+    }
+
+    /**
+     * Filter Store API product queries by custom attributes (`color` / `culoare` and `fragrance` / `parfum`).
+     */
+    public function filter_store_api_attribute_clauses( array $clauses, \WP_Query $wp_query ): array {
+        $post_type = $wp_query->get( 'post_type' );
+        $is_product_query = ( 'product' === $post_type ) || ( is_array( $post_type ) && in_array( 'product', $post_type, true ) );
+        if ( ! $is_product_query ) {
+            return $clauses;
+        }
+
+        $req_color = $this->current_rest_request ? ( $this->current_rest_request->get_param( 'color' ) ?? $this->current_rest_request->get_param( 'culoare' ) ) : null;
+        $req_fragrance = $this->current_rest_request ? ( $this->current_rest_request->get_param( 'fragrance' ) ?? $this->current_rest_request->get_param( 'parfum' ) ) : null;
+
+        $raw_color     = null !== $req_color ? sanitize_text_field( (string) $req_color ) : ( isset( $_GET['color'] ) ? sanitize_text_field( wp_unslash( (string) $_GET['color'] ) ) : ( isset( $_GET['culoare'] ) ? sanitize_text_field( wp_unslash( (string) $_GET['culoare'] ) ) : '' ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $raw_fragrance = null !== $req_fragrance ? sanitize_text_field( (string) $req_fragrance ) : ( isset( $_GET['fragrance'] ) ? sanitize_text_field( wp_unslash( (string) $_GET['fragrance'] ) ) : ( isset( $_GET['parfum'] ) ? sanitize_text_field( wp_unslash( (string) $_GET['parfum'] ) ) : '' ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+        if ( '' === $raw_color && '' === $raw_fragrance ) {
+            return $clauses;
+        }
+
+        $wanted_colors = array_values( array_filter( array_map( [ $this, 'normalize_attr_value' ], explode( ',', $raw_color ) ) ) );
+        $wanted_fragrances = array_values( array_filter( array_map( [ $this, 'normalize_attr_value' ], explode( ',', $raw_fragrance ) ) ) );
+
+        if ( empty( $wanted_colors ) && empty( $wanted_fragrances ) ) {
+            return $clauses;
+        }
+
+        global $wpdb;
+        $rows = $wpdb->get_results(
+            "SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_product_attributes'",
+            ARRAY_A
+        );
+
+        $matching_ids = [];
+        foreach ( (array) $rows as $row ) {
+            $attrs = maybe_unserialize( $row['meta_value'] ?? '' );
+            if ( ! is_array( $attrs ) ) {
+                continue;
+            }
+
+            $prod_color = '';
+            $prod_fragrance = '';
+            foreach ( $attrs as $key => $attr ) {
+                if ( ! is_array( $attr ) ) {
+                    continue;
+                }
+                $attr_name = $this->normalize_attr_value( (string) ( $attr['name'] ?? $key ) );
+                $attr_val  = $this->normalize_attr_value( (string) ( $attr['value'] ?? '' ) );
+                if ( 'culoare' === $attr_name || 'color' === $attr_name ) {
+                    $prod_color = $attr_val;
+                } elseif ( 'parfum' === $attr_name || 'fragrance' === $attr_name ) {
+                    $prod_fragrance = $attr_val;
+                }
+            }
+
+            $color_ok = true;
+            if ( ! empty( $wanted_colors ) ) {
+                $color_ok = false;
+                if ( '' !== $prod_color ) {
+                    foreach ( $wanted_colors as $wc ) {
+                        if ( $prod_color === $wc || str_contains( $prod_color, $wc ) || str_contains( $wc, $prod_color ) ) {
+                            $color_ok = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            $fragrance_ok = true;
+            if ( ! empty( $wanted_fragrances ) ) {
+                $fragrance_ok = false;
+                if ( '' !== $prod_fragrance ) {
+                    foreach ( $wanted_fragrances as $wf ) {
+                        if ( $prod_fragrance === $wf || str_contains( $prod_fragrance, $wf ) || str_contains( $wf, $prod_fragrance ) ) {
+                            $fragrance_ok = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if ( $color_ok && $fragrance_ok ) {
+                $matching_ids[] = (int) $row['post_id'];
+            }
+        }
+
+        if ( empty( $matching_ids ) ) {
+            $clauses['where'] .= " AND {$wpdb->posts}.ID = 0 ";
+        } else {
+            $id_list = implode( ',', array_unique( array_map( 'intval', $matching_ids ) ) );
+            $clauses['where'] .= " AND {$wpdb->posts}.ID IN ({$id_list}) ";
+        }
+
+        return $clauses;
+    }
+
+    /**
+     * Ensure Store API product queries always place in-stock items before out-of-stock items
+     * while preserving the secondary sort order (date, price, title, etc.).
+     */
+    public function filter_store_api_outofstock_last_clauses( array $clauses, \WP_Query $wp_query ): array {
+        $post_type = $wp_query->get( 'post_type' );
+        $is_product_query = ( 'product' === $post_type ) || ( is_array( $post_type ) && in_array( 'product', $post_type, true ) );
+        if ( ! $is_product_query ) {
+            return $clauses;
+        }
+
+        $route = $this->current_rest_request ? $this->current_rest_request->get_route() : ( $_SERVER['REQUEST_URI'] ?? '' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+        if ( ! str_contains( (string) $route, '/wc/store' ) ) {
+            return $clauses;
+        }
+
+        global $wpdb;
+        $join = isset( $clauses['join'] ) ? (string) $clauses['join'] : '';
+        if ( ! preg_match( '/\bwc_product_meta_lookup\b/', $join ) ) {
+            $clauses['join'] = $join . " LEFT JOIN {$wpdb->wc_product_meta_lookup} wc_product_meta_lookup ON {$wpdb->posts}.ID = wc_product_meta_lookup.product_id ";
+        }
+
+        $stock_order_clause = "CASE WHEN wc_product_meta_lookup.stock_status = 'outofstock' THEN 1 ELSE 0 END ASC";
+        $existing_orderby   = trim( (string) ( $clauses['orderby'] ?? '' ) );
+
+        if ( ! str_contains( $existing_orderby, 'wc_product_meta_lookup.stock_status' ) ) {
+            $clauses['orderby'] = '' !== $existing_orderby
+                ? "{$stock_order_clause}, {$existing_orderby}"
+                : $stock_order_clause;
+        }
+
+        return $clauses;
     }
 
     /**

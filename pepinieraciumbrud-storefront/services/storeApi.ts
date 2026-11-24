@@ -2,6 +2,40 @@ import type { Product } from '~/types/product'
 import type { Category } from '~/types/category'
 import type { Cart } from '~/types/cart'
 
+type RequestCountListener = (count: number) => void
+let inFlightRequests = 0
+const listeners = new Set<RequestCountListener>()
+
+const notifyListeners = () => {
+  listeners.forEach((fn) => {
+    try {
+      fn(inFlightRequests)
+    } catch {
+      // ignore listener errors
+    }
+  })
+}
+
+export const trackRequestStart = () => {
+  inFlightRequests++
+  notifyListeners()
+}
+
+export const trackRequestEnd = () => {
+  inFlightRequests = Math.max(0, inFlightRequests - 1)
+  notifyListeners()
+}
+
+export const getActiveRequestCount = () => inFlightRequests
+
+export const onRequestCountChange = (fn: RequestCountListener) => {
+  listeners.add(fn)
+  fn(inFlightRequests)
+  return () => {
+    listeners.delete(fn)
+  }
+}
+
 export class StoreApiService {
   private getApiBase(): string {
     const config = useRuntimeConfig()
@@ -53,6 +87,7 @@ export class StoreApiService {
       }
     }
 
+    trackRequestStart()
     try {
       const response = await $fetch.raw<T>(url, {
         ...options,
@@ -75,6 +110,8 @@ export class StoreApiService {
     } catch (err: any) {
       console.warn(`[StoreApi] Request failed for ${url}:`, err.message || err)
       throw err
+    } finally {
+      trackRequestEnd()
     }
   }
 
@@ -98,20 +135,25 @@ export class StoreApiService {
         query.append(k, String(v))
       }
     })
-    const response = await $fetch.raw<Product[]>(`${base}/products${query.toString() ? `?${query.toString()}` : ''}`, {
-      headers: {
-        'Accept': 'application/json',
-        'Cache-Control': 'no-cache, no-store',
-        'Pragma': 'no-cache'
-      },
-      cache: 'no-cache',
-      credentials: 'include'
-    })
-    const items = (response._data as Product[]) || []
-    return {
-      items,
-      total: parseInt(response.headers.get('X-WP-Total') || String(items.length), 10),
-      totalPages: parseInt(response.headers.get('X-WP-TotalPages') || '1', 10)
+    trackRequestStart()
+    try {
+      const response = await $fetch.raw<Product[]>(`${base}/products${query.toString() ? `?${query.toString()}` : ''}`, {
+        headers: {
+          'Accept': 'application/json',
+          'Cache-Control': 'no-cache, no-store',
+          'Pragma': 'no-cache'
+        },
+        cache: 'no-cache',
+        credentials: 'include'
+      })
+      const items = (response._data as Product[]) || []
+      return {
+        items,
+        total: parseInt(response.headers.get('X-WP-Total') || String(items.length), 10),
+        totalPages: parseInt(response.headers.get('X-WP-TotalPages') || '1', 10)
+      }
+    } finally {
+      trackRequestEnd()
     }
   }
 

@@ -32,7 +32,7 @@ const whatsappUrl = computed(() => {
 
     <!-- Page Header -->
     <div class="text-center mb-10 sm:mb-12">
-      <span class="inline-flex items-center gap-1.5 text-xs uppercase tracking-widest text-primary font-bold bg-primary/10 px-3.5 py-1.5 rounded-full mb-3">
+      <span class="inline-flex items-center gap-1.5 text-xs sm:text-sm uppercase tracking-wide text-primary font-bold bg-primary/10 px-3.5 py-1.5 rounded-full mb-3">
         <span>🛡️</span>
         <span>Angajamentul Producătorului · Pepiniera Ciumbrud</span>
       </span>
@@ -45,19 +45,19 @@ const whatsappUrl = computed(() => {
     </div>
 
     <!-- 3 Pillars of Guarantee -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
-      <div class="bg-white/90 backdrop-blur-sm rounded-3xl border border-border p-6 shadow-sm flex flex-col justify-between">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10 items-stretch">
+      <div class="bg-white rounded-3xl border border-border p-6 shadow-sm flex flex-col justify-between">
         <div>
           <div class="w-10 h-10 rounded-2xl bg-surface-warm border border-border flex items-center justify-center text-xl mb-4">
             📦
           </div>
-          <span class="text-xs font-bold uppercase tracking-wider text-primary block mb-1">
+          <span class="text-xs sm:text-sm font-bold uppercase tracking-wide text-primary block mb-1">
             Termen: 48 de ore de la livrare
           </span>
           <h2 class="font-serif text-lg font-bold text-primary-dark mb-2">
             1. Garanția la Transport
           </h2>
-          <p class="text-xs text-text-muted leading-relaxed">
+          <p class="text-xs sm:text-sm text-text-muted leading-relaxed">
             Acoperă orice colet ajuns deteriorat în urma transportului: lăstari sau altoi rupți, ambalaj compromis ori rădăcini deshidratate la deschiderea coletului.
           </p>
         </div>
@@ -66,18 +66,18 @@ const whatsappUrl = computed(() => {
         </div>
       </div>
 
-      <div class="bg-white/90 backdrop-blur-sm rounded-3xl border-2 border-primary/30 p-6 shadow-sm flex flex-col justify-between">
+      <div class="bg-white rounded-3xl border-2 border-primary/30 p-6 shadow-sm flex flex-col justify-between">
         <div>
           <div class="w-10 h-10 rounded-2xl bg-leaf-50 border border-leaf-100 flex items-center justify-center text-xl mb-4">
             🌱
           </div>
-          <span class="text-xs font-bold uppercase tracking-wider text-leaf-700 block mb-1">
+          <span class="text-xs sm:text-sm font-bold uppercase tracking-wide text-leaf-700 block mb-1">
             Termen: Primul sezon (până la 30 iunie)
           </span>
           <h2 class="font-serif text-lg font-bold text-primary-dark mb-2">
             2. Garanția de Prindere
           </h2>
-          <p class="text-xs text-text-muted leading-relaxed">
+          <p class="text-xs sm:text-sm text-text-muted leading-relaxed">
             Acoperă pomii fructiferi, trandafirii și arbuștii plantați corespunzător în sezonul de toamnă sau primăvară care nu intră în vegetație până la data de <strong>30 iunie</strong> a primului sezon.
           </p>
         </div>
@@ -86,18 +86,18 @@ const whatsappUrl = computed(() => {
         </div>
       </div>
 
-      <div class="bg-white/90 backdrop-blur-sm rounded-3xl border border-border p-6 shadow-sm flex flex-col justify-between">
+      <div class="bg-white rounded-3xl border border-border p-6 shadow-sm flex flex-col justify-between">
         <div>
           <div class="w-10 h-10 rounded-2xl bg-surface-warm border border-border flex items-center justify-center text-xl mb-4">
             🏷️
           </div>
-          <span class="text-xs font-bold uppercase tracking-wider text-primary block mb-1">
+          <span class="text-xs sm:text-sm font-bold uppercase tracking-wide text-primary block mb-1">
             Termen: Prima înflorire / rodire (1–2 ani)
           </span>
           <h2 class="font-serif text-lg font-bold text-primary-dark mb-2">
             3. Autenticitatea Soiului
           </h2>
-          <p class="text-xs text-text-muted leading-relaxed">
+          <p class="text-xs sm:text-sm text-text-muted leading-relaxed">
             Garantăm că fiecare plantă aparține soiului înscris pe etichetă. Dacă la prima înflorire (trandafiri) sau fructificare (pomi/arbuști) constatați o neconcordanță, vă despăgubim integral.
           </p>
         </div>
@@ -108,7 +108,7 @@ const whatsappUrl = computed(() => {
     </div>
 
     <!-- Main Detailed Content Card -->
-    <div class="bg-white/85 backdrop-blur-sm rounded-3xl border border-border p-6 sm:p-10 shadow-sm space-y-10 text-sm text-text leading-relaxed">
+    <div class="bg-white rounded-3xl border border-border p-6 sm:p-10 shadow-sm space-y-10 text-sm text-text leading-relaxed">
       <!-- Step-by-Step Claim Procedure -->
       <section>
         <h2 class="font-serif text-2xl font-bold text-primary-dark mb-2">

@@ -32,7 +32,8 @@ onMounted(() => {
         </div>
         <button
           @click="cartStore.closeDrawer()"
-          class="p-2 text-text-muted hover:text-text rounded-lg hover:bg-surface-warm"
+          class="min-w-[44px] min-h-[44px] p-2 text-text-muted hover:text-text rounded-lg hover:bg-surface-warm flex items-center justify-center"
+          aria-label="Închide coșul"
         >
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -48,7 +49,7 @@ onMounted(() => {
           class="p-3 mb-4 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-center justify-between"
         >
           <span>{{ cartStore.error }}</span>
-          <button @click="cartStore.error = null" class="font-bold text-rose-600 hover:text-rose-800 ml-2">&times;</button>
+          <button @click="cartStore.error = null" class="font-bold text-rose-600 hover:text-rose-800 ml-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-lg" aria-label="Închide eroarea">&times;</button>
         </div>
 
         <!-- Empty cart message -->

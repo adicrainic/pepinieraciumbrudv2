@@ -35,15 +35,14 @@ const variantClasses = computed(() => {
 })
 
 const sizeClasses = computed(() => {
-  // Square-ish with one "petal" corner, echoing the logo's curves
   switch (props.size) {
     case 'sm':
-      return 'px-4 py-2 text-xs uppercase tracking-[0.16em] rounded-tr-xl rounded-bl-xl font-medium'
+      return 'px-4 py-2.5 min-h-[44px] text-xs sm:text-sm uppercase tracking-wide rounded-xl font-medium'
     case 'lg':
-      return 'px-8 py-4 text-sm uppercase tracking-[0.2em] rounded-tr-[1.25rem] rounded-bl-[1.25rem] font-medium'
+      return 'px-8 py-4 min-h-[48px] text-sm sm:text-base uppercase tracking-wider rounded-2xl font-medium'
     case 'md':
     default:
-      return 'px-6 py-3 text-xs sm:text-sm uppercase tracking-[0.18em] rounded-tr-2xl rounded-bl-2xl font-medium'
+      return 'px-6 py-3 min-h-[44px] text-xs sm:text-sm uppercase tracking-wide rounded-xl font-medium'
   }
 })
 </script>

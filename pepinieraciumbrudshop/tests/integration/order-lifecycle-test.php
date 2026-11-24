@@ -560,6 +560,50 @@ try {
         $slow_checkout_data
     );
 
+    // -------------------------------------------------------------------------
+    // 8f. Rose Attributes & Store API Colour / Fragrance / Price Filter Test
+    // -------------------------------------------------------------------------
+    echo "\n[Step 9] Testing Store API rose colour, fragrance, and price filters...\n";
+    $rose_filter_req = new WP_REST_Request( 'GET', '/wc/store/v1/products' );
+    $rose_filter_req->set_param( 'category', 'trandafiri' );
+    $rose_filter_req->set_param( 'color', 'Roșu' );
+    $rose_filter_req->set_param( 'fragrance', 'Intens' );
+    $rose_filter_req->set_param( 'min_price', '2500' );
+    $rose_filter_req->set_param( 'max_price', '2800' );
+    $rose_filter_res  = $server->dispatch( $rose_filter_req );
+    $rose_filter_data = json_decode( wp_json_encode( $server->response_to_data( $rose_filter_res, false ) ), true );
+
+    assert_step(
+        $rose_filter_res->get_status() === 200 && is_array( $rose_filter_data ) && count( $rose_filter_data ) === 4,
+        'GET /wc/store/v1/products?category=trandafiri&color=Roșu&fragrance=Intens&min_price=2500&max_price=2800 returns 4 matching rose varieties',
+        count( is_array( $rose_filter_data ) ? $rose_filter_data : [] )
+    );
+
+    // -------------------------------------------------------------------------
+    // 8g. Out-of-Stock Products Ordered Last in Store API Catalog Queries
+    // -------------------------------------------------------------------------
+    $catalog_order_req = new WP_REST_Request( 'GET', '/wc/store/v1/products' );
+    $catalog_order_req->set_param( 'per_page', 100 );
+    $catalog_order_res  = $server->dispatch( $catalog_order_req );
+    $catalog_order_data = json_decode( wp_json_encode( $server->response_to_data( $catalog_order_res, false ) ), true );
+
+    $seen_out_of_stock = false;
+    $stock_ordering_ok = true;
+    foreach ( (array) $catalog_order_data as $item ) {
+        $in_stock = ! empty( $item['is_in_stock'] );
+        if ( ! $in_stock ) {
+            $seen_out_of_stock = true;
+        } elseif ( $seen_out_of_stock && $in_stock ) {
+            $stock_ordering_ok = false;
+            break;
+        }
+    }
+
+    assert_step(
+        $catalog_order_res->get_status() === 200 && $stock_ordering_ok && $seen_out_of_stock,
+        'GET /wc/store/v1/products lists all in-stock products before out-of-stock products'
+    );
+
 } finally {
     // -------------------------------------------------------------------------
     // 9. Teardown / Cleanup

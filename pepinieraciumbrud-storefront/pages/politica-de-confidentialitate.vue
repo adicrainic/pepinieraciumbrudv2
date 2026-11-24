@@ -29,7 +29,7 @@ setPageSeo({
       Elaborată în conformitate cu Regulamentul (UE) 2016/679 privind protecția persoanelor fizice în ceea ce privește prelucrarea datelor cu caracter personal (GDPR), Legea nr. 190/2018 și Legea nr. 506/2004.
     </p>
 
-    <div class="bg-white/85 backdrop-blur-sm rounded-3xl border border-border p-6 sm:p-12 shadow-sm space-y-8 text-sm text-text-muted leading-relaxed">
+    <div class="bg-white rounded-3xl border border-border p-6 sm:p-12 shadow-sm space-y-8 text-sm text-text-muted leading-relaxed">
       <!-- 1. Identitatea Operatorului de Date -->
       <section class="space-y-3">
         <h2 class="font-serif text-xl font-bold text-primary-dark">
@@ -247,7 +247,7 @@ setPageSeo({
         <!-- Interactive Consent Control Box -->
         <div class="p-5 rounded-2xl bg-surface-warm border border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div class="space-y-1">
-            <div class="text-xs font-bold uppercase tracking-wider text-primary-dark">
+            <div class="text-xs sm:text-sm font-bold uppercase tracking-wide text-primary-dark">
               Starea actuală a consimțământului dumneavoastră:
             </div>
             <div class="text-sm font-semibold text-text">
@@ -261,21 +261,21 @@ setPageSeo({
             <button
               type="button"
               @click="acceptAll"
-              class="px-3.5 py-2 rounded-xl bg-primary hover:bg-primary-dark text-white text-xs font-semibold transition-colors"
+              class="min-h-[44px] px-4 py-2.5 rounded-xl bg-primary hover:bg-primary-dark text-white text-xs sm:text-sm font-semibold transition-colors flex items-center justify-center"
             >
               Acceptă toate
             </button>
             <button
               type="button"
               @click="acceptNecessaryOnly"
-              class="px-3.5 py-2 rounded-xl bg-white hover:bg-border/40 text-text border border-border text-xs font-semibold transition-colors"
+              class="min-h-[44px] px-4 py-2.5 rounded-xl bg-white hover:bg-border/40 text-text border border-border text-xs sm:text-sm font-semibold transition-colors flex items-center justify-center"
             >
               Doar strict necesare
             </button>
             <button
               type="button"
               @click="openPreferences"
-              class="px-3 py-2 rounded-xl text-primary hover:text-primary-dark underline text-xs font-semibold"
+              class="min-h-[44px] px-3.5 py-2 rounded-xl text-primary hover:text-primary-dark underline text-xs sm:text-sm font-semibold flex items-center justify-center"
             >
               Deschide panoul
             </button>

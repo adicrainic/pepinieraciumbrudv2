@@ -169,11 +169,13 @@ const itemPath = computed(() => {
           type="button"
           @click="changeQuantity(-1)"
           :disabled="isUpdating || cartStore.loading"
-          class="w-7 h-7 rounded-lg bg-surface-warm border border-border flex items-center justify-center text-xs font-bold hover:bg-border text-text disabled:opacity-40 disabled:cursor-not-allowed transition-colors select-none"
+          class="w-9 h-9 sm:w-10 sm:h-10 min-w-[36px] min-h-[36px] rounded-lg bg-surface-warm border border-border flex items-center justify-center font-bold hover:bg-primary hover:text-white hover:border-primary text-text disabled:bg-surface-warm disabled:text-text-muted disabled:border-border/80 disabled:cursor-not-allowed transition-colors select-none shadow-sm"
           title="Scade cantitatea"
           aria-label="Scade cantitatea"
         >
-          -
+          <svg class="w-3.5 h-3.5 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" />
+          </svg>
         </button>
         <input
           type="number"
@@ -186,7 +188,7 @@ const itemPath = computed(() => {
           @blur="commitQuantity()"
           @keydown.enter.prevent="handleEnter"
           :disabled="isUpdating || cartStore.loading"
-          class="w-16 h-7 text-center text-xs font-semibold bg-white border border-border rounded-lg text-text focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary disabled:bg-surface-warm disabled:cursor-not-allowed [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          class="w-14 sm:w-16 h-9 sm:h-10 text-center text-xs sm:text-sm font-bold bg-white border border-border rounded-lg text-text focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary disabled:bg-surface-warm disabled:text-text-muted disabled:cursor-not-allowed [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           title="Cantitate"
           aria-label="Cantitate produs"
         />
@@ -194,11 +196,13 @@ const itemPath = computed(() => {
           type="button"
           @click="changeQuantity(1)"
           :disabled="isUpdating || cartStore.loading || Number(localQuantity) >= maxQuantity"
-          class="w-7 h-7 rounded-lg bg-surface-warm border border-border flex items-center justify-center text-xs font-bold hover:bg-border text-text disabled:opacity-40 disabled:cursor-not-allowed transition-colors select-none"
+          class="w-9 h-9 sm:w-10 sm:h-10 min-w-[36px] min-h-[36px] rounded-lg bg-surface-warm border border-border flex items-center justify-center font-bold hover:bg-primary hover:text-white hover:border-primary text-text disabled:bg-surface-warm disabled:text-text-muted disabled:border-border/80 disabled:cursor-not-allowed transition-colors select-none shadow-sm"
           title="Crește cantitatea"
           aria-label="Crește cantitatea"
         >
-          +
+          <svg class="w-3.5 h-3.5 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14m-7-7h14" />
+          </svg>
         </button>
         <span class="text-xs text-text-muted pl-0.5">buc.</span>
       </div>
@@ -208,8 +212,9 @@ const itemPath = computed(() => {
     <div class="text-right flex flex-col items-end justify-between self-stretch py-0.5">
       <button
         @click="cartStore.removeItem(item.key)"
-        class="text-text-muted hover:text-rose-600 p-1"
+        class="min-w-[44px] min-h-[44px] p-2.5 flex items-center justify-center text-text-muted hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors"
         title="Șterge produs"
+        aria-label="Șterge produs"
       >
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>

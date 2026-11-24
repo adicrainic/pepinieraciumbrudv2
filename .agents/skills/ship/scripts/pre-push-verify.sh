@@ -66,6 +66,18 @@ echo -e "\n${BLUE}[6/6] 🏗️  Verifying Storefront & Admin Production Builds.
 cd "$ROOT_DIR/pepinieraciumbrud-storefront"
 npm run build
 
+# If a standalone local storefront server is running from .output/server/index.mjs, restart it so it picks up the new build chunks
+if pgrep -f "pepinieraciumbrud-storefront/\.output/server/index\.mjs" > /dev/null 2>&1; then
+    echo -e "${BLUE}🔄 Restarting local Storefront server (:3000) with fresh build...${NC}"
+    pkill -f "pepinieraciumbrud-storefront/\.output/server/index\.mjs" || true
+    sleep 1
+    if ! pgrep -f "pepinieraciumbrud-storefront/\.output/server/index\.mjs" > /dev/null 2>&1; then
+        NODE_ENV=production PORT=3000 HOST=0.0.0.0 NITRO_PORT=3000 NITRO_HOST=0.0.0.0 nohup node "$ROOT_DIR/pepinieraciumbrud-storefront/.output/server/index.mjs" > /tmp/pepiniera-storefront.log 2>&1 &
+        sleep 1
+    fi
+    echo -e "${GREEN}✔ Local Storefront server restarted on port 3000.${NC}"
+fi
+
 cd "$ROOT_DIR/pepinieraciumbrud-admin"
 npm run build
 

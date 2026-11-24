@@ -25,13 +25,11 @@
 @layer utilities {
   .text-balance { text-wrap: balance; }
 
-  /* Organic shapes taken from the logo curves & rose petals */
-  .petal      { border-radius: 0 6rem 0 6rem; }
-  .petal-alt  { border-radius: 6rem 0 6rem 0; }
-  .arch       { border-radius: 0 6rem 0 6rem; }
-  .arch-lg    { border-radius: 0 8rem 0 8rem; }
-
-  .hero-s-clip { clip-path: url(#s-clip); }
+  /* Symmetric rounded utilities */
+  .petal      { border-radius: 1rem; }
+  .petal-alt  { border-radius: 1rem; }
+  .arch       { border-radius: 1rem; }
+  .arch-lg    { border-radius: 1.5rem; }
 }
 
 @layer components {

@@ -34,7 +34,7 @@ setPageSeo({
       Echipa noastră va pregăti cu atenție plantele pentru ambalare și expediere. Veți fi contactat telefonic înainte de predarea coletului către curier.
     </p>
 
-    <div class="bg-white/85 backdrop-blur-sm p-6 rounded-3xl border border-border shadow-sm text-left text-xs space-y-3 mb-8">
+    <div class="bg-white p-6 rounded-3xl border border-border shadow-sm text-left text-xs space-y-3 mb-8">
       <h3 class="font-bold text-text font-serif text-sm">Ce urmează acum?</h3>
       <div class="flex items-start space-x-3 text-text-muted">
         <span class="text-primary font-bold">1.</span>

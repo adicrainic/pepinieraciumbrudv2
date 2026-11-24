@@ -128,7 +128,7 @@ const handleAddToCart = async () => {
     <div v-else class="pb-20 sm:pb-0">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-start">
         <!-- Image Gallery -->
-        <div class="bg-white/85 backdrop-blur-sm border border-border rounded-3xl p-4 sm:p-6 overflow-hidden lg:sticky lg:top-24">
+        <div class="bg-white border border-border rounded-3xl p-4 sm:p-6 overflow-hidden lg:sticky lg:top-24">
           <div class="aspect-square rounded-2xl overflow-hidden bg-surface-warm relative">
             <img
               :src="activeImageSrc"
@@ -168,12 +168,12 @@ const handleAddToCart = async () => {
             <NuxtLink
               v-if="product.categories && product.categories.length > 0"
               :to="`/produse?category=${product.categories[0].slug}`"
-              class="text-xs uppercase tracking-widest text-primary font-semibold hover:underline mr-1"
+              class="text-xs sm:text-sm uppercase tracking-wide text-primary font-semibold hover:underline mr-1 min-h-[44px] inline-flex items-center"
             >
               {{ product.categories[0].name }}
             </NuxtLink>
             <AppBadge v-if="product.is_in_stock" variant="success">În Stoc</AppBadge>
-            <AppBadge v-else variant="danger">Stoc Epuizat</AppBadge>
+            <AppBadge v-else variant="neutral" class="!bg-neutral-800 !text-white !border-neutral-700 font-semibold">Stoc Epuizat</AppBadge>
             <AppBadge v-if="discountPercent > 0 || product.on_sale" variant="danger">
               {{ discountPercent > 0 ? `Reducere -${discountPercent}%` : 'Promoție' }}
             </AppBadge>
@@ -211,16 +211,18 @@ const handleAddToCart = async () => {
           <!-- Quantity & Add to Cart -->
           <div class="pt-4 border-t border-border space-y-3">
             <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-              <div class="flex items-center justify-between sm:justify-start border border-border rounded-xl bg-surface-warm p-1">
+              <div class="flex items-center justify-between sm:justify-start border border-border rounded-xl bg-surface-warm p-1 shadow-inner">
                 <button
                   type="button"
                   @click="quantity = Math.max(1, (quantity || 1) - 1)"
-                  class="w-10 h-10 flex items-center justify-center text-lg hover:bg-border rounded-lg disabled:opacity-40 disabled:cursor-not-allowed select-none transition-colors"
-                  :disabled="quantity <= 1"
+                  class="min-w-[44px] min-h-[44px] w-11 h-11 flex items-center justify-center rounded-lg bg-white border border-border text-text font-bold hover:bg-primary hover:text-white hover:border-primary disabled:bg-surface-warm disabled:text-text-muted disabled:border-border/80 disabled:cursor-not-allowed select-none transition-colors shadow-sm"
+                  :disabled="!product.is_in_stock || quantity <= 1"
                   title="Scade cantitatea"
                   aria-label="Scade cantitatea"
                 >
-                  -
+                  <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" />
+                  </svg>
                 </button>
                 <input
                   type="number"
@@ -230,19 +232,22 @@ const handleAddToCart = async () => {
                   v-model.number="quantity"
                   @blur="validateQuantity"
                   @keydown.enter.prevent="handleEnter"
-                  class="w-16 h-10 text-center font-bold text-sm bg-transparent border-0 focus:outline-none focus:ring-1 focus:ring-primary rounded-lg [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  :disabled="!product.is_in_stock"
+                  class="w-16 h-11 text-center font-bold text-base text-text bg-transparent border-0 focus:outline-none focus:ring-1 focus:ring-primary rounded-lg disabled:text-text-muted disabled:cursor-not-allowed [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   title="Cantitate"
                   aria-label="Cantitate produs"
                 />
                 <button
                   type="button"
                   @click="quantity = Math.min(maxSelectableQty, (quantity || 0) + 1)"
-                  :disabled="quantity >= maxSelectableQty || hasReachedStockLimit"
-                  class="w-10 h-10 flex items-center justify-center text-lg hover:bg-border rounded-lg disabled:opacity-40 disabled:cursor-not-allowed select-none transition-colors"
+                  :disabled="!product.is_in_stock || quantity >= maxSelectableQty || hasReachedStockLimit"
+                  class="min-w-[44px] min-h-[44px] w-11 h-11 flex items-center justify-center rounded-lg bg-white border border-border text-text font-bold hover:bg-primary hover:text-white hover:border-primary disabled:bg-surface-warm disabled:text-text-muted disabled:border-border/80 disabled:cursor-not-allowed select-none transition-colors shadow-sm"
                   title="Crește cantitatea"
                   aria-label="Crește cantitatea"
                 >
-                  +
+                  <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14m-7-7h14" />
+                  </svg>
                 </button>
               </div>
 
@@ -250,6 +255,7 @@ const handleAddToCart = async () => {
                 variant="warm"
                 size="lg"
                 class="flex-1"
+                :class="!product.is_in_stock ? '!bg-surface-warm !text-text-muted !border-border !opacity-100 !shadow-none' : ''"
                 :disabled="!product.is_in_stock || isAdding || hasReachedStockLimit"
                 :loading="isAdding"
                 @click="handleAddToCart"
@@ -267,7 +273,7 @@ const handleAddToCart = async () => {
               <button
                 type="button"
                 @click="cartStore.openDrawer()"
-                class="font-bold text-leaf-700 underline hover:text-leaf-900 ml-2"
+                class="font-bold text-leaf-700 underline hover:text-leaf-900 ml-2 min-h-[44px] inline-flex items-center px-1"
               >
                 Vezi coșul →
               </button>
@@ -317,7 +323,7 @@ const handleAddToCart = async () => {
                 :key="attr.name"
                 class="bg-surface-warm/70 border border-border/80 rounded-xl p-3.5 flex flex-col"
               >
-                <span class="text-xs uppercase tracking-wider font-semibold text-text-muted">
+                <span class="text-xs sm:text-sm uppercase tracking-wide font-semibold text-text-muted">
                   {{ attr.name }}
                 </span>
                 <span class="text-sm font-medium text-text mt-0.5">
@@ -348,7 +354,7 @@ const handleAddToCart = async () => {
       <div v-if="relatedProducts.length > 0" class="mt-20 pt-12 border-t border-border">
         <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-3">
           <div>
-            <span class="text-xs uppercase tracking-widest text-primary font-semibold block mb-1">Recomandări din aceeași categorie</span>
+            <span class="text-xs sm:text-sm uppercase tracking-wide text-primary font-semibold block mb-1">Recomandări din aceeași categorie</span>
             <h2 class="font-serif text-2xl sm:text-3xl font-bold text-primary-dark">
               Soiuri similare care v-ar putea interesa
             </h2>
@@ -356,7 +362,7 @@ const handleAddToCart = async () => {
           <NuxtLink
             v-if="primaryCategorySlug"
             :to="`/produse?category=${primaryCategorySlug}`"
-            class="text-xs font-semibold text-primary hover:underline"
+            class="text-xs sm:text-sm font-semibold text-primary hover:underline min-h-[44px] inline-flex items-center"
           >
             Vezi toată categoria →
           </NuxtLink>
@@ -374,6 +380,7 @@ const handleAddToCart = async () => {
           variant="warm"
           size="md"
           class="flex-shrink-0"
+          :class="!product.is_in_stock ? '!bg-surface-warm !text-text-muted !border-border !opacity-100 !shadow-none' : ''"
           :disabled="!product.is_in_stock || isAdding || hasReachedStockLimit"
           :loading="isAdding"
           @click="handleAddToCart"

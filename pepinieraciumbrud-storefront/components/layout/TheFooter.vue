@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import LogoMark from '~/components/ui/LogoMark.vue'
 import { useSiteSettings } from '~/composables/useSiteSettings'
 import { useCookieConsent } from '~/composables/useCookieConsent'
 
@@ -9,7 +8,6 @@ const { openPreferences } = useCookieConsent()
 
 <template>
   <footer class="relative overflow-hidden bg-primary text-white mt-0">
-    <LogoMark :rose="false" class="pointer-events-none absolute -right-10 -bottom-10 h-[130%] w-auto text-white/[0.06]" />
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
         <!-- Brand & Legal Identity Info -->
@@ -26,7 +24,7 @@ const { openPreferences } = useCookieConsent()
             </div>
             <span class="font-serif text-2xl font-medium tracking-wide">{{ settings.site_title || 'Pepiniera Ciumbrud' }}</span>
           </div>
-          <p class="text-xs uppercase tracking-[0.22em] text-rose-200">{{ settings.site_tagline || 'Pepiniera de familie din 2000' }}</p>
+          <p class="text-xs sm:text-sm uppercase tracking-wide text-rose-200">{{ settings.site_tagline || 'Pepiniera de familie din 2000' }}</p>
           <p class="text-sm text-white/80 leading-relaxed">
             {{ settings.site_description }}
           </p>
@@ -51,32 +49,32 @@ const { openPreferences } = useCookieConsent()
 
         <!-- Links 1 -->
         <div>
-          <h4 class="text-xs font-medium uppercase tracking-[0.26em] text-white mb-5 pb-3 border-b border-white/15 inline-block pr-8">Produse</h4>
-          <ul class="space-y-2.5 text-sm text-white/80">
-            <li><NuxtLink to="/produse?category=meri" class="hover:text-white transition-colors">Meri &amp; Peri</NuxtLink></li>
-            <li><NuxtLink to="/produse?category=pruni" class="hover:text-white transition-colors">Pruni &amp; Cireși</NuxtLink></li>
-            <li><NuxtLink to="/produse?category=caisi" class="hover:text-white transition-colors">Caiși &amp; Piersici</NuxtLink></li>
-            <li><NuxtLink to="/produse?category=trandafiri" class="hover:text-white transition-colors">Trandafiri Teahibrizi</NuxtLink></li>
-            <li><NuxtLink to="/produse?category=arbusti-fructiferi" class="hover:text-white transition-colors">Arbuști Fructiferi</NuxtLink></li>
-            <li><NuxtLink to="/produse?category=arbusti-ornamentali" class="hover:text-white transition-colors">Arbuști Ornamentali</NuxtLink></li>
+          <h4 class="text-xs sm:text-sm font-semibold uppercase tracking-wide text-white mb-5 pb-3 border-b border-white/15 inline-block pr-8">Produse</h4>
+          <ul class="space-y-2 text-sm text-white/80">
+            <li><NuxtLink to="/produse?category=meri" class="hover:text-white transition-colors inline-block py-1">Meri &amp; Peri</NuxtLink></li>
+            <li><NuxtLink to="/produse?category=pruni" class="hover:text-white transition-colors inline-block py-1">Pruni &amp; Cireși</NuxtLink></li>
+            <li><NuxtLink to="/produse?category=caisi" class="hover:text-white transition-colors inline-block py-1">Caiși &amp; Piersici</NuxtLink></li>
+            <li><NuxtLink to="/produse?category=trandafiri" class="hover:text-white transition-colors inline-block py-1">Trandafiri Teahibrizi</NuxtLink></li>
+            <li><NuxtLink to="/produse?category=arbusti-fructiferi" class="hover:text-white transition-colors inline-block py-1">Arbuști Fructiferi</NuxtLink></li>
+            <li><NuxtLink to="/produse?category=arbusti-ornamentali" class="hover:text-white transition-colors inline-block py-1">Arbuști Ornamentali</NuxtLink></li>
           </ul>
         </div>
 
         <!-- Links 2 -->
         <div>
-          <h4 class="text-xs font-medium uppercase tracking-[0.26em] text-white mb-5 pb-3 border-b border-white/15 inline-block pr-8">Informații &amp; Legal</h4>
-          <ul class="space-y-2.5 text-sm text-white/80">
-            <li><NuxtLink to="/despre-noi" class="hover:text-white transition-colors">Despre Pepinieră</NuxtLink></li>
-            <li><NuxtLink to="/garantie" class="hover:text-white transition-colors">Garanția Plantelor</NuxtLink></li>
-            <li><NuxtLink to="/livrare-si-plata" class="hover:text-white transition-colors">Livrare &amp; Plată</NuxtLink></li>
-            <li><NuxtLink to="/termeni-si-conditii" class="hover:text-white transition-colors">Termeni și Condiții (Retur)</NuxtLink></li>
-            <li><NuxtLink to="/politica-de-confidentialitate" class="hover:text-white transition-colors">Politica de Confidențialitate (GDPR)</NuxtLink></li>
-            <li><NuxtLink to="/contact" class="hover:text-white transition-colors">Contact &amp; Locație</NuxtLink></li>
+          <h4 class="text-xs sm:text-sm font-semibold uppercase tracking-wide text-white mb-5 pb-3 border-b border-white/15 inline-block pr-8">Informații &amp; Legal</h4>
+          <ul class="space-y-2 text-sm text-white/80">
+            <li><NuxtLink to="/despre-noi" class="hover:text-white transition-colors inline-block py-1">Despre Pepinieră</NuxtLink></li>
+            <li><NuxtLink to="/garantie" class="hover:text-white transition-colors inline-block py-1">Garanția Plantelor</NuxtLink></li>
+            <li><NuxtLink to="/livrare-si-plata" class="hover:text-white transition-colors inline-block py-1">Livrare &amp; Plată</NuxtLink></li>
+            <li><NuxtLink to="/termeni-si-conditii" class="hover:text-white transition-colors inline-block py-1">Termeni și Condiții (Retur)</NuxtLink></li>
+            <li><NuxtLink to="/politica-de-confidentialitate" class="hover:text-white transition-colors inline-block py-1">Politica de Confidențialitate (GDPR)</NuxtLink></li>
+            <li><NuxtLink to="/contact" class="hover:text-white transition-colors inline-block py-1">Contact &amp; Locație</NuxtLink></li>
             <li>
               <button
                 type="button"
                 @click="openPreferences"
-                class="hover:text-white transition-colors text-left underline decoration-white/40 underline-offset-4"
+                class="hover:text-white transition-colors text-left underline decoration-white/40 underline-offset-4 inline-flex items-center min-h-[44px]"
               >
                 Preferințe Cookie &amp; Trafic
               </button>
@@ -86,18 +84,18 @@ const { openPreferences } = useCookieConsent()
 
         <!-- Contact Box -->
         <div class="space-y-3">
-          <h4 class="text-xs font-medium uppercase tracking-[0.26em] text-white mb-5 pb-3 border-b border-white/15 inline-block pr-8">Contact Direct</h4>
+          <h4 class="text-xs sm:text-sm font-semibold uppercase tracking-wide text-white mb-5 pb-3 border-b border-white/15 inline-block pr-8">Contact Direct</h4>
           <p class="text-sm text-white/80">
             Aveți întrebări despre plantare sau comenzi en-gros? Echipa noastră vă stă la dispoziție:
           </p>
           <div class="space-y-1.5 text-sm font-medium">
             <div class="text-white font-medium">
-              <a :href="`tel:${settings.contact_phone.replace(/\s+/g, '')}`" class="hover:underline">
+              <a :href="`tel:${settings.contact_phone.replace(/\s+/g, '')}`" class="hover:underline inline-flex items-center min-h-[36px] sm:min-h-[44px]">
                 {{ settings.contact_phone }}
               </a>
             </div>
             <div class="text-white/90">
-              <a :href="`mailto:${settings.contact_email}`" class="hover:underline">
+              <a :href="`mailto:${settings.contact_email}`" class="hover:underline inline-flex items-center min-h-[36px] sm:min-h-[44px]">
                 {{ settings.contact_email }}
               </a>
             </div>
@@ -119,7 +117,7 @@ const { openPreferences } = useCookieConsent()
       <!-- Consumer Protection Links (ANPC / SAL / SOL) -->
       <div class="mt-10 pt-6 border-t border-white/15 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
         <div class="text-xs text-white/75 space-y-0.5">
-          <div class="font-semibold text-white uppercase tracking-wider text-[11px]">Protecția Consumatorilor</div>
+          <div class="font-semibold text-white uppercase tracking-wide text-xs">Protecția Consumatorilor</div>
           <p class="text-white/65">
             Conform legislației în vigoare (OUG 34/2014 și OG 38/2015), consumatorii pot apela la mecanismele oficiale de soluționare a litigiilor:
           </p>
@@ -130,7 +128,7 @@ const { openPreferences } = useCookieConsent()
             href="https://anpc.ro/"
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-semibold text-white transition-colors"
+            class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-semibold text-white transition-colors min-h-[44px]"
           >
             <span>🛡️</span>
             <span>ANPC — Autoritatea Națională pentru Protecția Consumatorilor</span>
@@ -141,7 +139,7 @@ const { openPreferences } = useCookieConsent()
             href="https://anpc.ro/ce-este-sal/"
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-semibold text-white transition-colors"
+            class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-semibold text-white transition-colors min-h-[44px]"
           >
             <span>⚖️</span>
             <span>ANPC — Soluționarea Alternativă a Litigiilor (SAL)</span>
@@ -152,7 +150,7 @@ const { openPreferences } = useCookieConsent()
             href="https://ec.europa.eu/consumers/odr"
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-semibold text-white transition-colors"
+            class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-semibold text-white transition-colors min-h-[44px]"
           >
             <span>🇪🇺</span>
             <span>Soluționarea Online a Litigiilor (SOL / ODR)</span>

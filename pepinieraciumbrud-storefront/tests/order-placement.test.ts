@@ -1,8 +1,11 @@
 import { describe, it, beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { createPinia, setActivePinia } from 'pinia'
 import { StoreApiService, storeApi } from '~/services/storeApi'
 import { useCartStore } from '~/stores/cart'
+import { useProducts } from '~/composables/useProducts'
 import type { Cart } from '~/types/cart'
 
 // Provide Nuxt runtime globals & localStorage for isolated Storefront unit/integration tests
@@ -294,6 +297,26 @@ describe('Storefront Order Placement & Cart Lifecycle', () => {
     assert.equal(availableProducts[0].is_in_stock, true)
   })
 
+  it('passes rose colour, fragrance, and minor-unit price filters to Store API paged products query', async () => {
+    const res = await storeApi.getProductsPaged({
+      category: 'trandafiri',
+      color: 'Roșu',
+      fragrance: 'Intens',
+      min_price: 2500,
+      max_price: 2800,
+      orderby: 'price',
+      order: 'asc'
+    })
+    const req = recordedRequests.find((r) => r.url.includes('/products?'))
+    assert.ok(req, 'GET /products paged request was called')
+    assert.ok(req.url.includes('category=trandafiri'), 'Includes category=trandafiri')
+    assert.ok(req.url.includes('color=Ro%C8%99u'), 'Includes encoded color=Roșu')
+    assert.ok(req.url.includes('fragrance=Intens'), 'Includes fragrance=Intens')
+    assert.ok(req.url.includes('min_price=2500'), 'Includes min_price=2500')
+    assert.ok(req.url.includes('max_price=2800'), 'Includes max_price=2800')
+    assert.equal(res.items.length, 2)
+  })
+
   it('rejects adding more items than available in stock and surfaces decoded Romanian error message', async () => {
     const cartStore = useCartStore()
 
@@ -345,5 +368,155 @@ describe('Storefront Order Placement & Cart Lifecycle', () => {
       cartStore.error,
       'Cantitatea maximă de "Măr Florina — Pom Fructifer" permisă în coș este 1'
     )
+  })
+
+  it('orders in-stock products before out-of-stock products while preserving relative order', async () => {
+    const { sortInStockFirst } = useProducts()
+    const mixed = [
+      { id: 227, name: 'Photinia Red Robin', is_in_stock: false },
+      { id: 226, name: 'Cornus Alba Sibirica', is_in_stock: true },
+      { id: 225, name: 'Lavandă Hidcote', is_in_stock: true },
+      { id: 199, name: 'Trandafir Epuizat', is_in_stock: false },
+      { id: 101, name: 'Măr Florina', is_in_stock: true }
+    ]
+    const sorted = sortInStockFirst(mixed)
+    assert.deepEqual(
+      sorted.map((p) => p.id),
+      [226, 225, 101, 227, 199],
+      'In-stock items come first in their original relative order, followed by out-of-stock items at the end'
+    )
+  })
+
+  it('shows product card badges only for exceptions (never "În stoc"), normalizes 2 spec chips, and detects optional 2nd hover photo', () => {
+    const {
+      getProductExceptionBadges,
+      getProductCardSpecs,
+      getSecondaryProductImage
+    } = useProducts()
+
+    // 1. Standard in-stock product has ZERO badges (no "În stoc" noise)
+    const standardInStock: any = {
+      id: 201,
+      name: 'Trandafir Pink Panther',
+      slug: 'trandafir-pink-panther',
+      is_in_stock: true,
+      on_sale: false,
+      low_stock_remaining: null,
+      quantity_limit: 50,
+      prices: { price: '2500', regular_price: '2500', sale_price: '2500', currency_minor_unit: 2 },
+      images: [{ id: 1, src: '/img/pink-1.jpg', thumbnail: '/img/pink-1.jpg', alt: 'Pink 1' }],
+      categories: [{ id: 10, name: 'Trandafiri Teahibrizi', slug: 'trandafiri-teahibrizi' }],
+      tags: [],
+      attributes: [
+        { name: 'Culoare', terms: [{ name: 'Roz' }] },
+        { name: 'Parfum', terms: [{ name: 'Moderat' }] },
+        { name: 'Înălțime la maturitate', terms: [{ name: '90 - 120 cm' }] }
+      ]
+    }
+    assert.deepEqual(getProductExceptionBadges(standardInStock), [], 'Normal in-stock product shows no badges')
+    assert.equal(getSecondaryProductImage(standardInStock), null, 'Single-photo product has no hover secondary image')
+    assert.deepEqual(getProductCardSpecs(standardInStock), [
+      { label: 'Culoare', value: 'Roz' },
+      { label: 'Parfum', value: 'Moderat' }
+    ])
+
+    // 2. Out-of-stock product shows "Stoc epuizat"
+    const outOfStock: any = {
+      ...standardInStock,
+      id: 227,
+      is_in_stock: false
+    }
+    assert.deepEqual(
+      getProductExceptionBadges(outOfStock).map((b) => b.label),
+      ['Stoc epuizat']
+    )
+
+    // 3. Low-stock + New + Sale product shows exception badges ("-20%", "Ultimele bucăți", "Nou")
+    const exceptionProduct: any = {
+      ...standardInStock,
+      id: 112,
+      on_sale: true,
+      low_stock_remaining: 3,
+      prices: { price: '2000', regular_price: '2500', sale_price: '2000', currency_minor_unit: 2 },
+      tags: [{ id: 99, name: 'Nou', slug: 'nou' }],
+      images: [
+        { id: 1, src: '/img/pink-1.jpg', thumbnail: '/img/pink-1.jpg', alt: 'Pink 1' },
+        { id: 2, src: '/img/pink-2.jpg', thumbnail: '/img/pink-2.jpg', alt: 'Pink 2' }
+      ],
+      attributes: []
+    }
+    assert.deepEqual(
+      getProductExceptionBadges(exceptionProduct).map((b) => b.label),
+      ['-20%', 'Ultimele bucăți', 'Nou']
+    )
+    assert.equal(
+      getSecondaryProductImage(exceptionProduct),
+      '/img/pink-2.jpg',
+      'Product with 2 distinct photos returns second photo URL for hover'
+    )
+    assert.equal(
+      getProductCardSpecs(exceptionProduct).length,
+      2,
+      'Product without custom attributes still gets 2 consistent fallback spec chips'
+    )
+  })
+
+  it('orders homepage sections into Discover → Explore → Trust → Choose → Buy journey', () => {
+    const homeSource = readFileSync(resolve(process.cwd(), 'pages/index.vue'), 'utf8')
+
+    const orderedSectionAnchors = [
+      'id="colectii-trandafiri"',
+      'id="trandafiri-populari"',
+      'id="incredere-garantie"',
+      'id="alte-categorii"',
+      'id="cum-livram"',
+      'id="newsletter-calendar"'
+    ]
+
+    const indices = orderedSectionAnchors.map((anchor) => {
+      const idx = homeSource.indexOf(anchor)
+      assert.ok(idx > -1, `Homepage includes section ${anchor}`)
+      return idx
+    })
+
+    for (let i = 1; i < indices.length; i++) {
+      assert.ok(
+        indices[i] > indices[i - 1],
+        `Expected ${orderedSectionAnchors[i - 1]} to appear before ${orderedSectionAnchors[i]}`
+      )
+    }
+
+    // Verify rose collections include colour, scent, and use entry points
+    assert.ok(homeSource.includes("category=trandafiri&fragrance=Intens"), 'Includes rose scent collection link')
+    assert.ok(homeSource.includes("category=trandafiri&color="), 'Includes rose colour swatch links')
+    assert.ok(homeSource.includes("category=teahibrizi"), 'Includes rose use/habit collection link')
+  })
+
+  it('enforces symmetric button radii, aligned equal-height category cards, clean backgrounds, and balanced About page sections', () => {
+    const buttonSource = readFileSync(resolve(process.cwd(), 'components/ui/AppButton.vue'), 'utf8')
+    const homeSource = readFileSync(resolve(process.cwd(), 'pages/index.vue'), 'utf8')
+    const aboutSource = readFileSync(resolve(process.cwd(), 'pages/despre-noi.vue'), 'utf8')
+    const defaultLayoutSource = readFileSync(resolve(process.cwd(), 'layouts/default.vue'), 'utf8')
+    const minimalLayoutSource = readFileSync(resolve(process.cwd(), 'layouts/minimal.vue'), 'utf8')
+
+    // 1. Symmetric button corner radius
+    assert.ok(!buttonSource.includes('rounded-tr-'), 'AppButton does not use asymmetric rounded-tr-*')
+    assert.ok(!buttonSource.includes('rounded-bl-'), 'AppButton does not use asymmetric rounded-bl-*')
+    assert.ok(!homeSource.includes('rounded-tr-'), 'Homepage buttons do not use asymmetric rounded-tr-*')
+    assert.ok(!homeSource.includes('rounded-bl-'), 'Homepage buttons do not use asymmetric rounded-bl-*')
+
+    // 2. No background watermark overlapping hero text or stain-like background shapes on content pages
+    assert.ok(!homeSource.includes('text-white/15'), 'Hero text background watermark is removed')
+    assert.ok(!defaultLayoutSource.includes('LogoMark'), 'Default layout removes stain-like fixed background watermark')
+    assert.ok(!minimalLayoutSource.includes('LogoMark'), 'Minimal layout removes stain-like fixed background watermark')
+
+    // 3. Equal-height aligned category cards without alternating asymmetric petal classes
+    assert.ok(!homeSource.includes("petal-alt"), 'Category cards use symmetric rounded corners instead of alternating petal-alt')
+    assert.ok(homeSource.includes('grid md:grid-cols-3 gap-6 sm:gap-8 items-stretch'), 'Category cards grid stretches cards to equal height')
+
+    // 4. Balanced About page sections without empty sticky column voids or background watermarks
+    assert.ok(!aboutSource.includes('LogoMark'), 'About page removes overlapping card watermark')
+    assert.ok(!aboutSource.includes('lg:sticky'), 'About page timeline uses balanced grid instead of lopsided sticky column')
+    assert.ok(aboutSource.includes('grid md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch'), 'About page timeline renders a balanced 3x2 equal-height grid')
   })
 })

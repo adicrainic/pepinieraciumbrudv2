@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useSiteSettings } from '~/composables/useSiteSettings'
 import { useCookieConsent } from '~/composables/useCookieConsent'
-import LogoMark from '~/components/ui/LogoMark.vue'
 import CookieConsentBanner from '~/components/layout/CookieConsentBanner.vue'
 
 const { settings, fetchSettings } = useSiteSettings()
@@ -11,20 +10,7 @@ await useAsyncData('site-settings-minimal', () => fetchSettings())
 
 <template>
   <div class="min-h-screen flex flex-col bg-background relative">
-    <!-- Centered Brand Watermark Motif across all pages (full page height & wider) -->
-    <div
-      class="pointer-events-none fixed inset-0 flex items-center justify-center overflow-hidden z-0 select-none"
-      aria-hidden="true"
-    >
-      <div class="h-screen w-auto flex items-center justify-center">
-        <LogoMark
-          :rose="false"
-          class="h-full w-auto scale-x-125 sm:scale-x-135 text-primary/[0.05] drop-shadow-[0_2px_20px_rgba(178,17,17,0.06)]"
-        />
-      </div>
-    </div>
-
-    <header class="py-4 border-b border-border bg-white/90 backdrop-blur-sm relative z-10">
+    <header class="py-4 border-b border-border bg-white relative z-10">
       <div class="max-w-5xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-4">
         <NuxtLink
           to="/cos"
@@ -70,21 +56,21 @@ await useAsyncData('site-settings-minimal', () => fetchSettings())
             <span v-if="settings.company_reg_com"> · Reg. Com.: {{ settings.company_reg_com }}</span>
             <span v-if="settings.company_authorization"> · Autorizație: {{ settings.company_authorization }}</span>
           </div>
-          <div class="flex flex-wrap items-center justify-center gap-4">
-            <NuxtLink to="/garantie" class="hover:text-primary underline">Garanția Plantelor</NuxtLink>
-            <NuxtLink to="/livrare-si-plata" class="hover:text-primary underline">Livrare și Plată</NuxtLink>
-            <NuxtLink to="/termeni-si-conditii" class="hover:text-primary underline">Termeni și Condiții</NuxtLink>
-            <NuxtLink to="/politica-de-confidentialitate" class="hover:text-primary underline">Confidențialitate</NuxtLink>
-            <button type="button" @click="openPreferences" class="hover:text-primary underline">Cookies</button>
+          <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+            <NuxtLink to="/garantie" class="hover:text-primary underline min-h-[44px] inline-flex items-center">Garanția Plantelor</NuxtLink>
+            <NuxtLink to="/livrare-si-plata" class="hover:text-primary underline min-h-[44px] inline-flex items-center">Livrare și Plată</NuxtLink>
+            <NuxtLink to="/termeni-si-conditii" class="hover:text-primary underline min-h-[44px] inline-flex items-center">Termeni și Condiții</NuxtLink>
+            <NuxtLink to="/politica-de-confidentialitate" class="hover:text-primary underline min-h-[44px] inline-flex items-center">Confidențialitate</NuxtLink>
+            <button type="button" @click="openPreferences" class="hover:text-primary underline min-h-[44px] inline-flex items-center">Cookies</button>
           </div>
         </div>
 
-        <div class="pt-2 border-t border-border/60 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px]">
+        <div class="pt-2 border-t border-border/60 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-text-muted">
           <span>© {{ new Date().getFullYear() }} {{ settings.footer_copyright || `${settings.site_title}. Toate drepturile rezervate.` }}</span>
-          <div class="flex flex-wrap items-center justify-center gap-3">
-            <a href="https://anpc.ro/" target="_blank" rel="noopener noreferrer" class="hover:text-primary underline">ANPC</a>
-            <a href="https://anpc.ro/ce-este-sal/" target="_blank" rel="noopener noreferrer" class="hover:text-primary underline">ANPC – SAL</a>
-            <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener noreferrer" class="hover:text-primary underline">SOL / ODR</a>
+          <div class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
+            <a href="https://anpc.ro/" target="_blank" rel="noopener noreferrer" class="hover:text-primary underline min-h-[44px] inline-flex items-center">ANPC</a>
+            <a href="https://anpc.ro/ce-este-sal/" target="_blank" rel="noopener noreferrer" class="hover:text-primary underline min-h-[44px] inline-flex items-center">ANPC – SAL</a>
+            <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener noreferrer" class="hover:text-primary underline min-h-[44px] inline-flex items-center">SOL / ODR</a>
           </div>
         </div>
       </div>

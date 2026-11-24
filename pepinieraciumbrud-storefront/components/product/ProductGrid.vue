@@ -11,16 +11,17 @@ defineProps<{
 <template>
   <div>
     <!-- Skeleton loader -->
-    <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+    <div v-if="loading" class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
       <div
         v-for="i in 6"
         :key="i"
-        class="bg-white border border-border rounded-xl sm:rounded-2xl p-3.5 sm:p-5 animate-pulse"
+        class="bg-white border border-border rounded-xl sm:rounded-2xl p-2.5 sm:p-5 animate-pulse"
       >
-        <div class="aspect-[16/10] sm:aspect-square bg-surface-warm rounded-lg sm:rounded-xl mb-3 sm:mb-4"></div>
+        <div class="aspect-square sm:aspect-[4/5] bg-surface-warm rounded-lg sm:rounded-xl mb-3 sm:mb-4"></div>
         <div class="h-3 sm:h-4 bg-surface-warm rounded w-1/3 mb-2"></div>
-        <div class="h-4 sm:h-5 bg-surface-warm rounded w-3/4 mb-3 sm:mb-4"></div>
-        <div class="h-7 sm:h-8 bg-surface-warm rounded"></div>
+        <div class="h-4 sm:h-5 bg-surface-warm rounded w-3/4 mb-2.5 sm:mb-3"></div>
+        <div class="h-5 sm:h-6 bg-surface-warm rounded mb-2.5 sm:mb-3"></div>
+        <div class="h-8 sm:h-10 bg-surface-warm rounded"></div>
       </div>
     </div>
 
@@ -36,8 +37,8 @@ defineProps<{
       <p class="text-sm text-text-muted">Încercați să resetați filtrele sau căutați un alt termen.</p>
     </div>
 
-    <!-- Products Grid -->
-    <div v-else class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+    <!-- Products Grid (2 columns on mobile/tablet, 3 columns on desktop) -->
+    <div v-else class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
       <ProductCard
         v-for="product in products"
         :key="product.id"
@@ -46,4 +47,3 @@ defineProps<{
     </div>
   </div>
 </template>
-

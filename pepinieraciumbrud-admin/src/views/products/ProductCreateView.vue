@@ -52,7 +52,14 @@ const form = ref({
   coacere: '',
   polenizatori: '',
   distanta: '',
-  images: [{ id: undefined as number | undefined, src: '' }]
+  culoare: '',
+  parfum: '',
+  inaltime: '',
+  inflorire: '',
+  images: [
+    { id: undefined as number | undefined, src: '' },
+    { id: undefined as number | undefined, src: '' }
+  ]
 })
 
 onMounted(async () => {
@@ -88,6 +95,18 @@ const handleSave = async () => {
     if (form.value.distanta.trim()) {
       attributes.push({ name: 'Distanță de plantare', options: [form.value.distanta.trim()], visible: true })
     }
+    if (form.value.culoare.trim()) {
+      attributes.push({ name: 'Culoare', options: [form.value.culoare.trim()], visible: true })
+    }
+    if (form.value.parfum.trim()) {
+      attributes.push({ name: 'Parfum', options: [form.value.parfum.trim()], visible: true })
+    }
+    if (form.value.inaltime.trim()) {
+      attributes.push({ name: 'Înălțime la maturitate', options: [form.value.inaltime.trim()], visible: true })
+    }
+    if (form.value.inflorire.trim()) {
+      attributes.push({ name: 'Perioadă de înflorire', options: [form.value.inflorire.trim()], visible: true })
+    }
 
     const payload: any = {
       name: form.value.name,
@@ -105,9 +124,14 @@ const handleSave = async () => {
       attributes
     }
 
-    if (form.value.images && form.value.images[0] && (form.value.images[0].src || form.value.images[0].id)) {
-      const img = form.value.images[0]
-      payload.images = [img.id ? { id: img.id, src: img.src } : { src: img.src }]
+    const imagesPayload: any[] = []
+    for (const img of form.value.images || []) {
+      if (img && (img.src || img.id)) {
+        imagesPayload.push(img.id ? { id: img.id, src: img.src } : { src: img.src })
+      }
+    }
+    if (imagesPayload.length > 0) {
+      payload.images = imagesPayload
     }
 
     await productsService.create(payload)
@@ -351,14 +375,67 @@ const handleSave = async () => {
                   class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white"
                 />
               </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">
+                  Culoare Floare (Trandafiri / Ornamentale)
+                </label>
+                <input
+                  v-model="form.culoare"
+                  type="text"
+                  placeholder="ex: Roșu, Roz, Galben, Alb, Portocaliu, Mov / Lila, Bicolor"
+                  class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white"
+                />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">
+                  Intensitate Parfum (Trandafiri)
+                </label>
+                <input
+                  v-model="form.parfum"
+                  type="text"
+                  placeholder="ex: Intens, Moderat, Discret"
+                  class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white"
+                />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">
+                  Înălțime la Maturitate
+                </label>
+                <input
+                  v-model="form.inaltime"
+                  type="text"
+                  placeholder="ex: 80 - 110 cm, 250 - 350 cm"
+                  class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white"
+                />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">
+                  Perioadă de Înflorire
+                </label>
+                <input
+                  v-model="form.inflorire"
+                  type="text"
+                  placeholder="ex: Mai - Octombrie (repetată)"
+                  class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white"
+                />
+              </div>
             </div>
           </div>
 
-          <div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <ProductImageUploader
               v-model="form.images[0]"
               label="Imagine Principală Produs"
               helper-text="Imaginile sunt stocate local pe serverul Pepiniera Ciumbrud. Formate acceptate: JPG, PNG, GIF, WEBP."
+              compact
+            />
+            <ProductImageUploader
+              v-model="form.images[1]"
+              label="Imagine Secundară (Opțional – afișată la hover)"
+              empty-title="Adaugă a doua fotografie (opțional)"
+              empty-subtitle="Se afișează la trecerea cursorului peste cardul produsului și în galeria produsului"
+              helper-text="Opțional: fotografie de detaliu (floare, fruct sau rădăcină)."
+              compact
             />
           </div>
 

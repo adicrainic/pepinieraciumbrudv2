@@ -41,7 +41,7 @@ const showDetails = ref(false)
                 v-if="hasDecided"
                 type="button"
                 @click="closePreferences"
-                class="text-xs text-text-muted hover:text-text px-2 py-1 rounded-lg"
+                class="min-w-[44px] min-h-[44px] flex items-center justify-center text-sm text-text-muted hover:text-text rounded-lg"
                 aria-label="Închide preferințele cookie"
               >
                 ✕
@@ -58,7 +58,7 @@ const showDetails = ref(false)
             <button
               type="button"
               @click="showDetails = !showDetails"
-              class="text-xs font-semibold text-primary hover:text-primary-dark underline inline-flex items-center gap-1"
+              class="min-h-[44px] text-xs sm:text-sm font-semibold text-primary hover:text-primary-dark underline inline-flex items-center gap-1"
             >
               <span>{{ showDetails ? 'Ascunde detaliile tehnice ▲' : 'Detalii categorii utilizate ▼' }}</span>
             </button>
@@ -70,10 +70,10 @@ const showDetails = ref(false)
               <div class="p-3 rounded-xl bg-surface-warm border border-border space-y-1">
                 <div class="flex items-center justify-between font-bold text-text">
                   <span>1. Strict Necesare (Coș &amp; Sesiune)</span>
-                  <span class="text-[11px] px-2 py-0.5 rounded-full bg-leaf-50 text-leaf-800 border border-leaf-200">Mereu active</span>
+                  <span class="text-xs px-2.5 py-0.5 rounded-full bg-leaf-50 text-leaf-800 border border-leaf-200 font-medium">Mereu active</span>
                 </div>
                 <p class="text-text-muted leading-relaxed">
-                  Păstrează produsele adăugate în coș (<code class="font-mono text-[11px]">pcs_wc_cart_token</code>) și opțiunea dumneavoastră de consimțământ (<code class="font-mono text-[11px]">pcs_cookie_consent</code>).
+                  Păstrează produsele adăugate în coș (<code class="font-mono text-xs">pcs_wc_cart_token</code>) și opțiunea dumneavoastră de consimțământ (<code class="font-mono text-xs">pcs_cookie_consent</code>).
                 </p>
               </div>
 
@@ -82,7 +82,7 @@ const showDetails = ref(false)
                   <span>2. Analiză Trafic Intern (First-Party)</span>
                   <span
                     :class="[
-                      'text-[11px] px-2 py-0.5 rounded-full border',
+                      'text-xs px-2.5 py-0.5 rounded-full border font-medium',
                       consent === 'all'
                         ? 'bg-leaf-50 text-leaf-800 border-leaf-200'
                         : 'bg-white text-text-muted border-border'
@@ -92,7 +92,7 @@ const showDetails = ref(false)
                   </span>
                 </div>
                 <p class="text-text-muted leading-relaxed">
-                  Măsoară anonim paginile vizitate în magazinul nostru (hash zilnic <code class="font-mono text-[11px]">SHA-256</code> pe serverul propriu, fără partajare cu rețele publicitare).
+                  Măsoară anonim paginile vizitate în magazinul nostru (hash zilnic <code class="font-mono text-xs">SHA-256</code> pe serverul propriu, fără partajare cu rețele publicitare).
                 </p>
               </div>
             </div>
@@ -102,14 +102,14 @@ const showDetails = ref(false)
             <button
               type="button"
               @click="acceptAll"
-              class="px-4 py-2.5 rounded-xl bg-primary hover:bg-primary-dark text-white text-xs sm:text-sm font-semibold transition-colors shadow-sm text-center"
+              class="min-h-[44px] px-4 py-2.5 rounded-xl bg-primary hover:bg-primary-dark text-white text-xs sm:text-sm font-semibold transition-colors shadow-sm flex items-center justify-center text-center"
             >
               Acceptă toate
             </button>
             <button
               type="button"
               @click="acceptNecessaryOnly"
-              class="px-4 py-2.5 rounded-xl bg-surface-warm hover:bg-border/50 text-text border border-border text-xs sm:text-sm font-semibold transition-colors text-center"
+              class="min-h-[44px] px-4 py-2.5 rounded-xl bg-surface-warm hover:bg-border/50 text-text border border-border text-xs sm:text-sm font-semibold transition-colors flex items-center justify-center text-center"
             >
               Doar strict necesare
             </button>

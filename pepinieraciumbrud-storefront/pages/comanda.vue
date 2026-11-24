@@ -205,17 +205,17 @@ const handlePlaceOrder = async () => {
     <!-- Error Alert -->
     <div v-if="errorMessage" class="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-sm flex items-center justify-between">
       <span>{{ errorMessage }}</span>
-      <button type="button" @click="errorMessage = ''" class="font-bold text-rose-600 hover:text-rose-800 ml-3">&times;</button>
+      <button type="button" @click="errorMessage = ''" class="font-bold text-rose-600 hover:text-rose-800 ml-3 min-w-[44px] min-h-[44px] flex items-center justify-center text-lg" aria-label="Închide eroarea">&times;</button>
     </div>
 
     <!-- Loading Cart State -->
-    <div v-if="cartStore.loading && (!cartStore.items || cartStore.items.length === 0)" class="py-16 text-center bg-white/85 backdrop-blur-sm rounded-3xl border border-border">
+    <div v-if="cartStore.loading && (!cartStore.items || cartStore.items.length === 0)" class="py-16 text-center bg-white rounded-3xl border border-border">
       <div class="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-3"></div>
       <p class="text-sm text-text-muted">Se încarcă produsele din coș...</p>
     </div>
 
     <!-- Empty Cart Guard -->
-    <div v-else-if="!cartStore.items || cartStore.items.length === 0" class="bg-white/85 backdrop-blur-sm rounded-3xl border border-border p-10 sm:p-12 text-center max-w-xl mx-auto my-8 shadow-sm">
+    <div v-else-if="!cartStore.items || cartStore.items.length === 0" class="bg-white rounded-3xl border border-border p-10 sm:p-12 text-center max-w-xl mx-auto my-8 shadow-sm">
       <div class="text-4xl mb-4">🛒</div>
       <h2 class="font-serif text-2xl font-bold text-text mb-2">Coșul dumneavoastră este gol</h2>
       <p class="text-sm text-text-muted mb-6">
@@ -228,7 +228,7 @@ const handlePlaceOrder = async () => {
 
     <form v-else @submit.prevent="handlePlaceOrder" class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
       <!-- Address Details -->
-      <div class="lg:col-span-2 space-y-6 bg-white/85 backdrop-blur-sm p-6 sm:p-8 rounded-3xl border border-border shadow-sm">
+      <div class="lg:col-span-2 space-y-6 bg-white p-6 sm:p-8 rounded-3xl border border-border shadow-sm">
         <div class="flex items-center justify-between border-b border-border pb-3">
           <h3 class="font-serif text-xl font-bold text-primary-dark">
             1. Date de Contact și Livrare
@@ -370,7 +370,7 @@ const handlePlaceOrder = async () => {
 
       <!-- Order Summary -->
       <div class="space-y-6 lg:sticky lg:top-8">
-        <div class="bg-white/85 backdrop-blur-sm p-6 rounded-3xl border border-border shadow-sm space-y-4">
+        <div class="bg-white p-6 rounded-3xl border border-border shadow-sm space-y-4">
           <div class="flex items-center justify-between border-b border-border pb-3">
             <h3 class="font-serif text-lg font-bold text-primary-dark">
               Comanda Dumneavoastră ({{ cartStore.itemCount }} buc.)
